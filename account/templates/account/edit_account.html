@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+
+<style type="text/css">
+	.image-container{
+		max-width: 250px;
+		height: auto;
+		position: relative;
+	}
+	.field-heading{
+		color: #737373;
+	}
+	#id_confirm{
+		color: green;
+	}
+	#id_confirm:hover {
+		opacity: 0.3;
+	}
+	#id_cancel:hover {
+		opacity: 0.3;
+	}
+	#id_cancel{
+		color: red;
+	}
+	.material-icons{
+		font-size: 30px;
+	}
+	.material-icons:hover{
+		cursor: pointer;
+	}
+
+	.conti-main{
+		width: 35vw;
+		/* border: 2px solid red; */
+		margin-top: 1em;
+	}
+
+	#reg-info{
+		margin-left: 0.5em;
+		padding : 3px;
+	  }
+	  
+	  #reg-info:hover{
+	  
+	  }
+
+	  /* Custom CSS to hide the dropdown arrow */
+.dropdown-toggle::after {
+    display: none;
+}
+
+	  .dropdown-menu{
+		font-size: 12px; */
+    position: absolute;
+    top: 67%;
+    left: 26%;
+    z-index: 1000;
+    display: none;
+    /* float: left; */
+    width: 20rem;
+    min-width: 10rem;
+    padding: 0.5rem 0.5rem;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.25rem;
+	  }
+
+	  .dropdown-menu p{
+		margin-top: 0;
+    margin-bottom: 0px;
+	font-size:12px;
+	  }
+
+	/* Media query for tablet width 768px */
+  @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+
+	.conti-main {
+		width: 45vw;
+		/* border: 2px solid red; */
+		margin-top: 1em;
+	}
+
+
+
+}
+
+   
+/* Media query for tablet width 320px */
+@media only screen and (min-width: 300px) and (max-width: 600px) {
+
+	.conti-main{
+		width:unset;
+		margin-top:0px;
+	}
+
+ }
+
+
+</style>
+
+<div class="container-fluid conti-main">
+	<div class="row justify-content-center">
+		<div class="card profile-card">
+		  <div class="card-body">
+		  	<div class="d-flex flex-column justify-content-center p-4">
+		  		
+		  		<form class="form-signin" method="post">{% csrf_token %}
+					  <!-- <input type="email" name="email" id="id_input_email" class="form-control" placeholder="Email address" required autofocus value={{form.initial.email}}> -->
+					  <h6 class="mt-4 field-heading">Name</h6>
+					  
+					<h6>{{form.name}}</h6>
+					
+		  			<!-- <input class="d-none" type="file" id="id_profile_image_file_selector" name="profile_image_file_selector" onchange="readURL(this)"> -->
+					  
+			  		<h6 class="mt-4 field-heading">Email</h6>
+					  <h6>{{form.email}}</h6>
+					  
+			  		<h6 class="mt-4 field-heading">University Name</h6>
+					
+                    <h6>{{form.universityName}}</h6>
+
+					<div class="d-flex align-items-center mt-3" style="position:relative;">
+					<p class=" mb-1 field-heading">Distance</p>
+					<div class="dropdown-toggle d-flex align-items-center" style="appearance:none;" id="reg-info" style="" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"> <i style="font-size:14px;" class="fa-solid fa-circle-info"></i>
+					</div>
+					<div class="dropdown-menu reg-menu" style="display:none;">
+						<p>In <strong>origin</strong> you can only connect with students from your university (those with the same domain as you ({{form.domain}})) </p>
+						<p>Whereas in  <strong>Nearby</strong> you can connect with students whose university lies within 60km of yours including the students from your university too.</p>
+					  </div>
+				</div>
+					
+					
+
+					{% if form.origin %}
+					<div>
+					<input type="radio" name="my_dist" value="True" checked> Origin
+					<input type="radio" name="my_dist" value="False"> Nearby
+				</div>
+					{% else %}
+					<div>
+					<input type="radio" name="my_dist" value="True"> Origin
+					<input type="radio" name="my_dist" value="False" checked> Nearby
+				</div>
+					{% endif %}
+
+					
+					{% comment %} <input type="text" name="bio" id="bio_input" >  {% endcomment %}
+					<div>
+					<h6 class="mt-2">Bio</h6>
+					{% if form.bio %}
+					<textarea name="bio" id="bio_input" class="form-control" placeholder="Tell other's Something about yourself 👻"
+					value="{{form.bio}}" cols="30" rows="5">{{form.bio}}</textarea>
+					{% else %}
+					<textarea name="bio" id="bio_input" class="form-control" placeholder="Tell other's Something about yourself 👻"
+					value="{{form.bio}}" cols="30" rows="5"></textarea>
+					{% endif %}
+
+				</div>
+
+				<div class="d-flex flex-column mt-3">
+					<a class="m-auto" style="color:#009cda" href="{% url "password_change" %}">Change password</a>
+				</div>
+
+					<div class="d-flex flex-column mt-1">
+						<button class="mt-2 btn btn-outline-dark flex-grow-1" type="submit">Save</button>
+					</div>
+					
+				</form>
+
+		  	</div>
+		  </div>
+
+
+		</div>
+	</div>
+</div>
+
+<script>
+
+	const hoverDiv = document.getElementById('reg-info');
+	hoverDiv.addEventListener("mouseover", () => {
+		// Handle mouseover (hover)
+		const hovermenu = document.querySelector('.reg-menu')
+		hovermenu.style.display = 'block';
+		  
+		console.log("Mouse over the element.");
+	  });
+	
+	  hoverDiv.addEventListener("mouseout", () => {
+		  // Handle mouseout (leave hover)
+		  const hovermenu = document.querySelector('.reg-menu')
+		  hovermenu.style.display = 'none';
+		  console.log("Mouse left the element.");
+	  });
+	
+
+</script>
+
+{% comment %} origin allows you to connect only with those student which has the same domain as you - @galgotiasuniversity.edu.in , whereas nearby allows you to connect with all the students that lies within 60km of your university including the students from your unicersity {% endcomment %}
+     
+
+{% endblock body %}

@@ -1,0 +1,240 @@
+<!-- 
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="vapid-key" content="{{ vapid_key }}">
+    {% if user.id %}
+        <meta name="user_id" content="{{ user.id }}">
+    {% endif %}
+    <title>Web Push</title>
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet">
+</head>
+
+<style>
+
+    body {
+        height: 100%;
+        background: rgba(0, 0, 0, 0.87);
+        font-family: 'PT Sans', sans-serif;
+    }
+    
+    div {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 35%;
+        margin: 10% auto;
+    }
+    
+    form > h3 {
+        font-size: 17px;
+        font-weight: bold;
+        margin: 15px 0;
+        color: orangered;
+        text-transform: uppercase;
+    }
+    
+    form > .error {
+        margin: 0;
+        font-size: 15px;
+        font-weight: normal;
+        color: orange;
+        opacity: 0.7;
+    }
+    
+    form > input, form > textarea {
+        border: 3px solid orangered;
+        box-shadow: unset;
+        padding: 13px 12px;
+        margin: 12px auto;
+        width: 80%;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    
+    form > input:focus, form > textarea:focus {
+        border: 3px solid orangered;
+        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+        outline: unset;
+    }
+    
+    form > button {
+        justify-self: center;
+        padding: 12px 25px;
+        border-radius: 0;
+        text-transform: uppercase;
+        font-weight: 600;
+        background: orangered;
+        color: white;
+        border: none;
+        font-size: 14px;
+        letter-spacing: -0.1px;
+        cursor: pointer;
+    }
+    
+    form > button:disabled {
+        background: dimgrey;
+        cursor: not-allowed;
+    }
+
+</style>
+
+<body>
+<div>
+    <form id="send-push__form">
+        <h3 class="header">Send a push notification</h3>
+        <p class="error"></p>
+        <input type="text" name="head" placeholder="Header: Your favorite airline 😍">
+        <textarea name="body" id="" cols="30" rows="10" placeholder="Body: Your flight has been cancelled 😱😱😱"></textarea>
+        <button>Send Me</button>
+    </form>
+</div>
+
+{% comment %} 
+{% include "script.html" %}
+
+<script>
+
+
+    const pushForm = document.getElementById('send-push__form');
+const errorMsg = document.querySelector('.error');
+
+pushForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const input = this[0];
+    const textarea = this[1];
+    const button = this[2];
+    errorMsg.innerText = '';
+
+    const head = input.value;
+    const body = textarea.value;
+    const meta = document.querySelector('meta[name="user_id"]');
+    const id = meta ? meta.content : null;
+
+    if (head && body && id) {
+        button.innerText = 'Sending...';
+        button.disabled = true;
+
+        const res = await fetch('/send_push', {
+            method: 'POST',
+            body: JSON.stringify({head, body, id}),
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        if (res.status === 200) {
+            button.innerText = 'Send another 😃!';
+            button.disabled = false;
+            input.value = '';
+            textarea.value = '';
+        } else {
+            errorMsg.innerText = res.message;
+            button.innerText = 'Something broke 😢..  Try again?';
+            button.disabled = false;
+        }
+    }
+    else {
+        let error;
+        if (!head || !body){
+            error = 'Please ensure you complete the form 🙏🏾'
+        }
+        else if (!id){
+            error = "Are you sure you're logged in? 🤔. Make sure! 👍🏼"
+        }
+        errorMsg.innerText = error;
+    }    
+});
+
+</script> {% endcomment %}
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getMessaging , getToken, onMessage} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+
+        const firebaseConfig = {
+        apiKey: "AIzaSyBvIfbBWmexblwSfutARVkA6bXZsa_ETpc",
+  authDomain: "notification-bcea2.firebaseapp.com",
+  projectId: "notification-bcea2",
+  storageBucket: "notification-bcea2.appspot.com",
+  messagingSenderId: "303828079465",
+  appId: "1:303828079465:web:4a61dcdffbd69eb64863f8"
+    };
+
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        // Initialize Firebase Cloud Messaging and get a reference to the service
+        const messaging = getMessaging(app);
+        // const analytics = getAnalytics(app);
+
+        onMessage(messaging, (payload) => {
+  console.log('Message received. ', payload);
+  // ...
+});
+
+        // function SubscribeUser(){
+            window.SubscribeUser = function() {
+            console.log('subscribe btn clicked!')
+            Notification.requestPermission().then(permission=>{
+                if(permission === 'granted'){
+                    
+                    console.log(permission);
+                    try {
+                    getToken(messaging, {vapidKey: "BCphnZek9fdpVvqDaM7rKZ9kCSWcZTc_n2GzX8MLMdnVA4n859RP06KCY_8Hk-Vg-ZkQ2GLMaiRQAU4fZ2WRVhc"}).then(currentToken =>{
+                        console.log(currentToken);
+                       document.getElementById('hawas').innerHTML = currentToken
+
+                    })
+                        
+                    } catch (error) {
+                        console.error('An error occurred while retrieving token. ', error);
+                    }
+                    
+
+
+                }
+            })
+        }
+
+
+        // messaging.onMessage(res=>{
+        //     console.log('got the notif baby -',res)
+        // })
+
+      </script>
+</head>
+<body>
+    <h1>firebase web push - </h1>
+    <button onclick="SubscribeUser()">Subscribe</button>
+    <h6 class="" id ="hawas"></h6>
+
+    <script>
+
+
+    </script>
+</body>
+</html>

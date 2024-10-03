@@ -1,0 +1,1044 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<style>
+    
+body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-container {
+    flex: 1;
+}
+
+
+.box2{
+    align-items: center;
+}
+
+.text_count{
+    /* float: inline-end;  */
+    /* position: absolute; */
+    right: 2px;
+    font-size: 14px; 
+    color: #007bff; 
+    padding: 1px; 
+    /* margin-right: 2px; */
+
+}
+
+
+    .right-column {
+        border: 2px solid #707070;
+        padding: 0px;
+    }
+
+    .right-column p {
+        margin-bottom: 3px;
+        font-size: 15px;
+    }
+
+    .cont-row {
+    height: 100%;
+    width: 99%;
+    display: flex;
+    align-items: center;
+    margin: auto;
+}
+
+    .left-column {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    {% comment %} height: 98%; {% endcomment %}
+    height: 89vh;
+    width: auto;
+    justify-content: space-between;
+}
+
+.right-column {
+    height: 98%;
+    width: auto;
+    flex: 1;
+    position: relative;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 4px;
+}
+
+    .upper-left {
+    {% comment %} border: 2px solid #707070; {% endcomment %}
+    min-width : 392px;
+    
+    width: auto;
+    height: 49.5%;
+    {% comment %} width: min-content; {% endcomment %}
+    {% comment %} width:67%; {% endcomment %}
+}
+
+    .lower-left {
+        {% comment %} border: 2px solid black; {% endcomment %}
+        height: 49.5%;
+        min-width : 392px;
+        width: auto;
+
+        {% comment %} width: fit-content; {% endcomment %}
+
+        {% comment %} margin-top: 18px; {% endcomment %}
+
+        width: fit-content;
+    }
+
+    #remote {
+    border-radius: 8px;
+    object-fit: cover; /* Maintain aspect ratio and cover the container */
+    {% comment %} object-fit: fill; {% endcomment %}
+    height: 100%;
+    {% comment %} height: -webkit-fill-available; {% endcomment %}
+    {% comment %} height: inherit; {% endcomment %}
+    width: 100%;
+    background-color: gainsboro;
+}
+
+#ours {
+    border-radius: 8px;
+    {% comment %} object-fit: cover; /* Maintain aspect ratio and cover the container */ {% endcomment %}
+    object-fit: fill;
+    height: 100%;
+    width: 100%;
+}
+
+
+    .right-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid #707070;
+        height: 3.5em;
+        padding: 1em;
+    }
+
+    .right-header img {
+        margin-right: 10px;
+    }
+
+    /* .img1 {
+        margin-right: 1em;
+    } */
+
+    .bottom-header {
+        position: relative;
+        margin: auto;
+        width: 72%;
+        display: flex;
+        {% comment %} position: absolute; {% endcomment %}
+        {% comment %} bottom: 0.5em; {% endcomment %}
+        {% comment %} left: 15%; {% endcomment %}
+        /* border: 2px solid black; */
+        justify-content: center;
+        align-items: center;
+}
+
+    
+
+    .skip-btn {
+        width: 72px;
+        border-radius: 8px;
+        height: 53px;
+    }
+
+    .video-textarea {
+        border: 1px solid #707070;
+        border-radius: 8px;
+        margin-left: 5px;
+        padding-left: 10px;
+        padding-right: 40px;
+        width: 100%;
+        position: relative;
+    }
+
+    .txtarea-cont {
+        position: relative;
+        width: 75%;
+        display: flex;
+        align-items: center;
+        height: 53px;
+    }
+
+    .send-btn {
+        position: absolute;
+        right: 10px;
+        top: 13px;
+    }
+
+    .send-btn-cont {
+        border: none;
+        color: black;
+        background-color: white;
+        padding: 0px;
+    }
+
+    .status-txt {
+        color: #343a40;
+        text-align: center;
+    }
+
+    .chat-log {
+        {% comment %} height: 450px; {% endcomment %}
+        max-height:61vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #fff;
+        font-size: 0.9em;
+        flex-direction: column-reverse;
+        /* border:2px solid green; */
+        flex-grow: 1;
+        {% comment %} overflow: auto; {% endcomment %}
+    }
+
+    .msg-p {
+        font-weight: 400;
+        margin-top: 5px;
+        margin-bottom: auto;
+        margin-left: 5px;
+        margin-right: 5px;
+        white-space: normal;
+        {% comment %} -ms-word-break: break-all;
+        word-break: break-all; {% endcomment %}
+        word-break: break-word;
+    }
+
+    .message-container {
+        margin-top: 10px;
+        justify-content: start;
+    }
+
+    .msg-style{
+        padding-right: 4px;
+        /* padding: 3px; */
+        padding-left: 4px;
+        /* color: wheat; */
+        /* color: white; */
+        min-height: 43px;
+        min-width: 90px;
+        max-width: 40%;
+        /* background: #343a40; */
+        /* background: #f9f8f8; */
+        background: #f0f2f2;
+        /* background: #ebf0f0; */
+
+        position: relative;
+        /* border: 1px solid black; */
+        border-radius: 8px;
+    }
+    .msg-style2{
+        padding-right: 4px;
+        /* padding: 3px; */
+        padding-left: 4px;
+        /* color: wheat; */
+        color: white;
+        min-height: 43px;
+        min-width: 90px;
+        max-width: 40%;
+        /* background: #343a40; */
+        /* background: #daf5ff;  */
+        /* background: #fafafa;  The best up until now */
+        /* background: #f9f8f8; */
+
+        {% comment %} background: #f0f2f2; {% endcomment %}
+        background: #ff943b;
+        /* background: #ebf0f0; */
+
+        position: relative;
+        /* border: 1px solid black; */
+        border-radius: 8px;
+    }
+
+    .msg-style::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        right: -8px;
+        height: 9px;
+        width: 15px;
+        /* background-color: red; */
+        background: linear-gradient(135deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+        /* background: linear-gradient(135deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
+    .msg-style2::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -8px;
+        height: 9px;
+        width: 15px;
+        /* background-color: red; */
+        {% comment %} background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent); {% endcomment %}
+        background: linear-gradient(226deg, #ff943b 0%, #ff943b 50%, transparent 50%, transparent);
+        /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
+    .username-span {
+        font-weight: 600;
+        margin-top: 0px;
+        margin-bottom: auto;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .typo{
+        margin-left: 1em;
+		color: green;
+		font-size: 16px;
+        
+    }
+
+    /* .bottom-header{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bottom2{
+        display: flex;
+        flex-direction: row;
+    } */
+
+    #id_chat_log_container{
+        /* border:2px solid red; */
+        flex:1;
+    }
+
+    #send_req_btn{
+        border: none;
+        background: none;
+    }
+
+    #report_btn{
+        border: none;
+        background: none;
+    }
+
+    #cancel_req_btn{
+        border: none;
+        margin-right: 1.79em;
+        /* display: block; */
+        background: none;
+        font-size: 20px;
+    }
+
+    .box1{
+        display: flex;
+        align-items: center;
+    }
+
+    .dropdown-menu{
+        width: 300px;
+        /* transform: translate3d(-211.5px, 47.5px, 0px); */
+        transform: translate3d(14px, 49.5px, 0px) !important;
+
+    }
+
+    .flag-p{
+        font-size: 1rem;
+    }
+
+    .btn.dropdown-toggle::after {
+    display: none;
+}
+
+.btn.dropdown-toggle:focus,
+.btn.dropdown-toggle:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.upper-left {
+    position: relative;
+}
+
+.loading-spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background: rgba(255, 255, 255, 0.8); Background color for the overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1; /* Place the spinner above the video */
+}
+
+.loading-spinner::before {
+    content: "";
+    border: 3px solid #009cda; /* Spinner border color */
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.bottom-header{
+    margin-bottom: 8px!important;
+}
+
+
+/* Media query for tablet width 320px */
+@media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+
+    #stranger_email{
+        display:none;
+    }
+
+    body{
+        height:100svh;
+    }
+
+    .text_count{
+        font-size: 10px!important;
+        margin-top: 2px !important;
+    }
+
+    .msg-style{
+        max-width: 70%;
+    }
+
+    .msg-style2{
+        max-width: 70%;
+    }
+   
+
+   
+.chat-log{
+    max-height: 58svh;
+}
+
+.status-txt span {
+    font-size: 12px;
+}
+
+.typo{
+    margin-left: 4px;
+    /* color: green; */
+    font-size: 11px;
+}
+
+    
+.bottom-header {
+    margin-bottom: 4em!important;
+}
+
+.send-btn{
+    font-size: 18px;
+    top: 14px;
+}
+
+.txtarea-cont{
+    align-items: unset;
+    height: 46px;
+}
+
+.skip-btn{
+    width: 63px;
+    /* border-radius: 8px; */
+    height: 46px;
+    font-size: 15px;
+}
+
+
+}
+
+
+.section_our_solution .row {
+    align-items: center;
+  }
+  
+  .our_solution_category {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .our_solution_category .solution_cards_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+  .solution_cards_box .solution_card {
+    flex: 0 50%;
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(136, 144, 195, 0.2),
+      0 5px 15px 0 rgba(37, 44, 97, 0.15);
+    border-radius: 15px;
+    margin: 8px;
+    padding: 10px 15px;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    {% comment %} min-height: 90px; {% endcomment %}
+    transition: 0.7s;
+    margin: 4px;
+    padding: 8px;
+  }
+  {% if not request.user_agent.is_mobile %}
+  .solution_cards_box .solution_card:hover {
+    {% comment %} background: #309df0; {% endcomment %}
+    background: #009cda;
+    color: #fff;
+    transform: scale(1.1);
+    z-index: 9;
+  }
+  
+  
+  .solution_cards_box .solution_card:hover::before {
+    background: rgb(85 108 214 / 10%);
+    
+  }
+
+
+  
+  .solution_cards_box .solution_card:hover .solu_title h3,
+  .solution_cards_box .solution_card:hover .solu_description p {
+    color: #fff;
+  }
+
+  {% endif %}
+  
+  .solution_cards_box .solution_card:before {
+    content: "";
+    position: absolute;
+    background: rgb(85 108 214 / 5%);
+    width: 170px;
+    height: 400px;
+    z-index: -1;
+    transform: rotate(42deg);
+    right: -56px;
+    top: -23px;
+    border-radius: 35px;
+  }
+  
+  {% if not request.user_agent.is_mobile %}
+  .solution_cards_box .solution_card:hover .solu_description button {
+    background: #fff !important;
+    color: #309df0;
+  }
+  {% endif %}
+  
+  .solution_card .so_top_icon {
+  }
+  
+  .solution_card .solu_title h3 {
+    color: #212121;
+    font-size: 1.3rem;
+    margin-top: 13px;
+    margin-bottom: 13px;
+  }
+  
+  .solution_card .solu_description p {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .solution_card .solu_description button {
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(
+      140deg,
+      #42c3ca 0%,
+      #42c3ca 50%,
+      #42c3cac7 75%
+    ) !important;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 5px 16px;
+  }
+  
+  .our_solution_content h1 {
+    text-transform: capitalize;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+  }
+  .our_solution_content p {
+  }
+  
+  .hover_color_bubble {
+    position: absolute;
+    background: rgb(54 81 207 / 15%);
+    width: 100rem;
+    height: 100rem;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    top: 16rem;
+    border-radius: 50%;
+    transform: rotate(-36deg);
+    left: -18rem;
+    transition: 0.7s;
+  }
+  
+  .solution_cards_box .solution_card:hover .hover_color_bubble {
+    top: 0rem;
+  }
+  
+  .solution_cards_box .solution_card .so_top_icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .solution_cards_box .solution_card .so_top_icon img {
+    width: 40px;
+    height: 50px;
+    object-fit: contain;
+  }
+  
+  /*start media query*/
+  @media screen and (min-width: 320px) {
+    .sol_card_top_3 {
+      position: relative;
+      top: 0;
+    }
+  
+    .our_solution_category {
+      width: 100%;
+      margin: 0 auto;
+    }
+  
+    .our_solution_category .solution_cards_box {
+      flex: auto;
+    }
+  }
+  @media only screen and (min-width: 768px) {
+    .our_solution_category .solution_cards_box {
+      flex: 1;
+    }
+  }
+  @media only screen and (min-width: 1024px) {
+    .sol_card_top_3 {
+      position: relative;
+      top: -3rem;
+    }
+    .our_solution_category {
+      width: 85%;
+      margin: 0 auto;
+    }
+
+    #icebreaker{
+        font-size:18px;
+    }
+
+  }
+  
+    
+  .main-container{
+    overflow-x:hidden;
+  }
+
+  .typing {
+    align-items: center;
+    display: flex;
+    height: 30px;
+    
+    
+    }
+    .typing .dot {
+    animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
+    {% comment %} background-color: #6CAD96 ;  {% endcomment %}
+    background-color:#e6e6e6;
+    border-radius: 50%;
+    height: 7px;
+    margin-right: 4px;
+    vertical-align: middle;
+    width: 7px;
+    display: inline-block;
+    }
+    .typing .dot:nth-child(1) {
+    animation-delay: 200ms;
+    }
+    .typing .dot:nth-child(2) {
+    animation-delay: 300ms;
+    }
+    .typing .dot:nth-child(3) {
+    animation-delay: 400ms;
+    }
+    .typing .dot:last-child {
+    margin-right: 0;
+    }
+    
+    @keyframes mercuryTypingAnimation {
+    0% {
+    transform: translateY(0px);
+    {% comment %} background-color:#6CAD96;  {% endcomment %}
+    background-color:#f1862d; 
+    }
+    28% {
+    transform: translateY(-7px);
+    {% comment %} background-color:#9ECAB9;  {% endcomment %}
+    background-color:#f5bd8f; 
+    }
+    44% {
+    transform: translateY(0px);
+    {% comment %} background-color: #B5D9CB; {% endcomment %}
+    background-color: #ff943b;
+    }
+
+}
+
+.custom-alert label{
+	margin-top:0.5rem;
+}
+
+.custom-alert {
+    display: none;
+    position: fixed;
+	z-index:1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.alert-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+
+	
+
+}
+
+</style>
+
+<div class="alert alert-info alert-dismissible fade show reg-notice-top" id="notif-btn"  style="margin-bottom:0px;" role="alert">
+    <span style="font-size: 14px;"> When more users are active - <button onclick="showCustomAlert()" style="border: none;
+
+        padding: 2px 10px;
+        font-size: 11px;
+        border-radius: 100px;
+        background: #009cda;
+        color: white;
+        font-weight: 500;
+        font-size: 11px; text-decoration:underline;">Notify Me</button></span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    
+  </div>
+
+  <div id="customAlert" class="custom-alert">
+    <div class="alert-content" style="display:flex; flex-direction:column; justify-content:center; align-items:center !important; width: 90%;">
+        <span class="close-btn" onclick="closeCustomAlert()">&times;</span>
+        <h6>Notifications</h6>
+        <p>We are going to send a notification to you whenever more people are active on text</p>
+       
+        <div style="display:flex;">
+        <button class="btn b-activate" style="background:#009cda; height: 25px;
+        width: 74px; font-size:10px; color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;" onclick="closeCustomAlert()">Not Now</button>
+
+        <button class="btn b-activate" style="background:#009cda; height: 25px;
+        width: 74px; font-size:10px; color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;" onclick="SubscribeUser()">Allow</button>
+    </div>
+    </div>
+</div>
+<div class="main-container">
+    <!-- <div id="confirmationDialog" style="display: none;">
+        <p>Are you sure you want to leave this page?</p>
+        <button id="returnButton">Return</button>
+        <button id="leaveButton">Leave</button>
+    </div> -->
+
+
+    <div class="row cont-row">
+        {% comment %} <div class="left-column">
+            <div class="upper-left" id="upr-lft">
+                <div class="loading-spinner"></div>
+                <video  id="remote" style="width : 392px"></video>
+            </div>
+            <div class="lower-left">
+                <video id="ours" style="width:392px"></video>
+            </div>
+        </div> {% endcomment %}
+        <div class="right-column">
+            <!-- Right column content goes here -->
+            <div class="right-header">
+                <div class="box1">
+                    <p><strong id="strangerName">Stranger</strong></p>
+                </div>
+                <div class="d-flex box2">
+                </span> <span  id="text-count" class="text_count" style=""></span>
+                    <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                                width="32px" alt="" srcset=""></span></button>
+                    <button class="d-none" id="cancel_req_btn"><i class="fa-solid fa-xmark "
+                            style="color:red;"></i></button>
+                   
+                      <div class="dropdown">
+                        <button disabled type="button" class="btn btn-primary dropdown-toggle"  id="report_btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                            <span class="img2"><img src="{% static 'images/report.svg' %}" width="22px" alt="" srcset=""></span>
+                        </button>
+
+                        <form class="dropdown-menu p-4" id="flag-form" action="{% url "chat:flag" %}" method='post'>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="flag-reason" class="form-label">Reason To Flag - </label>
+                                <input type="textarea" name="flag-reason" class="form-control" id="flag-reason" required placeholder="Reason ...">
+                            </div>
+                            
+                            <input type="text" name="flag_user_id" id="flag_user_id" hidden>
+                            <input type="text" name="flag_user_name" id="flag_user_name" hidden>
+                            <input type="text" name="flagged_by_id" id="flagged_by_id" hidden>
+                            {% comment %} <div class="mb-3">
+                                <label for="exampleDropdownFormPassword2" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="exampleDropdownFormPassword2" placeholder="Password">
+                            </div> {% endcomment %}
+                            <div class="mb-3">
+                                <p class="flag-p">Flagged person is going to be monitored and than banned if necessary</p>
+                                {% comment %} <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="dropdownCheck2">
+                                <label class="form-check-label" for="dropdownCheck2">
+                                    Remember me
+                                </label>
+                                </div> {% endcomment %}
+                            </div> 
+                            <button type="submit" class="btn btn-dark">Flag</button>
+                        </form>
+
+                      </div>
+                    
+                </div>
+            </div>
+            <div class="status-txt" id="id_chatroom_loading_spinner" role="status" style="display: block; ">
+                {% comment %} <div class="alert alert-info" role="alert" id="ice-cont" style="position: relative; display:none; border-radius: 0px 0px 12px 12px; margin-bottom:0px;"> <span id="icebreaker" style=""></span></div> {% endcomment %}
+
+
+
+                
+<div class="section_our_solution" id="ice-cont" style="display:none;">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="our_solution_category">
+          <div class="solution_cards_box">
+            <div class="solution_card" id="prompt-car">
+              <div class="hover_color_bubble"></div>
+              
+              <div class="solu_title" style="display: flex;
+              align-items: center;
+              justify-content: center;">
+                <h6 id="icebreaker" style="font-size: 14px; margin-bottom: 0px;"></h6>
+                
+  
+              </div>
+              {% comment %} <div class="solu_description">
+                <p style="margin-bottom: 4px;">
+                  {{prompt.answer}}
+                </p>
+                
+              </div> {% endcomment %}
+            </div>
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+
+
+                <div style=""> <span id="bar" style="">looking for someone nearby you can chat with....</div>
+                
+            </div>
+            <div class="d-flex flex-column" id="id_chat_log_container">
+                <div class="d-flex chat-log" id="id_chat_log">
+
+                </div>
+                <div class="bottom-header">
+                    <!-- <div class="bottom2"> -->
+
+                        <div style="transform: translateX(-30px); width:30px; left: -0.5em; position: absolute; bottom:2em; ">
+                            <div id="typing" class="typing d-none">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        </div>
+                        </div>    
+
+                        <button class="btn btn-dark skip-btn" id="skip_button">
+                            <span id="skip">Skip</span>
+                        </button>
+                        <a href="{% url 'new-chat-text' %}"><button class="btn btn-dark skip-btn d-none" id="new_button">
+                                <span id="new">New</span>
+                            </button></a>
+                        <!-- <textarea disabled class="flex-grow-1 chat-message-input"
+                                id="id_chat_message_input"></textarea> -->
+                        
+                        <div class="txtarea-cont">
+                            <textarea disabled class="flex-grow-1 video-textarea" id="id_chat_message_input"></textarea>
+                            <button disabled class="chat-message-submit-button send-button send-btn-cont" id="send_button">
+                                <span id="id_chat_message_submit" class="material-icons send-btn d-none">send
+                                </span>
+                            </button>
+                        </div>
+                <!-- </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+<script>
+
+    if (Notification.permission === "granted") {
+		{% if token_exist == 'yes' %}
+			// Notifications are enabled
+			console.log('the notifications are enabled!')
+			var nbtn = document.getElementById('notif-btn')
+			nbtn.style.display = 'none'
+		{% endif %}
+		
+	  } else if (Notification.permission === "denied") {
+		// Notifications are disabled
+		console.log('notif arre not enable permission denied!')
+	  } else {
+		// Notifications permission is not set, you can ask for permission
+		console.log('notif are not enabled at all')
+	  }
+
+    
+	function showCustomAlert() {
+		document.getElementById('customAlert').style.display = 'flex';
+	}
+	
+	function closeCustomAlert() {
+		document.getElementById('customAlert').style.display = 'none';
+	}
+	
+	// Close the alert when clicking outside
+	window.onclick = function(event) {
+		var alert = document.getElementById('customAlert');
+		if (event.target === alert) {
+			alert.style.display = 'none';
+		}
+	};
+
+
+$(document).ready(function() {
+    $("#flag-form").on("submit", function(event) {
+        event.preventDefault();  // Prevent the default form submission behavior
+
+         // Get the form element using $(this)
+         var form = $(this);
+
+         // Create a new FormData object with the form
+         var formData = new FormData(form[0]);
+
+        
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url "chat:flag" %}",
+			timeout: 5000,
+			data: formData,
+            processData: false, // Set processData and contentType to false
+            contentType: false,
+			success: function(data) {
+				console.log("SUCCESS", data);
+				if(data['status'] == "Already Flagged"){
+					alert(data.message)
+                    var cont = document.getElementById('flag-reason')
+                    cont.value = ""
+                    document.getElementById("report_btn").click();
+				}
+                else if(data['status'] == 'Flagged'){
+                    alert(data.message)
+                    var cont = document.getElementById('flag-reason')
+                    cont.value = ""
+                    document.getElementById("report_btn").click();
+				}
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert('Unable to flag - ', data.message)
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+
+    });
+
+});
+
+
+</script>
+
+
+{% include 'new_chat_text_js.html' %}
+
+
+{% endblock body %}

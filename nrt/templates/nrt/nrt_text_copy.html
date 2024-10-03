@@ -1,0 +1,3194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block body %}
+
+<style>
+	/* styles.css */
+	.measuring-line-container {
+		width: 100%;
+		height: 10px;
+		/* Adjust the height as needed */
+		border: 1px solid #ddd;
+		overflow: hidden;
+		border-radius: 100px;
+	}
+
+	.measuring-line {
+		height: 100%;
+		background-color: #009cda;
+		transition: width 1s ease;
+		width: 0%;
+	}
+
+
+	body {
+		height: 100vh;
+		/* border: 2px solid red; */
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		/* overflow: hidden; */
+	}
+
+	.main-container {
+		/* border: 2px solid blue; */
+		flex: 1;
+
+	}
+
+
+	.right-column {
+			{
+			% comment %
+		}
+
+		border: 1px solid #707070;
+
+			{
+			% endcomment %
+		}
+
+		padding: 0px;
+	}
+
+	.right-column p {
+		margin-bottom: 3px;
+		font-size: 16px;
+	}
+
+	.cont-row {
+		height: 100%;
+		/* border: 2px solid green; */
+		/* margin: 0px; */
+		margin: auto;
+		justify-content: center;
+
+			{
+			% comment %
+		}
+
+		align-items: center;
+
+			{
+			% endcomment %
+		}
+
+		width: 100%;
+	}
+
+	.left-column {
+		display: flex;
+		flex-direction: column;
+		padding: 0px;
+		/* padding-left: 5px !important; */
+		width: 29vw;
+
+		height: 97%;
+		/* margin: auto; */
+		/* margin-left: 0px; */
+		/* margin-right: 0px; */
+	}
+
+	.right-column {
+		height: 97%;
+		width: 69vw;
+		/* margin: auto; */
+		position: relative;
+		border-radius: 8px;
+		margin-left: 8px;
+	}
+
+
+	.upper-left {
+		border: 2px solid #707070;
+		height: 46%;
+		margin-top: 10px;
+		width: 100%;
+	}
+
+	.lower-left {
+		/* border: 2px solid black; */
+		height: 46%;
+		width: 100%;
+		margin-top: 18px;
+	}
+
+	video,
+	.video {
+		border-radius: 8px;
+	}
+
+	.right-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: 1px solid #707070;
+
+			{
+			% comment %
+		}
+
+		height: 2.5em;
+
+			{
+			% endcomment %
+		}
+
+		padding: 0.5em;
+	}
+
+	.right-header img {
+		margin-right: 10px;
+	}
+
+	.img1 {
+		margin-right: 1em;
+	}
+
+	.bottom-header {
+		margin: auto;
+		width: 70%;
+		display: flex;
+		/* position: absolute; */
+		/* bottom: 0.5em; */
+		/* left: 15%;` */
+		/* border: 2px solid black; */
+
+	}
+
+	.skip-btn {
+		width: 72px;
+		border-radius: 8px;
+		height: 53px;
+	}
+
+	.video-textarea {
+		border: 1px solid #707070;
+		border-radius: 8px;
+		margin-left: 5px;
+		padding-left: 12px;
+		padding-top: 4px;
+		padding-right: 40px;
+	}
+
+	.txtarea-cont {
+		display: contents;
+		position: absolute;
+	}
+
+	.send-btn {
+		position: absolute;
+		right: 13px;
+		top: 15px;
+	}
+
+	.send-btn-cont {
+		border: none;
+		color: black;
+		background-color: white;
+		padding: 0px;
+	}
+
+	.status-txt {
+		color: #343a40;
+		text-align: center;
+	}
+
+	.chat-log {
+		/* height: 450px; */
+		max-height: 42vh;
+		overflow-x: hidden;
+		overflow-y: auto;
+		padding: 10px;
+		background-color: #fff;
+		font-size: 0.9em;
+		flex-direction: column-reverse;
+		flex-grow: 1;
+	}
+
+	.msg-p {
+		font-weight: 450;
+		margin-top: 5px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+		white-space: normal;
+
+			{
+			% comment %
+		}
+
+		-ms-word-break: break-all;
+		word-break: break-all;
+
+			{
+			% endcomment %
+		}
+
+		word-break: break-word;
+	}
+
+	.message-container {
+		margin-top: 14px;
+		justify-content: start;
+		position: relative;
+	}
+
+	.message-container1 {
+		margin-top: 14px;
+		justify-content: end;
+		position: relative;
+	}
+
+	.username-span {
+		font-weight: 600;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+
+	#id_chatroom_card {
+		height: 100%;
+		/* margin-left: 8px; */
+	}
+
+	#id_chat_log_container {
+		flex: 1;
+	}
+
+	.left-card {
+		height: 100%;
+		border-radius: 8px;
+		border: 1px solid #707070;
+	}
+
+	#id_other_username {
+		font-size: 18px;
+		margin-bottom: 0px;
+		color: black;
+	}
+
+	.friends {
+		justify-content: space-between;
+		width: 100%;
+		position: relative;
+	}
+
+	.notify-badge {
+		position: absolute;
+		background: red;
+		/* border: 2px solid red; */
+		height: 1.2rem;
+		width: 1.2rem;
+		line-height: 1.2rem;
+		top: 1rem;
+		right: 2rem;
+		text-align: center;
+		font-size: 1rem;
+		border-radius: 50%;
+		color: white;
+		font-weight: 630;
+		margin-top: -15px;
+		margin-right: -25px;
+	}
+
+	.zero-badge {
+		display: none;
+	}
+
+	.online-dot {
+		width: 10px;
+		/* Adjust the size as needed */
+		height: 10px;
+		/* Adjust the size as needed */
+		background-color: green;
+		border-radius: 50%;
+		/* Makes it a circle */
+		display: inline-block;
+	}
+
+	.online-dot-display {
+		display: none;
+	}
+
+	.offline-dot-display {
+			{
+			% comment %
+		}
+
+		display: none;
+
+			{
+			% endcomment %
+		}
+	}
+
+	.offline-dot {
+		width: 10px;
+		/* Adjust the size as needed */
+		height: 10px;
+		/* Adjust the size as needed */
+		background-color: red;
+		border-radius: 50%;
+		/* Makes it a circle */
+		display: inline-block;
+	}
+
+	.friend-container:hover {
+		background: #f2f2f2;
+	}
+
+	.no-friend {
+		display: flex;
+		justify-content: center;
+		height: 100%;
+
+			{
+			% comment %
+		}
+
+		border: 2px solid red;
+
+			{
+			% endcomment %
+		}
+
+		align-items: center;
+	}
+
+	.bottom-header {
+		position: relative;
+		margin-bottom: 0.8em;
+	}
+
+	.msg_bar1_timestamp {
+		width: 53px;
+		right: 80px;
+		bottom: 8px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: bold;
+		border-radius: 20px;
+		background: #e6e6e6;
+		display: flex;
+		justify-content: center;
+		padding: 3px 5px;
+	}
+
+	.msg_bar_timestamp {
+
+
+		width: 53px;
+		left: -64px;
+		
+		bottom: 8px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: bold;
+		border-radius: 20px;
+		background: #e6e6e6;
+		display: flex;
+		justify-content: center;
+		padding: 3px 5px;
+	}
+
+	.inside_msg_cont {
+			{
+			% comment %
+		}
+
+		padding-right: 4px;
+		background: #f0f2f2;
+		min-width: 90px;
+		min-height: 45px;
+		padding-left: 4px;
+		border-radius: 8px;
+		max-width:400px;
+
+			{
+			% endcomment %
+		}
+
+		padding-right: 4px;
+		background: #ff943b;
+		min-width: 61px;
+		min-height: 37px;
+		padding-left: 4px;
+		border-radius: 10px;
+		font-weight: bold !important;
+	}
+
+	.inside_msg_cont p {
+		font-weight: 600;
+		color: white;
+	}
+
+	.inside_msg_cont1 p {
+		font-weight: 600;
+	}
+
+	.inside_msg_cont1 {
+		background: #f0f2f2;
+
+			{
+			% comment %
+		}
+
+		padding-right: 4px;
+		min-width: 90px;
+		min-height: 45px;
+		padding-left: 4px;
+		border-radius: 8px;
+		max-width:400px;
+
+			{
+			% endcomment %
+		}
+
+		padding-right: 4px;
+		background: #e6e6e6;
+		min-width: 61px;
+		min-height: 37px;
+		padding-left: 6px;
+		border-radius: 10px;
+		font-weight: bold !important;
+	}
+
+	.inside_msg_cont1::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		/* left: -8px; */
+		right: -8px;
+		height: 9px;
+		width: 15px;
+
+		/* background-color: red; */
+			{
+			% comment %
+		}
+
+		background: linear-gradient(135deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+
+			{
+			% endcomment %
+		}
+
+		background: linear-gradient(135deg, #e6e6e6 0%, #e6e6e6 50%, transparent 50%, transparent);
+		/* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+	}
+
+	.inside_msg_cont::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -8px;
+		/* right: -8px; */
+		height: 9px;
+		width: 15px;
+
+		/* background-color: red; */
+			{
+			% comment %
+		}
+
+		background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+
+			{
+			% endcomment %
+		}
+
+		/* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+
+		background: linear-gradient(226deg, #ff943b 0%, #ff943b 50%, transparent 50%, transparent);
+	}
+
+	.msg-p {
+		font-size: 18px;
+		margin-right: 1.5em;
+	}
+
+	.top-cont-left {
+		align-items: center;
+	}
+
+	.typo {
+		margin-left: 1em;
+		color: green;
+		font-size: 16px;
+	}
+
+	.msg-c {
+		position: absolute;
+		bottom: 5px;
+		right: 6px;
+		/* font-size: 12px; */
+	}
+
+	/* Styling the scrollbar track (the non-draggable part) */
+	::-webkit-scrollbar-track {
+		background: none;
+		/* Set the color of the track */
+
+	}
+
+	.svg-path {
+		/* fill: #FF5733; Change the fill color to your desired color */
+	}
+
+	.friends-list-container {
+		/* border: 2px solid; */
+		max-height: 70vh;
+		overflow: scroll;
+	}
+
+	.back-arrow {
+		display: none;
+	}
+
+	.no-selection {
+		height: 100%;
+		position: absolute;
+		border: 1px solid #707070;
+		border-radius: 8px;
+		background: #f0f0f0;
+		z-index: 1;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.contenta {
+		/* border: 2px solid green;
+		height: 40%;
+    	width: 45%; */
+	}
+
+	.contenta p {
+		font-weight: 900px;
+	}
+
+	/* Media query for tablet width 320px */
+	@media only screen and (min-width: 300px) and (max-width: 600px) {
+
+
+		.bottom-header {
+			width: 90%;
+		}
+
+
+		.remove-date-btn {
+			border: 1px solid rgba(0, 0, 0, .125);
+			padding: 5px;
+			border-radius: 12px;
+			justify-content: center;
+			align-items: center;
+			display: flex;
+			margin: 5px;
+			margin-top: 0px !important;
+		}
+
+		.video-textarea {
+			height: 30px !important;
+			border-radius: 40px;
+			margin-left: 0px;
+			font-size: 13px;
+		}
+
+		.meetup-section {
+			display: flex;
+			align-items: center;
+			padding: 5px;
+			height: 4%;
+			padding-right: 0px;
+			justify-content: space-between;
+			margin: 5px;
+			border: 1px solid rgba(0, 0, 0, .125);
+			border-radius: 10px;
+		}
+
+
+		.d-card {
+			font-size: 13px;
+			padding: 0.6em;
+		}
+
+		.d-link {
+			margin: 0px;
+			font-size: 13px;
+			justify-content: space-between;
+
+		}
+
+		.show-deactive {
+			border-bottom: 1px solid #CECBCB;
+			padding: 5px;
+		}
+
+		.b-activate-form {
+			margin-bottom: 1em;
+			justify-content: center;
+			display: flex;
+			margin-top: 0.5em;
+		}
+
+		.b-activate {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-weight: bold;
+			color: white;
+			border-radius: 101px;
+			height: 30px;
+			width: 100px;
+			font-size: 13px;
+			background: #FF3B3B;
+		}
+
+		.b-cont {
+
+			padding-top: 1rem;
+			width: 70%;
+			margin: auto;
+
+		}
+
+		h6 {
+			margin-bottom: 0.5em;
+		}
+
+		.f-13 {
+			font-size: 13px;
+		}
+
+		.image-cont {
+			display: flex;
+			justify-content: center;
+			margin-top: 1.5em;
+		}
+
+		.bheader {
+			height: 6%;
+			align-items: center;
+			padding: 4px;
+			display: flex;
+			justify-content: center;
+			border: 1px solid #CECBCB;
+		}
+
+		.landing-page {
+			padding: 0px;
+			height: 100%;
+
+				{
+				% comment %
+			}
+
+			border:2px solid orange;
+
+				{
+				% endcomment %
+			}
+
+			display: flex;
+			flex-direction: column;
+			justify-content: space-evenly;
+		}
+
+		body {
+				{
+				% comment %
+			}
+
+			height: unset;
+
+				{
+				% endcomment %
+			}
+
+			height:100svh;
+		}
+
+		.main-container {
+				{
+				% comment %
+			}
+
+			border:2px solid black;
+
+				{
+				% endcomment %
+			}
+
+			/* height: 90vh; */
+				{
+				% comment %
+			}
+
+			height: calc(100svh - 53px);
+
+				{
+				% endcomment %
+			}
+
+				{
+				% comment %
+			}
+
+			flex: unset;
+
+				{
+				% endcomment %
+			}
+
+			flex:1;
+		}
+
+		.inside_msg_cont {
+			max-width: 220px;
+		}
+
+		.inside_msg_cont1 {
+			max-width: 220px;
+		}
+
+		.cont-row {
+			position: relative;
+
+				{
+				% comment %
+			}
+
+			overflow: hidden;
+
+				{
+				% endcomment %
+			}
+		}
+
+		.left-column {
+			width: 99%;
+			height: 99%;
+		}
+
+		.right-column {
+				{
+				% comment %
+			}
+
+			position: absolute;
+
+				{
+				% endcomment %
+			}
+
+				{
+				% comment %
+			}
+
+			left: 100%;
+
+				{
+				% endcomment %
+			}
+
+			width: 100%;
+
+				{
+				% comment %
+			}
+
+			height: 99%;
+
+				{
+				% endcomment %
+			}
+
+			height: 71%;
+			padding: 5px;
+			margin-left: 0px;
+			transition: left 0.5s;
+		}
+
+		.back-arrow {
+			display: block;
+			margin-right: 2px;
+		}
+
+		#id_other_username {
+			font-size: 13px;
+		}
+
+		#offline_dot {
+			font-size: 15px;
+		}
+
+		#online_dot {
+			font-size: 15px;
+		}
+
+		.video-textarea {
+			height: 46px;
+		}
+
+		.send-btn {
+			font-size: 16px;
+			top: 7px;
+		}
+
+		.top-cont-left {
+			width: 70%;
+		}
+
+		.typo {
+			margin-left: 1em;
+			font-size: 11px;
+		}
+
+		.bottom-header {
+			margin-bottom: 15px;
+		}
+
+	}
+
+	.timestamp-span.hidden {
+		display: none !important;
+	}
+
+	.msg_cont1_timestamp {
+		right: 3px;
+		bottom: -14px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: 400;
+	}
+
+	.msg_cont_timestamp {
+		left: 3px;
+		bottom: -14px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: 400;
+	}
+
+	.down-arrow {
+		top: -2px;
+		position: absolute;
+		right: 6px;
+		transition: right 0.5s ease;
+	}
+
+	.angle-up-position {
+		right: 46%;
+		color: #ff3b3b;
+	}
+
+	.angle-up-height {
+		height: 77%;
+	}
+
+	.angle-up-height_log {
+		max-height: 48vh
+	}
+
+	#male_para {
+		font-size: 14px !important;
+		margin-bottom: 0.5rem !important;
+	}
+
+	#female_para {
+		font-size: 14px !important;
+		margin-bottom: 0.5rem !important;
+	}
+
+	.custom-alert label {
+		margin-top: 0.5rem;
+	}
+
+	.custom-alert {
+		display: none;
+		position: fixed;
+		z-index: 1;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		justify-content: center;
+		align-items: center;
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	.alert-content {
+		background: #fff;
+		padding: 20px;
+		border-radius: 10px;
+		text-align: center;
+		position: relative;
+		animation: slideIn 0.3s ease-in-out;
+	}
+
+	.close-btn {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		font-size: 20px;
+		cursor: pointer;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes slideIn {
+		from {
+			transform: translateY(-20px);
+			opacity: 0;
+		}
+
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
+
+
+
+
+	}
+
+
+	/* Media query for tablet width 320px */
+	@media only screen and (min-width: 800px) {
+
+
+
+		.bottom-header {
+			width: 90%;
+		}
+
+
+		.remove-date-btn {
+			border: 1px solid rgba(0, 0, 0, .125);
+			padding: 5px;
+			border-radius: 12px;
+			justify-content: center;
+			align-items: center;
+			display: flex;
+			margin: 5px;
+			margin-top: 0px !important;
+		}
+
+		.video-textarea {
+			height: 30px !important;
+			border-radius: 40px;
+			margin-left: 0px;
+			font-size: 13px;
+		}
+
+		.meetup-section {
+			display: flex;
+			align-items: center;
+			padding: 5px;
+			height: 4%;
+			padding-right: 0px;
+			justify-content: space-between;
+			margin: 5px;
+			border: 1px solid rgba(0, 0, 0, .125);
+			border-radius: 10px;
+		}
+
+
+		.d-card {
+			font-size: 13px;
+			padding: 0.6em;
+		}
+
+		.d-link {
+			margin: 0px;
+			font-size: 13px;
+			justify-content: space-between;
+
+		}
+
+		.show-deactive {
+			border-bottom: 1px solid #CECBCB;
+			padding: 5px;
+		}
+
+		.b-activate-form {
+			margin-bottom: 1em;
+			justify-content: center;
+			display: flex;
+			margin-top: 0.5em;
+		}
+
+		.b-activate {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-weight: bold;
+			color: white;
+			border-radius: 101px;
+			height: 30px;
+			width: 100px;
+			font-size: 13px;
+			background: #FF3B3B;
+		}
+
+		.b-cont {
+
+			padding-top: 1rem;
+			width: 70%;
+			margin: auto;
+
+		}
+
+		h6 {
+			margin-bottom: 0.5em;
+		}
+
+		.f-13 {
+			font-size: 13px;
+		}
+
+		.image-cont {
+			display: flex;
+			justify-content: center;
+			margin-top: 1.5em;
+		}
+
+		.bheader {
+			height: 6%;
+			align-items: center;
+			padding: 4px;
+			display: flex;
+			justify-content: center;
+			border: 1px solid #CECBCB;
+		}
+
+		.landing-page {
+			padding: 0px;
+			height: 100%;
+
+				{
+				% comment %
+			}
+
+			border:2px solid orange;
+
+				{
+				% endcomment %
+			}
+
+			display: flex;
+			flex-direction: column;
+			justify-content: space-evenly;
+		}
+
+		body {
+				{
+				% comment %
+			}
+
+			height: unset;
+
+				{
+				% endcomment %
+			}
+
+			height:100svh;
+		}
+
+		.main-container {
+				{
+				% comment %
+			}
+
+			border:2px solid black;
+
+				{
+				% endcomment %
+			}
+
+			/* height: 90vh; */
+
+			width: 80%;
+			margin: auto;
+
+				{
+				% comment %
+			}
+
+			height: calc(100svh - 53px);
+
+				{
+				% endcomment %
+			}
+
+				{
+				% comment %
+			}
+
+			flex: unset;
+
+				{
+				% endcomment %
+			}
+
+			flex:1;
+		}
+
+		.inside_msg_cont {
+			max-width: 220px;
+		}
+
+		.inside_msg_cont1 {
+			max-width: 220px;
+		}
+
+		.cont-row {
+			position: relative;
+
+				{
+				% comment %
+			}
+
+			overflow: hidden;
+
+				{
+				% endcomment %
+			}
+		}
+
+		.left-column {
+			width: 99%;
+			height: 99%;
+		}
+
+		.right-column {
+				{
+				% comment %
+			}
+
+			position: absolute;
+
+				{
+				% endcomment %
+			}
+
+				{
+				% comment %
+			}
+
+			left: 100%;
+
+				{
+				% endcomment %
+			}
+
+			width: 100%;
+
+				{
+				% comment %
+			}
+
+			height: 99%;
+
+				{
+				% endcomment %
+			}
+
+			height: 71%;
+			padding: 5px;
+			margin-left: 0px;
+			transition: left 0.5s;
+		}
+
+		.back-arrow {
+			display: block;
+			margin-right: 2px;
+		}
+
+		#id_other_username {
+			font-size: 13px;
+		}
+
+		#offline_dot {
+			font-size: 15px;
+		}
+
+		#online_dot {
+			font-size: 15px;
+		}
+
+		.video-textarea {
+			height: 46px;
+		}
+
+		.send-btn {
+			font-size: 16px;
+			top: 7px;
+		}
+
+		.top-cont-left {
+			width: 70%;
+		}
+
+		.typo {
+			margin-left: 1em;
+			font-size: 11px;
+		}
+
+		.bottom-header {
+			margin-bottom: 15px;
+		}
+
+	}
+
+	.timestamp-span.hidden {
+		display: none !important;
+	}
+
+	.msg_cont1_timestamp {
+		right: 3px;
+		bottom: -14px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: 400;
+	}
+
+	.msg_cont_timestamp {
+		left: 3px;
+		bottom: -14px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: 400;
+	}
+
+	.down-arrow {
+		top: -2px;
+		position: absolute;
+		right: 6px;
+		transition: right 0.5s ease;
+	}
+
+	.angle-up-position {
+		right: 46%;
+		color: #ff3b3b;
+	}
+
+	.angle-up-height {
+		height: 77%;
+	}
+
+	.angle-up-height_log {
+		max-height: 48vh
+	}
+
+	#male_para {
+		font-size: 14px !important;
+		margin-bottom: 0.5rem !important;
+	}
+
+	#female_para {
+		font-size: 14px !important;
+		margin-bottom: 0.5rem !important;
+	}
+
+	.custom-alert label {
+		margin-top: 0.5rem;
+	}
+
+	.custom-alert {
+		display: none;
+		position: fixed;
+		z-index: 1;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		justify-content: center;
+		align-items: center;
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	.alert-content {
+		background: #fff;
+		padding: 20px;
+		border-radius: 10px;
+		text-align: center;
+		position: relative;
+		animation: slideIn 0.3s ease-in-out;
+	}
+
+	.close-btn {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		font-size: 20px;
+		cursor: pointer;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes slideIn {
+		from {
+			transform: translateY(-20px);
+			opacity: 0;
+		}
+
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
+
+
+
+
+
+
+	}
+
+	.requi_btn {
+		border: none;
+		background: none;
+		margin-bottom: 5px;
+	}
+</style>
+
+<div class="main-container">
+	<div class="row cont-row">
+
+		<div class="landing-page">
+
+			<div class="bheader">
+				<div>🩵 Blind Dates</div>
+			</div>
+
+			{% if status == True %}
+
+			<div class="show-deactive">
+
+				<p class="d-flex gap-1 d-link">
+					<span>blind dating is currently activated </span>
+					<a class="" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+						aria-controls="collapseExample">
+						wanna deactivate?
+					</a>
+
+				</p>
+				<div class="collapse" id="collapseExample">
+					<div class="d-card">
+						By deactivating this feature you are no longer going to be connected on blind dates with anyone
+					</div>
+					<form class="b-activate-form" action="" method="post">
+						{% csrf_token %}
+
+						<button class="btn b-activate" name='deactivate' type="submit">Deactivate</button>
+					</form>
+				</div>
+
+			</div>
+
+
+			{% endif %}
+
+			{% if not room %}
+
+			<div class="image-cont">
+				<img src="{% static 'images/knp.png' %}" width="155px" alt="" srcset="">
+			</div>
+
+			{% endif %}
+
+			{% if status == True and not room %}
+
+			<div class="b-cont">
+				<h6 class="f-13">- The Connection is automatically going to be deleted after 24 hrs</h6>
+				<h6 class="f-13">- Since blind dating is activated you can find yourself connected on a blind date</h6>
+				<h6 class="f-13">- If you were on a date and now its not connected/showing up then that means the other
+					person has cancelled the date</h6>
+				<h6 class="f-13">- Only female can choose the location and time of the date</h6>
+				{% comment %} <h6 class="f-13">- if you don't wanna continue connecting
+					then you can always deactivate this feature
+					any time you want to</h6> {% endcomment %}
+			</div>
+
+			{% endif %}
+
+			{% comment %} {% if looped %}
+			<p>{{looped}}</p>
+			{% endif %} {% endcomment %}
+
+			{% if status == False %}
+			{% comment %} <h1>not activated</h1> {% endcomment %}
+			{% comment %} <div class="landing-page">
+
+				<div class="bheader">
+					<div>🩵 Blind Dates</div>
+				</div>
+
+				<div class="image-cont">
+					<img src="{% static 'images/knp.png' %}" width="155px" alt="" srcset="">
+				</div> {% endcomment %}
+
+				<div class="b-cont">
+					<h6 class="f-13">- Go on blind dates with students from your own college + nearby colleges</h6>
+					<h6 class="f-13">- Male connects with female and vice-versa</h6>
+					<h6 class="f-13">- But only female can select the location and time of the date</h6>
+					<h6 class="f-13">- By activating this feature u r automatically going to be connected on blind dates
+						if matched</h6>
+					<h6 class="f-13">- You can always deactivate this feature to stop getting connected on blind dates
+					</h6>
+				</div>
+
+				<form class="b-activate-form" action="" method="post"> {% csrf_token %}
+					{% comment %} <input type="text" name="form_type" value="form1" hidden> {% endcomment %}
+					<button class="btn b-activate" name='activate' style="" type="submit">Activate</button>
+				</form>
+
+				{% comment %}
+			</div> {% endcomment %}
+			{% comment %} {% elif status == True %}
+
+			<h1>activated</h1>
+			<form action="" method="post">
+				{% csrf_token %}
+
+				<button class="btn btn-outline-dark" name='deactivate' type="submit">Deactivate</button>
+			</form> {% endcomment %}
+
+			{% endif %}
+
+
+
+			{% if unavaillable %}
+			<h6 style="font-size: 13px;
+			margin: auto;
+			width: 80%;">{{unavaillable}}</h6>
+
+			{% elif room %}
+
+			<div class="meetup-section">
+
+				{% comment %} <span>meetup</span> {% endcomment %}
+				<div class="measuring-line-container">
+					<div class="measuring-line" id="measuring-line" {% if meetup_perci %}style="width:{{meetup_perci}}%"
+						{% endif %}></div>
+				</div>
+
+				<!-- This one is for locked one -->
+
+
+				<button id="meetup-btn" onclick="showCustomAlert()" class="btn b-activate ml-3" style="background:#009cda; height: 25px;
+			width: 74px; font-size:10px; {% if meetup_unlocked %}display:none;{% endif %}">Meetup</button>
+
+				<div id="customAlert" class="custom-alert">
+					<div class="alert-content"
+						style="display:flex; flex-direction:column; justify-content:center; align-items:center !important; width: 90%;">
+						<span class="close-btn" onclick="closeCustomAlert()">&times;</span>
+						<h6>Meetup is Locked</h6>
+						<p>Both sides have to send atleast 6 messages to unlock meetup.</p>
+						<p>Only female can select the location and time of the meetup.</p>
+						<button class="btn b-activate" style="background:#009cda; height: 25px;
+					width: 74px; font-size:10px;" onclick="closeCustomAlert()">Close</button>
+					</div>
+				</div>
+
+
+				<!-- This one is for unlocked one which is going to be different for male and female with different conditions -->
+
+				<button id="meetup-btn-active" onclick="showCustomAlert2()" class="btn b-activate ml-3" style="background:#009cda; height: 25px;
+			width: 105px; font-size:10px; {% if meetup_unlocked %}display:flex; {% else %}display:none;{% endif %}">
+					{% if meetup_fixed %}Date Fixed{% else %}Meetup{% endif %}
+				</button>
+
+				<div id="customAlert2" class="custom-alert">
+					<div class="alert-content"
+						style="display:flex; flex-direction:column; justify-content:center; align-items:center !important; width: 90%;">
+						<span class="close-btn" onclick="closeCustomAlert2()">&times;</span>
+						{% if request.user.gender == 'M' %}
+
+						{% if meetup_fixed %}
+						<h6>Congrats 🎉🎉</h6>
+						{% comment %} <p>bro your date is fixed you can fuck her at this location</p> {% endcomment %}
+						<p>your date with {{other_user_name}} is fixed at the below time and location</p>
+						<p>Address : {{address}}</p>
+						<p>Date : {{date}}</p>
+						<p>Time : {{time}}</p>
+						<p id="date_fixed_hai" class="btn b-activate" style="background:#009cda; height: 25px;
+					width: 110px; font-size:10px;">Date is Fixed</p>
+						{% elif got_req %}
+						<h6>Meetup Unlocked 🩵</h6>
+						<p id="male_para">{{other_user_name}} has requested a blind date with you at this time and
+							location</p>
+						<p>Address : {{address}}</p>
+						<p>Date : {{date}}</p>
+						<p>Time : {{time}}</p>
+
+						<button id="male_accept_meetup_req" class="btn b-activate" style="background:#009cda; height: 25px;
+					width: 125px; font-size:10px;" onclick="acceptmeetup()">Accept Meetup Req</button>
+						<p id="date_fixed_hai" class="btn b-activate" style="background:#009cda; height: 25px;
+					width: 110px; font-size:10px; display:none;">Date is Fixed</p>
+
+						{% elif i_send %}
+						<h6>Meetup Unlocked 🩵</h6>
+						<p id="male_para">you have send a blind date request to {{other_user_name}}</p>
+						<p id="cancel_meetup" class="btn b-activate" style="background:#009cda; height: 25px;
+						width: 110px; font-size:10px;">Meetup req sent</p>
+						<p id="date_fixed_hai" class="btn b-activate" style="background:#009cda; height: 25px;
+						width: 110px; font-size:10px; display:none;">Date is Fixed</p>
+
+
+						{% else %}
+						<h6>Meetup Unlocked 🩵</h6>
+						<p id="male_para">Request a blind date with {{other_user_name}}</p>
+						<p id="t_address" style="display:none"></p>
+						<p id="t_date" style="display:none"></p>
+						<p id="t_time" style="display:none"></p>
+
+						<button id="male_accept_meetup_req" class="btn b-activate" style="background:#009cda; height: 25px;
+						width: 125px; font-size:10px; display:none;" onclick="acceptmeetup()">Accept Meetup Req</button>
+
+						<p id="cancel_meetup" class="btn b-activate" style="background:#009cda; height: 25px;
+						width: 110px; font-size:10px; display:none;">Meetup req sent</p>
+
+						<p id="date_fixed_hai" class="btn b-activate" style="background:#009cda; height: 25px;
+						width: 110px; font-size:10px; display:none;">Date is Fixed</p>
+
+						<button id="male_req_btn" class="btn b-activate" style="background:#009cda; height: 25px;
+						width:90px; font-size:10px;" onclick="reqmeetup()">Req Meetup</button>
+						{% endif %}
+
+						{% elif request.user.gender == 'F' %}
+
+						{% if meetup_fixed %}
+						<h6>Congrats 🎉🎉</h6>
+						{% comment %} <p id="female_para">bro your date is fixed you can fuck him at this location</p>
+						{% endcomment %}
+						<p>your date with {{other_user_name}} is fixed at the below time and location</p>
+						<p>Address : {{address}}</p>
+						<p>Date : {{date}}</p>
+						<p>Time : {{time}}</p>
+						<p id="date_fixed_hai" class="btn b-activate" style="background:#009cda; height: 25px;
+					width:90px; font-size:10px;">Date is Fixed</p>
+						{% elif got_req %}
+						<h6>Meetup Unlocked 🩵</h6>
+						<p id="female_para">{{other_user_name}} has requested a blind date with you, please select the
+							time and location of the date</p>
+
+						<div id="date-info">
+							<label for="address">Date Location</label>
+							<input type="text" id="address" name="address" class="form-control"
+								placeholder="your meetup spot " required>
+							<label for="date">Select Date:</label>
+							<input type="date" id="date" name="date" class="form-control" required>
+							<label for="time">Select Time:</label>
+							<input type="time" id="time" name="time" class="form-control" required>
+						</div>
+
+						<button id="female_accept_meetup_req" class="btn b-activate" style="background:#009cda; height: 25px;
+					width:125px; font-size:10px; " onclick="acceptmeetup()">Accept Meetup Req</button>
+						<p id="date_fixed_hai" class="btn b-activate" style="background:#009cda; height: 25px;
+					width:100px; font-size:10px; display:none;">Date is Fixed</p>
+
+
+						{% elif i_send %}
+						<h6>Meetup Unlocked 🩵</h6>
+						<p id="female_para">You have requested a blind date with {{other_user_name}} at this time and
+							location</p>
+						<p>Address : {{address}}</p>
+						<p>Date : {{date}}</p>
+						<p>Time : {{time}}</p>
+
+						<p id="cancel_meetup" class="btn b-activate" style="background:#009cda; height: 25px;
+						width:100px; font-size:10px;">Meetup req sent</p>
+						<p id="date_fixed_hai" class="btn b-activate" style="background:#009cda; height: 25px;
+						width:100px; font-size:10px; display:none;">Date is Fixed</p>
+
+						{% else %}
+						<h6>Meetup Unlocked 🩵</h6>
+						<p id="female_para">Request a blind date with {{other_user_name}} at your preferred location and
+							time</p>
+
+						<div class="info" style="text-align:start; display: flex;
+						flex-direction: column;
+						justify-content: center;
+						align-items: center;">
+							<div id="date-info">
+								<label for="address">Meetup Location</label>
+								<input type="text" id="address" name="address" class="form-control"
+									placeholder="your meetup spot " required>
+								<label for="date">Select Date:</label>
+								<input type="date" id="date" name="date" class="form-control" required>
+								<label for="time">Select Time:</label>
+								<input type="time" id="time" name="time" class="form-control" required>
+							</div>
+
+							<p id="t_address" style="display:none"></p>
+							<p id="t_date" style="display:none"></p>
+							<p id="t_time" style="display:none"></p>
+
+							<button id="female_accept_meetup_req" class="mt-3 btn b-activate" style="background:#009cda; height: 25px;
+							width:125px; font-size:10px; display:none;" onclick="acceptmeetup()">Accept Meetup Req</button>
+							<button id="female_req_btn" class="mt-3 btn b-activate" style="background:#009cda; height: 25px;
+							width:90px; font-size:10px;" onclick="reqmeetup()">Req Meetup</button>
+							{% comment %} <button id="cancel_meetup" style="display:none;"
+								onclick="cancelmeetup()">cancel meetup req</button> {% endcomment %}
+							<p id="cancel_meetup" class="btn b-activate" style="background:#009cda; height: 25px;
+							width:110px; font-size:10px; display:none;" class="mt-3">Meetup req sent</p>
+							<p id="date_fixed_hai" class="btn b-activate" style="background:#009cda; height: 25px;
+							width:100px; font-size:10px; display:none;">Date is Fixed</p>
+						</div>
+						{% endif %}
+						{% endif %}
+					</div>
+				</div>
+
+			</div>
+
+			<div class="right-column">
+
+				<div class="card" id="id_chatroom_card" style="border-radius: 12px;">
+
+					<!-- Right column content goes here -->
+					<div class="right-header" id="id_room_title">
+						<div class="d-flex top-cont-left">
+							{% comment %} <div class="back-arrow" id="bk-arrow" onclick="goBack()"><i
+									class="fa-solid fa-arrow-left"></i></div> {% endcomment %}
+							<a class="d-flex flex-column" id="id_user_info_container">
+								<h4 class="ml-2" id="id_other_username">{{other_user_name}}</h4>
+								<span class="text-secondary ml-2" id="last_seen" style="font-size:10px;">last seen
+									{{last_seen|naturaltime}}</span>
+							</a>
+							<span id="typing" class="typo d-none">typing...</span>
+						</div>
+
+						<div style="display:flex; align-items:center;">
+							<button class="requi_btn" id="send_req_btn"><span class="img1"><img
+										src="{% static 'images/add.svg' %}" width="24px" alt=""
+										srcset=""></span></button>
+
+							<button class="requi_btn d-none" style="margin-right: 1.6em;
+				margin-bottom: 0px;" id="cancel_req_btn"><i class="fa-solid fa-xmark " style="color:red;"></i></button>
+
+							<div id='online_dot' class="online-dot-display"><span class="online-dot">
+								</span><span style="
+						margin-right: 10px;
+						padding-left: 5px;
+					"></span>
+							</div>
+
+							<div id='offline_dot' class="offline-dot-display"><span class="offline-dot">
+								</span><span style="
+						margin-right: 10px;
+						padding-left: 5px;
+					"></span>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+						<div class="spinner-border text-primary" id="id_chatroom_loading_spinner" role="status"
+							style="display: none; position: absolute; ">
+							{% comment %} <span class="sr-only">Loading...</span> {% endcomment %}
+						</div>
+					</div>
+					<div class="d-flex flex-column" id="id_chat_log_container">
+						{% comment %} <div class="no-selection">
+							<div class="contenta">
+								<p>Click on the friend whith whom you wanna chat</p>
+							</div>
+						</div> {% endcomment %}
+
+						<div class="d-flex chat-log" id="id_chat_log">
+
+						</div>
+						<span class="{% if not debug %}d-none{% endif %} page-number" id="id_page_number">1</span>
+						<div class="bottom-header">
+							{% comment %} <button class="btn btn-dark skip-btn" id="skip_button">
+								<span id="skip">Skip</span>
+							</button>
+							<a href="{% url 'new-chat' %}"><button class="btn btn-dark skip-btn d-none" id="new_button">
+									<span id="new">New</span>
+								</button></a> {% endcomment %}
+							<!-- <textarea disabled class="flex-grow-1 chat-message-input"
+									id="id_chat_message_input"></textarea> -->
+							<div class="txtarea-cont">
+
+								<textarea class="flex-grow-1 video-textarea" id="id_chat_message_input"
+									placeholder="say something..."></textarea>
+								<button class="chat-message-submit-button send-button send-btn-cont" id="send_button">
+									<span id="id_chat_message_submit" class="material-icons send-btn">send
+									</span>
+								</button>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			{% elif find_me_date %}
+
+			<div class="b-activate-form">
+				<form class="b-activate-form" action="" method="post"> {% csrf_token %}
+					{% comment %} <input type="text" name="form_type" value="form1" hidden> {% endcomment %}
+					<button class="btn b-activate" style="font-size: 12px;
+			width: 140px;" name='find_me_date' style="color:white;" type="submit">Find A Date For Me</button>
+				</form>
+			</div>
+
+			{% endif %}
+
+			{% if show_skip %}
+			{% comment %} <h1>not activated</h1> {% endcomment %}
+
+			{% comment %} <div class="b-activate-form remove-date-btn" style="position:relative; min-height:20px;">
+				<a class="down-arrow" data-bs-toggle="collapse" href="#collapseExampler" role="button"
+					aria-expanded="false" aria-controls="collapseExample">
+					<i class="fa-solid fa-angle-down" style="color: #000000;"></i>
+				</a>
+
+				<div class="collapse show" id="collapseExampler">
+					<form action="" method="post" style="display: flex;
+		flex-direction: column;
+		align-items: center;"> {% csrf_token %}
+
+						<button class="btn b-activate" style="width: 122px;
+			font-size: 11.5px; height:26px;" name='skip_date' style="color:white;" type="submit">Remove this date</button>
+
+						<div class="text-secondary" style="font-size:9px;" id="countdown-timer"></div>
+					</form>
+				</div>
+			</div> {% endcomment %}
+
+			<div class="b-activate-form remove-date-btn" style="position:relative; min-height:20px;">
+				<a class="down-arrow" data-bs-toggle="collapse" href="#collapseExampler" role="button"
+					aria-expanded="false" aria-controls="collapseExample" id="toggleIcon">
+					<i class="fa-solid fa-angle-down" style="color: #009cda;"></i>
+				</a>
+
+				<div class="collapse show" id="collapseExampler">
+					<form action="" method="post" style="display: flex; flex-direction: column; align-items: center;">
+						{% csrf_token %}
+						<button class="btn b-activate" style="width: 122px; font-size: 11.5px; height:26px;"
+							name='skip_date' style="color:white;" type="submit">Remove this date</button>
+						<div class="text-secondary" style="font-size:9px;" id="countdown-timer"></div>
+					</form>
+				</div>
+			</div>
+
+			{% endif %}
+
+		</div>
+
+	</div>
+</div>
+
+
+
+
+
+<!-- Client Error MODAL -->
+<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-toggle="modal"
+	data-target="#id_client_error_modal">
+</button>
+<div class="modal fade" id="id_client_error_modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Socket Client Error</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p id="id_client_error_modal_body">Something went wrong.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal"
+					id="id_client_error_modal_close_btn">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Client Error MODAL -->
+<!-- Include SweetAlert2 from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% include 'friend/snippets/send_friend_request.html' %}
+{% include 'friend/snippets/cancel_friend_request.html' %}
+
+
+
+{% if room %}
+<script>
+
+	var sendFriendRequestBtn = document.getElementById("send_req_btn")
+	if (sendFriendRequestBtn != null) {
+		sendFriendRequestBtn.addEventListener("click", function () {
+			sendFriendRequest({{ other_user_id }}, onFriendRequestSent)
+	})
+	}
+
+	var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
+	if (cancelFriendRequestBtn != null) {
+		cancelFriendRequestBtn.addEventListener("click", function () {
+			cancelFriendRequest({{ other_user_id }}, onFriendRequestCancelled)
+	})
+	}
+
+	function onFriendRequestSent() {
+		var sendFriendRequestBtn = document.getElementById("send_req_btn")
+		sendFriendRequestBtn.style.display = "none"
+
+		var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
+		cancelFriendRequestBtn.classList.remove("d-none");
+		// though reloding the page is the easiest and most convenient way but we can try to do this without reloading the page
+		// if there's a way to do so then that is going to enhance the user experience
+	}
+
+	function onFriendRequestCancelled() {
+
+		var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
+		cancelFriendRequestBtn.classList.add("d-none");
+
+		var sendFriendRequestBtn = document.getElementById("send_req_btn")
+		sendFriendRequestBtn.style.display = "inline-block"
+	}
+
+
+	function showCustomAlert() {
+		document.getElementById('customAlert').style.display = 'flex';
+	}
+
+	function closeCustomAlert() {
+		document.getElementById('customAlert').style.display = 'none';
+	}
+
+	// Close the alert when clicking outside
+	window.onclick = function (event) {
+		var alert = document.getElementById('customAlert');
+		if (event.target === alert) {
+			alert.style.display = 'none';
+		}
+	};
+
+	function showCustomAlert2() {
+		document.getElementById('customAlert2').style.display = 'flex';
+	}
+
+	function closeCustomAlert2() {
+		document.getElementById('customAlert2').style.display = 'none';
+	}
+
+	// Close the alert when clicking outside
+	window.onclick = function (event) {
+		var alert = document.getElementById('customAlert2');
+		if (event.target === alert) {
+			alert.style.display = 'none';
+		}
+	};
+
+	{% comment %} document.getElementById('meetup-btn').addEventListener('click', function () {
+		Swal.fire({
+			title: 'Meetup is Locked',
+			text: 'Both sides have to exchange atleast 6 messages to unlock meetup',
+
+			showCloseButton: true,
+			allowOutsideClick: false
+		});
+	}); {% endcomment %}
+
+	{% comment %} document.getElementById('meetup-btn-active').addEventListener('click', function () {
+		Swal.fire({
+			title: 'Meetup Unlocked 🎉',
+
+			{% if request.user.gender == 'M' %}
+
+			{% if meetup_fixed %}
+
+	html: `
+            <div>
+                <p>Your date is already fixed you can meet her at this address</p> 
+            </div>
+        `,
+
+		{% else %}
+
+	html: `
+            <div>
+                <p>congrats meetup is unlocked now you can fix your date</p> <p> here's how it works -</p> <p>Either user male/female can send a meetup request but only the female can select the location and time of the date</p>
+                
+            </div>
+        `,
+
+		{% endif %}
+
+
+	{% elif request.user.gender == 'F' %}
+
+	{% if meetup_fixed %}
+
+	html: `
+            <div>
+                <p>Your date is already fixed you can meet him at this address</p> 
+            </div>
+        `,
+
+		{% else %}
+
+	html: `
+			<div>
+				<p>please select a location where he can fuck you</p> 
+			</div>
+		`,
+
+		{% endif %}
+
+	{% endif %}
+
+	showCloseButton: true,
+		showCancelButton: false,
+			showConfirmButton: false,
+				allowOutsideClick: true,
+					{% if request.user.gender == 'M' %}
+	footer: `
+				<button id="male_req_btn" onclick="reqmeetup()">Request Meetup</button>
+			`
+
+	{% elif request.user.gender == 'F' %}
+	footer: `
+				<button id="female_req_btn" onclick="fixmeetup()">papa ki pari</button>
+			`
+	{% endif %}
+	});
+	}); {% endcomment %}
+
+	document.getElementById('toggleIcon').addEventListener('click', function () {
+		var icon = document.querySelector('#toggleIcon i');
+		var icon_cont = document.querySelector('#toggleIcon');
+		var right_colum = document.querySelector(".right-column")
+		var chat_log = document.getElementById('id_chat_log')
+		if (icon.classList.contains('fa-angle-down')) {
+			icon.classList.remove('fa-angle-down');
+			icon.classList.add('fa-angle-up');
+			icon_cont.classList.add('angle-up-position');
+			right_colum.classList.add('angle-up-height')
+			chat_log.classList.add('angle-up-height_log')
+		} else {
+			icon.classList.remove('fa-angle-up');
+			icon.classList.add('fa-angle-down');
+			icon_cont.classList.remove('angle-up-position');
+			right_colum.classList.remove('angle-up-height')
+			chat_log.classList.remove('angle-up-height_log')
+
+		}
+	});
+
+
+	// Function to format seconds into "hh : mm : ss" format
+	function formatTime(seconds) {
+		var hours = Math.floor(seconds / 3600);
+		var minutes = Math.floor((seconds % 3600) / 60);
+		var remainingSeconds = Math.floor(seconds % 60); // Round down to remove decimals
+
+		// Add leading zeros if needed
+		hours = String(hours).padStart(2, '0');
+		minutes = String(minutes).padStart(2, '0');
+		remainingSeconds = String(remainingSeconds).padStart(2, '0');
+
+		return hours + ' hr : ' + minutes + ' min : ' + remainingSeconds + ' sec';
+	}
+
+	// Function to update the countdown timer
+	function updateTimer() {
+		// Get the element where you want to display the timer
+		var timerElement = document.getElementById('countdown-timer');
+
+		// Update the remaining time
+		remainingTimeSeconds--;
+
+		// Display the formatted time
+		timerElement.innerHTML = 'Time Remaining - ' + formatTime(remainingTimeSeconds);
+
+		// Check if the countdown has reached zero
+		if (remainingTimeSeconds <= 0) {
+			// Optionally, perform an action when the countdown reaches zero
+			// For example, redirect the user or display a message
+			timerElement.innerHTML = 'Room expired';
+			// Additional actions...
+		} else {
+			// Schedule the next update after 1 second
+			setTimeout(updateTimer, 1000);
+		}
+	}
+
+	// Initial setup
+	var remainingTimeSeconds = {{ remaining_time_seconds }};
+
+	// Start the countdown timer
+	updateTimer();
+
+
+
+	var auth_user_id = {{ request.user.id }};
+
+	roomId = {{ room.id }}
+
+	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+	var ws_path = ws_scheme + '://' + window.location.host + "/nrtchat/" + roomId + "/";
+
+	// console.log("Connecting to " + ws_path);
+	chatSocket = new WebSocket(ws_path);
+
+	// Handle incoming messages
+	chatSocket.onmessage = function (message) {
+		// Decode the JSON
+		console.log("Got chat websocket message " + message.data);
+		console.log("Got websocket message.");
+		var data = JSON.parse(message.data);
+
+		// display the progress bar?
+		displayChatroomLoadingSpinner(data.display_progress_bar)
+
+		// Handle errors (ClientError)
+		if (data.error) {
+			console.error(data.error + ": " + data.message)
+			showClientErrorModal(data.message)
+
+		}
+
+		if (data.join) {
+			console.log("Joining room " + data.join);
+			room_name = data.room_name
+			console.log("The group name is -", room_name)
+
+			getRoomChatMessages()
+			enableChatLogScrollListener()
+			markRoomCount()
+			console.log("*************** The room id is - ", data.room_id)
+			startStatusCheckService()
+			var receivedPercentage = data.percentage;  // Replace with the actual value received
+			updateMeasuringLine(receivedPercentage);
+
+		}
+
+
+
+		// Handle leaving (client perspective)
+		if (data.leave) {
+			// do nothing
+			console.log("Leaving room " + data.leave);
+		}
+
+		if (data.status_check) {
+			// count++;
+			console.log('This is going to check the status every 10 secs ')
+			if (data.status == "online") {
+				console.log("it's the online status")
+				var offline_dot = document.getElementById('offline_dot')
+				offline_dot.style.display = 'none';
+
+				var online_dot = document.getElementById('online_dot')
+				online_dot.style.display = 'inline-block';
+
+				var last_seen = document.getElementById('last_seen')
+				last_seen.style.display = 'none'
+
+				// var pathElements = document.querySelectorAll('.svg-path')
+				// pathElements.forEach(function(pathElement) {
+				// 	console.log("***********_____________________----------- updating the color of each element")
+				// 	pathElement.style.fill = "#009cda"; // Change the fill color to your desired color
+				// });
+
+			} else {
+				// leaveCount++;
+				// if (leaveCount == 1){
+				console.log('its the offline status')
+				// console.log('The leave count is - ', leaveCount)
+				var online_dot = document.getElementById('online_dot')
+				online_dot.style.display = 'none';
+
+				var offline_dot = document.getElementById('offline_dot')
+				offline_dot.style.display = 'inline-block';
+
+				{% comment %} var last_seen = document.getElementById('last_seen')
+				last_seen.innerHTML = data.last_seen {% endcomment %}
+
+				// } else{
+				// console.log("This is the second time of leave message so we will ignore it", leaveCount)
+				// }
+			}
+
+
+		}
+
+		// Handle getting a message
+		if (data.msg_type == 0 || data.msg_type == 1 || data.msg_type == 2) {
+			console.log(data)
+			console.log("The authenticated user id is - ", auth_user_id)
+
+			appendChatMessage(data, false, true, auth_user_id, data.read)
+			var receivedPercentage = data.percentage;  // Replace with the actual value received
+			updateMeasuringLine(receivedPercentage);
+
+			console.log('The fuckin percentage is - ', receivedPercentage)
+			if (receivedPercentage == 100) {
+				console.error('bhai soo pohoch gi')
+				var disabled_btn = document.getElementById('meetup-btn')
+				disabled_btn.style.display = 'none';
+
+				var active_btn = document.getElementById('meetup-btn-active')
+				active_btn.style.display = 'flex';
+			}
+
+		}
+
+		if (data.msg_type == 1 || data.msg_type == 2) {
+			if (data.status == "online") {
+				console.log("it's the online status")
+				var offline_dot = document.getElementById('offline_dot')
+				offline_dot.style.display = 'none';
+
+				var online_dot = document.getElementById('online_dot')
+				online_dot.style.display = 'inline-block';
+
+				var pathElements = document.querySelectorAll('.svg-path')
+				pathElements.forEach(function (pathElement) {
+					console.log("***********_____________________----------- updating the color of each element")
+					pathElement.style.fill = "#009cda"; // Change the fill color to your desired color
+				});
+
+			} else {
+				// leaveCount++;
+				// if (leaveCount == 1){
+				console.log('its the offline status')
+				// console.log('The leave count is - ', leaveCount)
+				var online_dot = document.getElementById('online_dot')
+				online_dot.style.display = 'none';
+
+				var offline_dot = document.getElementById('offline_dot')
+				offline_dot.style.display = 'inline-block';
+				// } else{
+				// console.log("This is the second time of leave message so we will ignore it", leaveCount)
+				// }
+			}
+
+		}
+
+		if (data.isTyping) {
+			// Display "user is typing" message
+			if (data.id != auth_user_id) {
+				const typingIndicator = document.getElementById('typing');
+				typingIndicator.classList.remove("d-none");
+
+				// Add a timeout to remove the message after a few seconds
+				setTimeout(() => {
+					typingIndicator.classList.add("d-none");
+				}, 3000); // Remove the message after 1 seconds (adjust as needed)
+			}
+		}
+
+
+		if (data.message_deleted) {
+			console.log('message deleted called - ', 'msgdiv-' + data.msg_id)
+			var element = document.getElementById('msgdiv-' + data.msg_id)
+			if (element) {
+				console.log('sup boi - ')
+				element.classList.remove('d-flex')
+				element.classList.add('d-none')
+				element.style.display = 'none !important';
+			}
+		}
+
+		// new payload of messages coming in from backend
+		if (data.messages_payload) {
+			// console.log(data.messages)
+			handleMessagesPayload(data.messages, data.new_page_number)
+		}
+
+		if (data.marked) {
+			setMsgNotificationsAsRead()
+		}
+
+		if (data.date_req) {
+			console.log('got the req by - ', data.user_id + ' {{request.user.gender}}')
+			var current_user_gender = '{{request.user.gender}}'
+
+			if (data.gender == 'M' && current_user_gender == 'F') {
+				console.error('ari dada ladki got a blind date req')
+				// This means the req is send by a fuckin male and now the female has to fix the date
+				var fbtn = document.getElementById('female_req_btn')
+				if (fbtn) {
+					fbtn.style.display = 'none';
+				}
+				var fabtn = document.getElementById('female_accept_meetup_req')
+				if (fabtn) {
+					fabtn.style.display = 'flex';
+				}
+
+				var f_para = document.getElementById('female_para')
+				if (f_para) {
+					f_para.innerHTML = '{{other_user_name}} has requested a blind date with you, please enter the location and time of the meetup'
+				}
+			} else if (data.gender == 'M' && current_user_gender == 'M') {
+				var mbtn = document.getElementById('male_req_btn')
+				if (mbtn) {
+					mbtn.style.display = 'none';
+				}
+				var mcbtn = document.getElementById('cancel_meetup')
+				if (mcbtn) {
+					mcbtn.style.display = 'flex';
+				}
+			}
+			if (data.gender == 'F' && current_user_gender == 'F') {
+				console.error('ari dada ladka got a blind date req, rarely hota hahi yeah')
+				// This means the req is send by a fuckin male and now the female has to fix the date
+				var fbtn = document.getElementById('female_req_btn')
+				if (fbtn) {
+					fbtn.style.display = 'none';
+				}
+
+				var fcbtn = document.getElementById('cancel_meetup')
+				if (fcbtn) {
+					fcbtn.style.display = 'flex';
+				}
+
+				var date_input = document.getElementById('date-info')
+				date_input.style.display = 'none'
+
+				var t_address = document.getElementById('t_address')
+				var t_date = document.getElementById('t_date')
+				var t_time = document.getElementById('t_time')
+
+				if (t_address && t_date && t_time) {
+					t_address.style.display = 'block'
+					t_address.innerHTML = 'Address : ' + data.address
+
+					t_date.style.display = 'block'
+					t_date.innerHTML = 'Date : ' + data.date
+
+					t_time.style.display = 'block'
+					t_time.innerHTML = 'Time : ' + data.time
+
+				}
+
+
+
+			} else if (data.gender == 'F' && current_user_gender == 'M') {
+				var mbtn = document.getElementById('male_req_btn')
+				if (mbtn) {
+					mbtn.style.display = 'none';
+				}
+				var mabtn = document.getElementById('male_accept_meetup_req')
+				if (mabtn) {
+					mabtn.style.display = 'flex';
+				}
+
+				var male_para = document.getElementById('male_para')
+				male_para.innerHTML = '{{other_user_name}} has requested a blind date with you at this time and location'
+
+				var t_address = document.getElementById('t_address')
+				var t_date = document.getElementById('t_date')
+				var t_time = document.getElementById('t_time')
+
+				if (t_address && t_date && t_time) {
+					t_address.style.display = 'block'
+					t_address.innerHTML = 'Address : ' + data.address
+
+					t_date.style.display = 'block'
+					t_date.innerHTML = 'Date : ' + data.date
+
+					t_time.style.display = 'block'
+					t_time.innerHTML = 'Time : ' + data.time
+
+				}
+			}
+		}
+
+		{% comment %} if (data.req_cancelled) {
+
+			if (data.user_id == '{{request.user.id}}') {
+
+				var cbtn = document.getElementById('cancel_meetup')
+				if (cbtn) {
+					cbtn.style.display = 'none';
+				}
+
+				if (data.gender == 'M') {
+					var m_req_btn = document.getElementById('male_req_btn')
+					if (m_req_btn) {
+						m_req_btn.style.display = 'flex';
+					}
+
+				} else {
+
+					var f_req_btn = document.getElementById('female_req_btn')
+					if (f_req_btn) {
+						f_req_btn.style.display = 'flex';
+					}
+				}
+
+			} else {
+				var current_user_gender = '{{request.user.gender}}'
+				if (current_user_gender == 'M') {
+					var mabtn = document.getElementById('male_accept_meetup_req')
+					if (mabtn) {
+						mabtn.style.display = 'none';
+					}
+
+					var mbtn = document.getElementById('male_req_btn')
+					if (mbtn) {
+						mbtn.style.display = 'flex';
+					}
+				} else {
+					var fabtn = document.getElementById('female_accept_meetup_req')
+					if (fabtn) {
+						fabtn.style.display = 'none';
+					}
+
+					var fbtn = document.getElementById('female_req_btn')
+					if (fbtn) {
+						fbtn.style.display = 'flex';
+					}
+
+					var f_para = document.getElementById('female_para')
+					f_para.innerHTML = 'send a meetup_req to {{other_user_name}}, plus enter the fuckin address'
+				}
+
+			}
+
+
+		} {% endcomment %}
+
+		if (data.date_fixed) {
+			console.log('got the req by - ', data.user_id + ' {{request.user.gender}}')
+
+
+
+			var current_user_gender = '{{request.user.gender}}'
+
+			if (data.gender == 'M' && current_user_gender == 'F') {
+				console.error('Male has accepted her meetup req')
+
+				var fsbtn = document.getElementById('cancel_meetup')
+				if (fsbtn) {
+					fsbtn.style.display = 'none';
+				}
+
+				var dfbtn = document.getElementById('date_fixed_hai')
+				if (dfbtn) {
+					dfbtn.style.display = 'block';
+				}
+
+				var female_para = document.getElementById('female_para')
+				female_para.innerHTML = 'your date with {{other_user_name}} is fixed at the below location and time'
+
+			} else if (data.gender == 'M' && current_user_gender == 'M') {
+
+
+				var mabtn = document.getElementById('male_accept_meetup_req')
+				if (mabtn) {
+					mabtn.style.display = 'none';
+				}
+
+				var dfbtn = document.getElementById('date_fixed_hai')
+				if (dfbtn) {
+					dfbtn.style.display = 'block';
+				}
+
+				var male_para = document.getElementById('male_para')
+				male_para.innerHTML = 'your date with {{other_user_name}} is fixed at the below location and time'
+
+
+			}
+			if (data.gender == 'F' && current_user_gender == 'F') {
+
+				var fabtn = document.getElementById('female_accept_meetup_req')
+				if (fabtn) {
+					fabtn.style.display = 'none';
+				}
+
+				var dfbtn = document.getElementById('date_fixed_hai')
+				if (dfbtn) {
+					dfbtn.style.display = 'block';
+				}
+
+				var female_para = document.getElementById('female_para')
+				female_para.innerHTML = 'your date with {{other_user_name}} is fixed at the below location and time'
+
+				var date_input = document.getElementById('date-info')
+				date_input.style.display = 'none'
+
+				var t_address = document.getElementById('t_address')
+				var t_date = document.getElementById('t_date')
+				var t_time = document.getElementById('t_time')
+
+				if (t_address && t_date && t_time) {
+					t_address.style.display = 'block'
+					t_address.innerHTML = 'Address : ' + data.address
+
+					t_date.style.display = 'block'
+					t_date.innerHTML = 'Date : ' + data.date
+
+					t_time.style.display = 'block'
+					t_time.innerHTML = 'Time : ' + data.time
+
+				}
+
+
+
+			} else if (data.gender == 'F' && current_user_gender == 'M') {
+
+				var fsbtn = document.getElementById('cancel_meetup')
+				if (fsbtn) {
+					fsbtn.style.display = 'none';
+				}
+
+				var dfbtn = document.getElementById('date_fixed_hai')
+				if (dfbtn) {
+					dfbtn.style.display = 'block';
+				}
+
+
+
+				var male_para = document.getElementById('male_para')
+				male_para.innerHTML = 'your date with {{other_user_name}} is fixed at the below location and time'
+
+				var t_address = document.getElementById('t_address')
+				var t_date = document.getElementById('t_date')
+				var t_time = document.getElementById('t_time')
+
+				if (t_address && t_date && t_time) {
+					t_address.style.display = 'block'
+					t_address.innerHTML = 'Address : ' + data.address
+
+					t_date.style.display = 'block'
+					t_date.innerHTML = 'Date : ' + data.date
+
+					t_time.style.display = 'block'
+					t_time.innerHTML = 'Time : ' + data.time
+
+				}
+
+			}
+
+
+
+		}
+
+
+
+	}
+
+	chatSocket.addEventListener("open", function (e) {
+		console.log("ChatSocket OPEN")
+		// join chat room
+		if ("{{request.user.is_authenticated}}") {
+			chatSocket.send(JSON.stringify({
+				"command": "join",
+				"room": roomId
+			}));
+		}
+	})
+
+	chatSocket.onclose = function (e) {
+		console.log('Chat socket closed.');
+	};
+
+	chatSocket.onOpen = function (e) {
+		console.log("ChatSocket onOpen", e)
+	}
+
+	chatSocket.onerror = function (e) {
+		console.log('ChatSocket error', e)
+	}
+
+	if (chatSocket.readyState == WebSocket.OPEN) {
+		console.log("ChatSocket OPEN")
+	} else if (chatSocket.readyState == WebSocket.CONNECTING) {
+		console.log("ChatSocket connecting..")
+	}
+
+	function reqmeetup() {
+
+		var current_user_gender = '{{request.user.gender}}'
+
+		if (current_user_gender == 'M') {
+
+			if ("{{request.user.is_authenticated}}") {
+				chatSocket.send(JSON.stringify({
+					"command": "req_meetup",
+					"gender": "{{request.user.gender}}",
+					'id': "{{request.user.pk}}",
+					"room": roomId,
+					'address': null,
+					'date': null,
+					'time': null,
+
+				}));
+			}
+
+		} else {
+
+			// Fetch input values
+			var address = document.getElementById("address").value;
+			var date = document.getElementById("date").value;
+			var time = document.getElementById("time").value;
+
+			// Check if all fields are filled
+			if (address && date && time) {
+				// All fields are filled, proceed to send data
+
+				if ("{{request.user.is_authenticated}}") {
+					chatSocket.send(JSON.stringify({
+						"command": "req_meetup",
+						"gender": "{{request.user.gender}}",
+						'id': "{{request.user.pk}}",
+						"room": roomId,
+						'address': address,
+						'date': date,
+						'time': time,
+
+					}));
+				}
+			} else {
+				// Display an alert or message indicating that all fields are required
+				alert("Please fill in all required fields.");
+			}
+
+		}
+
+	}
+
+	{% comment %} function cancelmeetup() {
+		if ("{{request.user.is_authenticated}}") {
+			chatSocket.send(JSON.stringify({
+				"command": "cancel_meetup",
+				"gender": "{{request.user.gender}}",
+				'id': "{{request.user.pk}}",
+				"room": roomId,
+			}));
+		}
+	} {% endcomment %}
+
+	function acceptmeetup() {
+
+		var current_user_gender = '{{request.user.gender}}'
+		if (current_user_gender == 'M') {
+
+			if ("{{request.user.is_authenticated}}") {
+				chatSocket.send(JSON.stringify({
+					"command": "fix_meetup",
+					"gender": "{{request.user.gender}}",
+					'id': "{{request.user.pk}}",
+					"room": roomId,
+					'address': null,
+					'date': null,
+					'time': null,
+
+				}));
+			}
+
+		} else {
+			// Fetch input values
+			var address = document.getElementById("address").value;
+			var date = document.getElementById("date").value;
+			var time = document.getElementById("time").value;
+
+			// Check if all fields are filled
+			if (address && date && time) {
+				// All fields are filled, proceed to send data
+
+				if ("{{request.user.is_authenticated}}") {
+					chatSocket.send(JSON.stringify({
+						"command": "fix_meetup",
+						"gender": "{{request.user.gender}}",
+						'id': "{{request.user.pk}}",
+						"room": roomId,
+						'address': address,
+						'date': date,
+						'time': time,
+
+					}));
+				}
+			} else {
+				// Display an alert or message indicating that all fields are required
+				alert("Please fill in all required fields.");
+			}
+		}
+	}
+
+	function updateMeasuringLine(percentage) {
+		var measuringLine = document.getElementById('measuring-line');
+		measuringLine.style.width = percentage + '%';
+	}
+
+	{% comment %} // Assume you receive the percentage from Django Channels and update the line
+	var receivedPercentage = 10;  // Replace with the actual value received
+	updateMeasuringLine(receivedPercentage); {% endcomment %}
+
+
+
+	function displayChatroomLoadingSpinner(isDisplayed) {
+		// console.log("displayChatroomLoadingSpinner: " + isDisplayed)
+		var spinner = document.getElementById("id_chatroom_loading_spinner")
+		if (isDisplayed) {
+			spinner.style.display = "block"
+		}
+		else {
+			spinner.style.display = "none"
+		}
+	}
+
+	// document.getElementById('id_chat_message_input').focus();
+	document.getElementById('id_chat_message_input').onkeyup = function (e) {
+		if (e.keyCode === 13 && e.shiftKey) {  // enter + return
+			// Handled automatically by textarea
+		}
+		else if (e.keyCode === 13 && !e.shiftKey) { // enter + !return
+			document.getElementById('id_chat_message_submit').click();
+		}
+	};
+
+
+
+	document.getElementById('id_chat_message_submit').onclick = function (e) {
+		const messageInputDom = document.getElementById('id_chat_message_input');
+		const message = messageInputDom.value;
+		chatSocket.send(JSON.stringify({
+			"command": "send",
+			"message": message,
+			"room": roomId
+		}));
+		messageInputDom.value = '';
+	};
+
+	// typing setup -----
+
+
+
+	const inputField = document.getElementById('id_chat_message_input');
+	inputField.addEventListener('input', () => {
+
+		// console.log('The onchange function is getting called')
+		// Send a "typing" event to the server using WebSocket
+		if (room_name != null) {
+			// console.log("----- The group name is - ", room_name)
+			chatSocket.send(JSON.stringify(
+				{
+					"command": "typing",
+					"group_name": room_name,
+					"isTyping": true,
+					// "userName": window.self_name, // Add the username
+					"userId": auth_user_id, // Add the user's ID 
+				}
+			));
+		}
+	});
+
+	function startStatusCheckService() {
+		// if ("{{request.user.is_authenticated}}" == "True") {
+		console.log('The 4sec interval has been set')
+		setInterval(statusCheck, 5000)
+		// }
+	}
+
+	// This function is going to check every 3-5 secs that whether the user is online or not
+	function statusCheck() {
+		// count++;
+		// console.log("sending status check command to the backend - ", count)
+		chatSocket.send(JSON.stringify({
+			"command": "status_check",
+			// "room": roomId
+		}));
+	}
+
+	function selectUser(user_id) {
+		// Weird work-around for passing arg to url
+		var url = "{% url 'account:view' user_id=243823983752487823 %}".replace("243823983752487823", user_id)
+		var win = window.open(url, "_blank")
+		win.focus()
+	}
+
+	function getUserInfo() {
+		chatSocket.send(JSON.stringify({
+			"command": "get_user_info",
+			"room_id": roomId,
+		}));
+	}
+	function markRoomCount() {
+		chatSocket.send(JSON.stringify({
+			"command": "mark_room_read",
+			"room_id": roomId,
+		}));
+	}
+
+	// function mark_room_read(){
+	// 	chatSocket.send(JSON.stringify({
+	// 		"command": "mark_room_read",
+	// 		"roomId": roomId,
+	// 	}));
+	// }
+
+	function setMsgNotificationsAsRead() {
+		var countElement = document.getElementById("id_msg_notifications_count")
+		countElement.style.background = "transparent"
+		countElement.style.display = "none"
+		getUnreadMessageNotificationsCount()
+	}
+
+	function handleUserInfoPayload(user_info) {
+
+		document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'].slice(0, 12) + '...'
+
+		document.getElementById("id_user_info_container").href = "{% url 'account:view' user_id=4586463456756486676 %}".replace("4586463456756486676", user_info['id'])
+	}
+
+	function showClientErrorModal(message) {
+		document.getElementById("id_client_error_modal_body").innerHTML = message
+		document.getElementById("id_trigger_client_error_modal").click()
+	}
+
+	function appendChatMessage(data, maintainPosition, isNewMessage, auth_user_id, read) {
+		messageType = data['msg_type']
+		msg_id = data['msg_id']
+		message = data['message']
+		uName = data['name']
+		user_id = data['user_id']
+		uniName = data['uniName']
+		timestamp = data['natural_timestamp']
+		readMsg = data['read']
+		// console.log("append chat message: " + messageType)
+
+		// username = uName + " | " + uniName + " :"
+		username = uName + " :"
+		msg = message + '\n'
+		// determine what type of msg it is
+		switch (messageType) {
+			case 0:
+				// new chatroom msg
+				username = uName + ": "
+				msg = message + '\n'
+				if (read == null) {
+					createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id, readMsg)
+				} else if (read == true || read == false || read == 'True' || read == "False") {
+					createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id, read)
+				}
+				break;
+			case 1:
+				// User joined room
+				// createConnectedDisconnectedElement(message, msg_id, uniName, user_id)
+				break;
+			case 2:
+				// User left room
+				// createConnectedDisconnectedElement(message, msg_id, uniName, user_id)
+				break;
+			default:
+				console.log("Unsupported message type!");
+				return;
+		}
+	}
+
+	/*
+		Build a new ChatMessage element and append to the list
+	*/
+	function createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id, read) {
+
+		// console.log("***************************************************************************************************************************************************************************************** The value of read is - ",read)
+
+		var chatLog = document.getElementById("id_chat_log")
+
+
+
+		// var newMessageDiv = document.createElement("div")
+		// newMessageDiv.classList.add("d-flex")
+		// newMessageDiv.classList.add("flex-row")
+
+		// if (auth_user_id == user_id){
+		// 	// console.log('The user_id',user_id)
+		// 	// console.log('The auth_user_id',auth_user_id)
+		// 	newMessageDiv.classList.add("message-container1")
+		// } else{
+		// 	newMessageDiv.classList.add("message-container")
+		// 	// console.log('The user_id',user_id)
+		// 	// console.log('The auth_user_id',auth_user_id)
+		// }
+
+		// {% comment %} var profileImage = document.createElement("img")
+		// profileImage.addEventListener("click", function (e) {
+		// 	selectUser(user_id)
+		// })
+		// profileImage.classList.add("profile-image")
+		// profileImage.classList.add("rounded-circle")
+		// profileImage.classList.add("img-fluid")
+		// profileImage.src = "{% static 'codingwithmitch/dummy_image.png' %}"
+		// var profile_image_id = "id_profile_image_" + msg_id
+		// profileImage.id = profile_image_id
+		// newMessageDiv.appendChild(profileImage) {% endcomment %}
+
+		// var div1 = document.createElement("div")
+		// div1.classList.add("d-flex")
+		// div1.classList.add("flex-column")
+		// if (auth_user_id == user_id){
+		// 	div1.classList.add("inside_msg_cont1")
+
+		// } else{
+		// 	div1.classList.add("inside_msg_cont")
+
+		// }
+
+
+
+
+		// var div2 = document.createElement("div")
+		// div2.classList.add("d-flex")
+		// div2.classList.add("flex-row")
+
+		// var timestampSpan = document.createElement("span");
+		// timestampSpan.innerHTML = timestamp;
+		// timestampSpan.classList.add("timestamp-span");
+		// timestampSpan.classList.add("d-flex");
+		// timestampSpan.classList.add("align-items-center");
+		// timestampSpan.classList.add("text-secondary");
+		// timestampSpan.classList.add("hidden"); // Apply the hidden class by default
+		// if (auth_user_id == user_id){
+		// 	timestampSpan.classList.add("msg_cont1_timestamp");
+		// } else {
+		// 	timestampSpan.classList.add("msg_cont_timestamp");
+
+		// }
+
+		// {% comment %} div2.appendChild(timestampSpan);
+		// div1.appendChild(div2);
+
+		// // Add a click event listener to toggle the visibility of the timestamp
+		// newMessageDiv.addEventListener("click", function () {
+		// 	// Toggle the visibility by adding/removing a CSS class to the timestampSpan
+		// 	timestampSpan.classList.toggle("hidden");
+		// }); {% endcomment %}
+
+		// if (auth_user_id == user_id){
+		// 	var msgbarContainer = document.createElement("div");
+		// 	msgbarContainer.classList.add("timestamp-span");
+
+		// 	msgbarContainer.classList.add("hidden");
+		// 		msgbarContainer.classList.add("msg_bar1_timestamp");
+
+
+
+		// 	var toggleButton = document.createElement("a");
+		// 	{% comment %} toggleButton.innerHTML = '<i class="fa-solid fa-trash" style="color: #ff943b;"></i>'; {% endcomment %}
+		// 	toggleButton.innerHTML = '<span style="color:#009cda;">unsend</span>';
+
+		// 	toggleButton.addEventListener("click", function () {
+		// 		// Toggle the visibility by adding/removing a CSS class to the timestampContainer
+		// 		{% comment %} timestampContainer.classList.toggle("hidden"); {% endcomment %}
+		// 		// Call your JavaScript function here
+		// 		yourFunction(msg_id);
+		// 	});
+
+		// }
+
+		// 	// Add a click event listener to toggle the visibility of the timestamp
+		// 	newMessageDiv.addEventListener("click", function () {
+		// 		// Toggle the visibility by adding/removing a CSS class to the timestampSpan
+		// 		timestampSpan.classList.toggle("hidden");
+		// 		if (auth_user_id == user_id){
+		// 		msgbarContainer.classList.toggle("hidden"); }
+		// 	});
+
+		// 	div2.appendChild(timestampSpan);
+		// 	if (auth_user_id == user_id){
+		// 	msgbarContainer.appendChild(toggleButton);
+		// 	div2.appendChild(msgbarContainer); }
+
+		// 	div1.appendChild(div2);
+
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex")
+		newMessageDiv.classList.add("flex-row")
+		newMessageDiv.id = "msgdiv-" + msg_id;
+
+		if (auth_user_id == user_id) {
+			// console.log('The user_id',user_id)
+			// console.log('The auth_user_id',auth_user_id)
+			newMessageDiv.classList.add("message-container1")
+		} else {
+			newMessageDiv.classList.add("message-container")
+			// console.log('The user_id',user_id)
+			// console.log('The auth_user_id',auth_user_id)
+		}
+
+		{% comment %} var profileImage = document.createElement("img")
+		profileImage.addEventListener("click", function (e) {
+			selectUser(user_id)
+		})
+		profileImage.classList.add("profile-image")
+		profileImage.classList.add("rounded-circle")
+		profileImage.classList.add("img-fluid")
+		profileImage.src = "{% static 'codingwithmitch/dummy_image.png' %}"
+		var profile_image_id = "id_profile_image_" + msg_id
+		profileImage.id = profile_image_id
+		newMessageDiv.appendChild(profileImage) {% endcomment %}
+
+		var div1 = document.createElement("div")
+		div1.classList.add("d-flex")
+		div1.classList.add("flex-column")
+		if (auth_user_id == user_id) {
+			div1.classList.add("inside_msg_cont1")
+
+		} else {
+			div1.classList.add("inside_msg_cont")
+
+		}
+
+		var div2 = document.createElement("div")
+		div2.classList.add("d-flex")
+		div2.classList.add("flex-row")
+
+		var timestampSpan = document.createElement("span");
+		timestampSpan.innerHTML = timestamp;
+		timestampSpan.classList.add("timestamp-span");
+		timestampSpan.classList.add("d-flex");
+		timestampSpan.classList.add("align-items-center");
+		timestampSpan.classList.add("text-secondary");
+		timestampSpan.classList.add("hidden"); // Apply the hidden class by default
+		if (auth_user_id == user_id) {
+			timestampSpan.classList.add("msg_cont1_timestamp");
+		} else {
+			timestampSpan.classList.add("msg_cont_timestamp");
+
+		}
+
+		if (auth_user_id == user_id) {
+			var msgbarContainer = document.createElement("div");
+			msgbarContainer.classList.add("timestamp-span");
+
+			msgbarContainer.classList.add("hidden");
+			msgbarContainer.classList.add("msg_bar1_timestamp");
+
+
+
+			var toggleButton = document.createElement("a");
+			{% comment %} toggleButton.innerHTML = '<i class="fa-solid fa-trash" style="color: #ff943b;"></i>'; {% endcomment %}
+			toggleButton.innerHTML = '<span style="color:#009cda;">unsend</span>';
+
+			toggleButton.addEventListener("click", function () {
+				// Toggle the visibility by adding/removing a CSS class to the timestampContainer
+				{% comment %} timestampContainer.classList.toggle("hidden"); {% endcomment %}
+				// Call your JavaScript function here
+				yourFunction(msg_id);
+			});
+
+		}
+
+		// Add a click event listener to toggle the visibility of the timestamp
+		newMessageDiv.addEventListener("click", function () {
+			// Toggle the visibility by adding/removing a CSS class to the timestampSpan
+			timestampSpan.classList.toggle("hidden");
+			if (auth_user_id == user_id) {
+				msgbarContainer.classList.toggle("hidden");
+			}
+		});
+
+		div2.appendChild(timestampSpan);
+		if (auth_user_id == user_id) {
+			msgbarContainer.appendChild(toggleButton);
+			div2.appendChild(msgbarContainer);
+		}
+
+		div1.appendChild(div2);
+
+
+		var msgP = document.createElement("p")
+		msgP.innerHTML = validateText(msg)
+		msgP.classList.add("msg-p")
+		div1.appendChild(msgP)
+
+		if (auth_user_id == user_id) {
+
+			var msgcheck = document.createElement("span")
+			msgcheck.classList.add("msg-c")
+
+			// Create an HTML element with your SVG content
+			if (read == true || read == 'True') {
+				// console.log("The color is going to be ******************************************************************************************************************************************************************************************************************   BBBBLLUUUUEEEEE" )
+				var svgHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" id="double-check"><path class="svg-path" fill="#009cda" fill-rule="evenodd" d="M16.5303 6.46967C16.8232 6.76256 16.8232 7.23744 16.5303 7.53033L6.53033 17.5303C6.38968 17.671 6.19891 17.75 6 17.75 5.80109 17.75 5.61032 17.671 5.46967 17.5303L1.46967 13.5303C1.17678 13.2374 1.17678 12.7626 1.46967 12.4697 1.76256 12.1768 2.23744 12.1768 2.53033 12.4697L6 15.9393 15.4697 6.46967C15.7626 6.17678 16.2374 6.17678 16.5303 6.46967zM22.5303 6.46966C22.8232 6.76254 22.8232 7.23742 22.5303 7.53032L12.5308 17.5303C12.2379 17.8232 11.7631 17.8232 11.4702 17.5304L9.96975 16.0304C9.67681 15.7376 9.67674 15.2627 9.96959 14.9697 10.2624 14.6768 10.7373 14.6767 11.0303 14.9696L12.0004 15.9394 21.4697 6.46968C21.7625 6.17678 22.2374 6.17677 22.5303 6.46966z" clip-rule="evenodd"></path></svg>';
+			} else if (read == false || read == 'False') {
+				// console.log("The color is going to be ******************************************************************************************************************************************************************************************************************   BBBBLLAACCKK" )
+				var svgHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" id="double-check"><path class="svg-path" fill="#212529" fill-rule="evenodd" d="M16.5303 6.46967C16.8232 6.76256 16.8232 7.23744 16.5303 7.53033L6.53033 17.5303C6.38968 17.671 6.19891 17.75 6 17.75 5.80109 17.75 5.61032 17.671 5.46967 17.5303L1.46967 13.5303C1.17678 13.2374 1.17678 12.7626 1.46967 12.4697 1.76256 12.1768 2.23744 12.1768 2.53033 12.4697L6 15.9393 15.4697 6.46967C15.7626 6.17678 16.2374 6.17678 16.5303 6.46967zM22.5303 6.46966C22.8232 6.76254 22.8232 7.23742 22.5303 7.53032L12.5308 17.5303C12.2379 17.8232 11.7631 17.8232 11.4702 17.5304L9.96975 16.0304C9.67681 15.7376 9.67674 15.2627 9.96959 14.9697 10.2624 14.6768 10.7373 14.6767 11.0303 14.9696L12.0004 15.9394 21.4697 6.46968C21.7625 6.17678 22.2374 6.17677 22.5303 6.46966z" clip-rule="evenodd"></path></svg>';
+
+			}
+			// Set the innerHTML of the span to the SVG HTML
+			msgcheck.innerHTML = svgHTML;
+
+			// Append the span to the document or wherever you want to display it
+			div1.appendChild(msgcheck); // Add it to the body as an example
+
+			// // msgP.innerHTML = <i class="fa-solid fa-check"></i>
+			// msgcheck.classList.add("fa-solid")
+			// msgcheck.classList.add("fa-check")
+			// div1.appendChild(msgcheck)
+
+
+		}
+
+		newMessageDiv.appendChild(div1)
+
+		if (isNewMessage) {
+			chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
+		}
+		else {
+			chatLog.appendChild(newMessageDiv)
+		}
+
+		if (!maintainPosition) {
+			chatLog.scrollTop = chatLog.scrollHeight
+		}
+
+		{% comment %} preloadImage(profile_image, profile_image_id) {% endcomment %}
+	}
+
+	function createConnectedDisconnectedElement(msg, msd_id, uniName, user_id) {
+		var chatLog = document.getElementById("id_chat_log")
+
+
+
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex")
+		newMessageDiv.classList.add("flex-row")
+		newMessageDiv.classList.add("message-container")
+
+		{% comment %} var profileImage = document.createElement("img")
+		profileImage.addEventListener("click", function (e) {
+			selectUser(user_id)
+		})
+		profileImage.classList.add("profile-image")
+		profileImage.classList.add("rounded-circle")
+		profileImage.classList.add("img-fluid")
+		profileImage.src = "{% static 'codingwithmitch/dummy_image.png' %}"
+		var profile_image_id = "id_profile_image_" + msg_id
+		profileImage.id = profile_image_id
+		newMessageDiv.appendChild(profileImage) {% endcomment %}
+
+		var usernameSpan = document.createElement("span")
+		usernameSpan.innerHTML = msg
+		usernameSpan.classList.add("username-span")
+		usernameSpan.addEventListener("click", function (e) {
+			selectUser(user_id)
+		})
+		newMessageDiv.appendChild(usernameSpan)
+
+		chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
+
+		// preloadImage(profile_image, profile_image_id)
+	}
+
+	function setPageNumber(pageNumber) {
+		document.getElementById("id_page_number").innerHTML = pageNumber
+	}
+
+	function clearChatLog() {
+		document.getElementById("id_chat_log").innerHTML = ""
+	}
+
+
+	function setPaginationExhausted() {
+		setPageNumber("-1")
+	}
+
+	/*
+	  Retrieve the chat room messages given the page number.
+  */
+	function getRoomChatMessages() {
+		var pageNumber = document.getElementById("id_page_number").innerHTML
+		if (pageNumber != "-1") {
+			setPageNumber("-1") // loading in progress
+			chatSocket.send(JSON.stringify({
+				"command": "get_room_chat_messages",
+				"room_id": roomId,
+				"page_number": pageNumber,
+			}));
+		}
+	}
+
+	// Function to be called on anchor tag click
+	function yourFunction(msg_id) {
+		// Your JavaScript code here
+		console.log("Anchor tag clicked!");
+		chatSocket.send(JSON.stringify({
+			"command": "delete_message",
+			"room_id": roomId,
+			"sender_id": '{{request.user.id}}',
+			"msg_id": msg_id,
+
+		}));
+	}
+
+
+	function handleMessagesPayload(messages, new_page_number) {
+		if (messages != null && messages != "undefined" && messages != "None") {
+			setPageNumber(new_page_number)
+			// console.log("The messages are ------------ ",messages)
+			messages.forEach(function (message) {
+				appendChatMessage(message, true, false, auth_user_id, null)
+			})
+		}
+		else {
+			setPaginationExhausted() // no more messages
+		}
+	}
+
+	/*
+		Get the next page of chat messages when scrolls to bottom
+	*/
+	function chatLogScrollListener(e) {
+		var chatLog = document.getElementById("id_chat_log")
+		if ((Math.abs(chatLog.scrollTop) + 2) >= (chatLog.scrollHeight - chatLog.offsetHeight)) {
+			getRoomChatMessages()
+		}
+	}
+
+	/*
+		Enable the function "chatLogScrollListener"
+	*/
+	function enableChatLogScrollListener() {
+		document.getElementById("id_chat_log").addEventListener("scroll", chatLogScrollListener);
+	}
+
+	/*
+		Disable the function "chatLogScrollListener"
+	*/
+	function disableChatLogScrollListener() {
+		document.getElementById("id_chat_log").removeEventListener("scroll", chatLogScrollListener)
+	}
+
+</script>
+
+
+{% endif %}
+
+
+{% endblock body %}

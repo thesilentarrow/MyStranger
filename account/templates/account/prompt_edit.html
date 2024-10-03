@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style>
+
+    .textarea-class{
+        border-radius: 8px;
+        width: 100%;
+        padding: 4px 10px;
+        background: transparent;
+        border: none;
+        font-size: 15px;
+    }
+
+    #questionSelect{
+        padding: 4px;
+    font-size: 14px;
+    
+    width: 100%;
+    border-radius: 4px;
+    max-height: 150px; /* Set your desired maximum height */
+    overflow-y: scroll; /* Enable vertical scrolling */
+    }
+
+    .ques-cont{
+        border-radius: 16px;
+    padding: 13px;
+    }
+    
+
+    textarea:focus {
+        outline: none;
+    }
+
+    .custom-prompt{
+        margin-top: 1.5em;
+    }
+
+    .quest-text{
+        border: 1px solid ;
+        border-radius:4px;
+    }
+
+    .save-btn{
+        font-size: 13px;
+    /* border: 8px; */
+    border-radius: 27px;
+    width: 80px;
+    }
+
+    @media only screen and (min-width: 1024px) {
+
+    .webd{
+        width:55%;
+    }
+
+    .prom-cont{
+        border-radius: 16px;
+        padding: 2.5rem!important;
+        border: 1px solid #dfdfdf!important;
+    }
+
+}
+
+</style>
+
+
+<div class="container webd">
+
+    {% comment %} <div class="col-md-6 mt-2">
+        <div class="h-100 p-2 bg-body-tertiary border rounded-3">
+          
+          <p>Choose prompts that best describes you or create your own custom prompts.</p>
+          
+        </div>
+    </div> {% endcomment %}
+
+    <div class="card prom-cont mt-4" style="border:none;">
+
+        <div class="main-prompt">
+
+            <h6>Be your real self -</h6>
+            <p style="font-size:13px;">Select a question that best suits you and tell others this is who you really
+                are and this is what you really like </p>
+
+                <form method="post"> {% csrf_token %}
+            <div class="card ques-cont">
+
+                    {% comment %} <label for="questionSelect">Select a Question:</label> {% endcomment %}
+                    <div class="seleci">
+                    {% if request.user.gender == 'M' %}
+                    <select id="questionSelect" name="selectedQuestion">
+                        <option value="I like the kind of girls who ...">I like the kind of girls who ...</option>
+                        <option value="Never have I ever …">Never have I ever …</option>
+                        <option value="All I want is …">All I want is …</option>
+                        <option value="Perks of dating me ...">Perks of dating me ...</option>
+                        <option value="The first item on my bucket list is...">The first item on my bucket list is...</option>
+                        <option value="I wish more people knew that I …">I wish more people knew that I …</option>
+                        <option value="The dorkiest thing about me is …">The dorkiest thing about me is …</option>
+                        <option value="My deepest darkest secret is …">My deepest darkest secret is …</option>
+
+                    {% elif request.user.gender == 'F' %}
+
+                        <select id="questionSelect" name="selectedQuestion">
+                            <option value="I like the kind of boys who …">I like the kind of boys who …</option>
+                            <option value="The key to my heart is ...">The key to my heart is ...</option>
+                            <option value="I promise not to judge you if …">I promise not to judge you if …</option>
+                            <option value="Never have I ever …">Never have I ever …</option>
+                            <option value="Perks of dating me...">Perks of dating me...</option>
+                            <option value="I'm strangely attracted to …">I'm strangely attracted to …</option>
+                            <option value="I get along great with people who …">I get along great with people who …</option>
+                            <option value="The first item on my bucket list is ...">The first item on my bucket list is ...</option>
+                            <option value="A way to win me over would be …">A way to win me over would be …</option>
+                            <option value="I wish more people knew that I …">I wish more people knew that I …</option>
+                            <option value="My Love Language is …">My Love Language is …</option>
+                            <option value="I am crazy for …">I am crazy for …</option>
+                            <option value="The dorkiest thing about me is …">The dorkiest thing about me is …</option>
+                            <option value="My deepest darkest secret is ….">My deepest darkest secret is ….</option>
+    
+                        
+                    {% endif %}
+                        
+                        <!-- Add more options for your other questions -->
+                    </select>
+                </div>
+                    {% comment %} <input type="submit" value="Submit"> {% endcomment %}
+                
+                    <div class="txt-prom mt-2">
+                        <textarea class="textarea-class" name="prompt-answer" id="prompt-answer" cols="30" rows="5" placeholder="Your answer ..." required></textarea>
+                    </div>
+
+                    
+                </div>
+                <div class="d-flex flex-column mt-1" style="justify-content: center;
+        align-items: center;">
+            <button class="mt-2 btn btn-dark flex-grow-1 save-btn" name="main-prompt-id" type="submit">Save</button>
+        </div>
+            </form>
+
+        </div>
+
+
+        <div class="main-prompt custom-prompt">
+
+            <h6>Create Custom Prompts -</h6>
+            <p style="font-size:13px;">Didn't like the questions above "no worries", Tell others about
+                your real self in question answer form here </p>
+
+                <form method="post"> {% csrf_token %}
+            <div class="card ques-cont">
+
+                    {% comment %} <label for="questionSelect">Select a Question:</label> {% endcomment %}
+                    <textarea class='quest-text textarea-class' name="custom-question" id="custom-question" cols="30" rows="1" placeholder="A question about you ..." required></textarea>
+                    {% comment %} <input type="submit" value="Submit"> {% endcomment %}
+                
+                    <div class="txt-prom mt-2">
+                        <textarea class="textarea-class" name="custom-prompt-answer" id="custom-prompt-answer" cols="30" rows="5" placeholder="Your answer ..." required></textarea>
+                    </div>
+
+                    
+                </div>
+                <div class="d-flex flex-column mt-1" style="    justify-content: center;
+        align-items: center;">
+            <button class="mt-2 btn btn-dark flex-grow-1 save-btn" name="custom-prompt-id"  type="submit">Save</button>
+        </div>
+            </form>
+
+        </div>
+
+        
+
+</div>
+
+</div>
+
+{% endblock body %}

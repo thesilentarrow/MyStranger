@@ -1,0 +1,1187 @@
+{% extends "base.html" %}
+{% block body %}
+{% load humanize %}
+{% load static %}
+
+
+<style>
+
+    {% comment %} {% if request.user_agent.is_mobile %} {% endcomment %}
+    .footer {
+        background-color: whitesmoke;
+        {% comment %} color: #fff; {% endcomment %}
+        text-align: center;
+        {% comment %} padding: 10px; {% endcomment %}
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        {% comment %} z-index:4000; {% endcomment %}
+    }
+    {% comment %} {% endif %} {% endcomment %}
+
+    {% comment %} For the polls {% endcomment %}
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+    
+    .wrapper{
+      background: #fff;
+      border-radius: 15px;
+      padding: 25px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+    }
+    .wrapper header{
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .wrapper .poll-area{
+      margin: 20px 0 15px 0;
+    }
+    .poll-area label{
+      display: block;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      padding: 8px 15px;
+      border: 2px solid #e6e6e6;
+      transition: all 0.2s ease;
+    }
+    .poll-area label:hover{
+      border-color: #ddd;
+    }
+    label.selected{
+      border-color: #6665ee!important;
+    }
+    label .row{
+      display: flex;
+      pointer-events: none;
+      justify-content: space-between;
+    }
+    label .row .column{
+      display: flex;
+      align-items: center;
+    }
+    label .row .circle{
+      height: 19px;
+      width: 19px;
+      display: block;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      margin-right: 10px;
+      position: relative;
+    }
+    label.selected .row .circle{
+      border-color: #6665ee;
+    }
+    label .row .circle::after{
+      content: "";
+      height: 11px;
+      width: 11px;
+      background: #6665ee;
+      border-radius: inherit;
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      display: none;
+    }
+    .poll-area label:hover .row .circle::after{
+      display: block;
+      background: #e6e6e6;
+    }
+    label.selected .row .circle::after{
+      display: block;
+      background: #6665ee!important;
+    }
+    label .row span{
+      font-size: 16px;
+      font-weight: 500;
+    }
+    label .row .percent{
+      display: none;
+    }
+    label .progress{
+      height: 7px;
+      width: 100%;
+      position: relative;
+      background: #f0f0f0;
+      margin: 8px 0 3px 0;
+      border-radius: 30px;
+      display: none;
+      pointer-events: none;
+    }
+    label .progress:after{
+      position: absolute;
+      content: "";
+      height: 100%;
+      background: #ccc;
+      width: calc(1% * var(--w));
+      border-radius: inherit;
+      transition: all 0.2s ease;
+    }
+    label.selected .progress::after{
+      background: #6665ee;
+    }
+    label.selectall .progress,
+    label.selectall .row .percent{
+      display: block;
+    }
+    input[type="radio"],
+    input[type="checkbox"]{
+      display: none;
+    }
+
+    .poll-area{
+        padding: 20px;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+{% comment %}      
+/* Styling the scrollbar track */
+::-webkit-scrollbar {
+    width: 10px; /* Set the width of the scrollbar */
+}
+
+/* Styling the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+    background: white; /* Set the color of the thumb */
+    border-radius: 5px; /* Round the corners of the thumb */
+}
+
+/* Styling the scrollbar track (the non-draggable part) */
+::-webkit-scrollbar-track {
+    background: white; /* Set the color of the track */
+    /* background: #eee;  */
+    /* background: #bcdfed; Set the color of the track */
+} {% endcomment %}
+
+    .share-btn{
+        border:none;
+        background:none;
+        margin-top:5px;
+        font-size:14px;
+    }
+
+    .card-header{
+        font-family: 'Varela Round', sans-serif;
+    }
+    
+
+    .nearby-container{
+        {% comment %} border: 2px solid green; {% endcomment %}
+        width: 60vw;
+        margin: auto;
+        margin-top: 0.5em;
+
+    }
+
+    .card-main{
+        width: 100%;
+        border: 2px solid #e3e3e3;
+        {% comment %} border: 1px solid #343a40; {% endcomment %}
+        border-radius:4px;
+        
+    }
+
+    .nearby-container{
+        margin-bottom:4em;
+        max-height: 80vh;
+        overflow-y: scroll;
+        {% comment %} border:2px solid green; {% endcomment %}
+        width:100%;
+    }
+
+    .container{
+        max-height: 80vh;
+        width:58%;
+        {% comment %} overflow-y: scroll;
+        border:2px solid red; {% endcomment %}
+    }
+
+    .card-header{
+        display: flex;
+        justify-content: space-between;
+        
+        align-items: center;
+        {% comment %} background:whitesmoke; {% endcomment %}
+        {% comment %} background:fafaf8; {% endcomment %}
+        background: #343A40;
+        padding-top:1em;
+        padding-bottom:1em;
+        border-radius: 14px 14px 0px 0px!important;
+
+        /* margin-bottom: 2em; */
+    }
+    
+    /* .heading-top{
+        border: 1px solid#d5cfcf; 
+        {% comment %} font-size: 18px; {% endcomment %}
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    } */
+
+    .card-body{
+        border-bottom: 1px solid #d5cfcf;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .nearby-num:hover{
+        cursor: default;
+    }
+
+    .btn:hover{
+        background-color: white!important;
+        cursor: default;
+    }
+
+    .btn-answer{
+        border-radius : 100px;
+        width: 100px;
+        height: 35px;
+        margin-left:10px;
+    }
+
+    .btn-answer:hover{
+        background-color:white!important;
+        color:black;
+    }
+
+    .btn-answer span {
+        font-size:13px
+    }
+
+    .quora-textarea{
+        height: 36px;
+        border-radius: 100px;
+        padding: 6px;
+        font-size:13px;
+        padding-left: 1em;
+    }
+
+    .answer-form{
+        display:flex;
+        align-items: center;
+        width: 70%;
+        margin:auto;
+        margin-top:1em;
+        margin-bottom:1em;
+    }
+
+
+    .card-header{
+       
+        height:auto;
+    }
+
+    .card-main{
+        border-radius:16px!important;
+    }
+
+    .card{
+        border-radius:0px;
+    }
+
+    .add-friend-btn{
+        border: none;
+        background: none;
+    }
+
+    .tp1{
+        display: flex;
+    /* border: 1px solid red; */
+    justify-content: space-between;
+    align-items:center;
+    }
+
+    .tp1-right{
+        display: flex;
+    align-items: center;
+    }
+
+    .tp2{
+        display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+    .answers-card{
+        overflow-y: scroll;
+    {% comment %} border: 1px solid red; {% endcomment %}
+    max-height: 300px;
+    }
+
+    .card-answer {
+        border:none;
+        {% comment %} border-bottom:2px solid #fafaf8; {% endcomment %}
+        border-bottom:2px solid #d5dbdd;
+    }
+    
+    .card-body-answer{
+        border:none;
+    }
+
+    .like-btn{
+        background: none;
+    border: none;
+    }
+    
+    .like-btn:hover{
+        background-color:none!important;
+        background:none;
+    }
+    
+    .card-reply-main{
+        max-height:130px;
+        overflow-y:scroll;
+    }
+
+    .cancel_btn{
+        background: none;
+        border: none;
+    }
+
+    .dots{
+        background: none!important;
+        color: #white!important;
+        border: none;
+    }
+
+    .dots:hover{
+        background:none!important;
+    }
+
+    .dropdown-toggle::after {
+        display: none;
+    }
+
+    .dropdown-toggle:focus {
+        background-color: transparent !important;
+    }
+
+    .report-dpn{
+        min-width: 6em!important;
+        font-size:14px;
+    }
+
+    .on_add_class{
+        color:#009cda;
+        font-size:13px;
+        cursor:pointer;
+    }
+
+    .innerbar{
+        top: 0;
+        position: absolute;
+        z-index: 2;
+        height: 29px;
+        width: 0%;
+        left: 0px;
+        background: #7cdaff;
+        transition: width 1s ease;
+        border-radius: 8px 10px 10px 8px;
+    }
+
+    {% comment %} .btn-answer:focus,
+.btn-answer:active {
+    outline: none !important;
+    box-shadow: none !important;
+} {% endcomment %}
+
+    
+
+    /* Media query for tablet width 320px */
+  @media only screen and (min-width: 800px) { 
+
+    .thepoll-cont{
+        height: 45px!important;
+    }
+
+    .innerbar{
+        height: 44px!important;
+    }
+
+    .poll-optieon{
+        top: 7px!important;
+    font-size: 17px!important;
+    }
+
+    .percetion{
+        position: absolute;
+    right: 25px !important;
+    z-index: 2;
+    font-size: 16px!important;
+    top: 10px !important;
+    }
+
+    .tick-percetion{
+        right: 10px!important;
+    top: 16px!important;
+    font-size:12px!important;
+    }
+
+  }
+
+    /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+	.nearby-container{
+        width:unset;
+        margin-bottom: 4em!important;
+    }
+
+    .container{
+        width:100%;
+    }
+
+    .img1 img{
+        width: 22px;
+    }
+
+    .small-text{
+        font-size: 11px!important;
+        margin-bottom: 4px!important;
+        display: flex;
+    flex-direction: column;
+
+    
+    }
+
+    .timepamper{
+        font-size: 9px;
+    }
+
+    .tp2{
+        {% comment %} flex-direction:column; {% endcomment %}
+        position:relative;
+    }
+
+    .total_ans_box{
+        font-size: 10px!important;
+        margin-left: 0em;
+        position:absolute;
+        right:0px;
+        bottom:-14px;
+    }
+
+    .the-ques{
+        {% comment %} font-size: 12px!important; {% endcomment %}
+        font-size: 1em!important;
+    }
+
+    .ans_texti{
+        font-size:13px;
+    }
+
+    .like-btn{
+        font-size:12px!important;
+    }
+
+    .f12{
+        font-size:12px!important;
+    }
+
+    .smaf{
+        font-size: 11px!important;
+    }
+
+    .quora-textarea{
+        width: 200px;
+    height: 27px;
+    border-radius: 100px;
+    padding: 6px;
+    font-size: 10px;
+    padding-left: 1em;
+
+    }
+
+    .answer-form{
+        display: flex;
+    align-items: center;
+    width: 88%;
+    margin: auto;
+    /* margin-top: 1em; */
+    margin-bottom: 0.5em;
+    }
+
+    .btn-answer span {
+        font-size: 9px;
+    }
+
+    .btn-answer{
+        height: 27px;
+        display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    .view_rep_btn{
+        margin-top: -1.5em!important;
+    }
+
+
+    .replybox{
+        margin-top: 6px;
+    }
+
+    .replybox button{
+        margin-bottom: 1em;
+    }
+
+  }
+
+
+  .spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+    border: 0.15em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: spinner-border .75s linear infinite;
+    animation: spinner-border .75s linear infinite;
+}
+
+.new-textarea {
+    resize: none; /* Disable textarea resizing by user */
+    height: 36px; /* Initial height */
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    transition: height 0.3s; /* Add smooth transition for height changes */
+  }
+
+</style>
+{% comment %} <div class="blah" style="background:black; height:94svh">
+
+</div> {% endcomment %}
+<div style="display:flex; justify-content:center; flex-direction:column; align-items:center;">
+<p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'confessions:create-postc' %}">Create a confession</a>
+</p>
+<span class="" style="font-size:12px"><a style="" class="text-secondary" href="{% url "confessions:cworking" %}">how it works?</a></span>
+</div>
+
+<!-- search.html -->
+<div class="input-group" style="display:flex; justify-content:center; align-items:center;">
+    <form action="{% url 'confessions:search-view' %}" method="GET">
+        <div class="form-outline d-flex" data-mdb-input-init>
+            <input type="search" name="q" id="search-focus" style="margin-top:8px;" class="form-control" placeholder="search using token" />
+            <button type="submit" class="btn btn-dark" style="margin-left: 8px; margin-top:8px;" data-mdb-ripple-init>
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        
+    </form>
+</div>
+
+
+
+
+<div class="nearby-container" id="scroll-conti">
+    
+
+    <div class="container">
+        <div style="margin-bottom:4px; font-size:12px;" class="alert alert-dark" role="alert">
+            Confess to someone you know anonymously
+          </div>
+        <div id="comments-container">
+            {% include 'confessions/question_partialc.html' %}
+        </div>
+        
+        
+    </div>
+
+        
+   
+</div>
+<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+    <div class="spinner-border text-primary" id="id_chatroom_loading_spinner" role="status" style="display: none;">
+        
+    </div>
+</div>
+
+    {% comment %} <!-- Display pagination links -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if the_questions.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ the_questions.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ the_questions.number }} of {{ the_questions.paginator.num_pages }}.
+            </span>
+
+            {% if the_questions.has_next %}
+                <a href="?page={{ the_questions.next_page_number }}">next</a>
+                <a href="?page={{ the_questions.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>shareLink
+     {% endcomment %}
+
+  
+{% if request.user_agent.is_mobile %}
+<div class="footer">
+    <!-- Your footer content goes here -->
+    <div style="display:flex; width:20%; justify-content:space-between; align-items:center; margin:auto; padding:4px;">
+        <a style="cursor: pointer;" href="{% url "qna:pika" %}"><span><i class="fa-solid fa-volleyball" style="color:#009cda;"></i></span></a>
+        <a style="cursor: pointer;" href="{% url "confessions:pikac" %}"><span><i class="fa-solid fa-fire"  style="color:#009cda;"></i></span></a></div>
+    </div>
+
+    {% else %}
+
+    <div class="footer">
+        <!-- Your footer content goes here -->
+        <div style="display:flex; width:20%; justify-content:space-between; align-items:center; margin:auto; padding:4px;">
+            <a style="cursor: pointer;" href="{% url "qna:pika" %}"><span><i class="fa-solid fa-volleyball" style="color:#009cda;"></i><span style="margin-left:0.5em; color:#009cda;">Vibes</span></span></a>
+            <a style="cursor: pointer;" href="{% url "confessions:pikac" %}"><span><i class="fa-solid fa-fire"  style="color:#009cda;"></i> <span style="margin-left:0.5em; color:#009cda;" >Confessions</span></span></a></div>
+        </div>
+
+{% endif %}
+
+<!-- Bootstrap Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="shareModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Share Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Share this link:</p>
+          {% comment %} <input type="text" class="form-control mb-3" id="shareLink" value="https://mystranger.in/vibes/question/ans_id/" readonly> {% endcomment %}
+          <input type="text" class="form-control mb-3" id="shareLink" readonly>
+          <button class="btn btn-primary" onclick="copyLink()">Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% include 'friend/snippets/send_friend_request.html' %}
+{% include 'friend/snippets/cancel_friend_request.html' %}
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<script>
+
+    function resizeTextarea(textarea) {
+        textarea.style.height = 'auto'; // Reset height to auto to calculate scrollHeight
+        textarea.style.height = (textarea.scrollHeight > 60 ? 60 : textarea.scrollHeight) + 'px';
+      }
+
+
+    var searchFocus = document.getElementById('search-focus')
+
+    // Add this event listener to your existing JavaScript
+searchFocus.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        searchFocus.closest('form').submit();
+    }
+});
+
+
+    var nextPage = 2;  // Initialize next page
+
+function loadMoreComments() {
+    // Fetch the next page using AJAX
+    $.ajax({
+        url: '?page=' + nextPage,
+        method: 'GET',
+        data : {'action':'new_ques'},
+        success: function (data) {
+            var spinner = document.getElementById('id_chatroom_loading_spinner')
+            spinner.style.display = 'none';
+            console.log('got back the data - ',nextPage)
+            // Append new comments to the container
+            $('#comments-container').append(data.html);
+
+            // Update the next page number
+            nextPage += 1;
+
+            // Check if there are more pages
+            console.log('is it last one - ', data.has_next,nextPage)
+            if (!data.has_next) {
+                // Disable infinite scroll if no more pages
+                var container = document.getElementById("scroll-conti");
+                container.removeEventListener('scroll', checkScroll); // Remove scroll listener
+            }
+        },
+        error : function(data){
+            console.log('something went wrong!')
+        }
+    });
+}
+
+function checkScroll() {
+    console.log('Scroll event triggered');
+
+    let totalScrollHeight = this.scrollHeight;
+    let currentScrollPosition = this.scrollTop;
+    let containerHeight = this.clientHeight;
+
+    // Add a small threshold
+    if (totalScrollHeight <= currentScrollPosition + containerHeight + 2) {
+        // Call your function here
+        console.log('this is gettin called!')
+        var spinner = document.getElementById('id_chatroom_loading_spinner')
+        spinner.style.display = 'inline';
+        loadMoreComments();
+    }
+}
+
+function setOnScrollListener() {
+    console.log('activating the scroll listener')
+    var container = document.getElementById("scroll-conti");
+
+    if (container != null) {
+        container.addEventListener('scroll', checkScroll);
+    }
+}
+
+setOnScrollListener(); // Initial scroll listener attachment
+
+
+
+    function myselecfunc(pollid,allpollid){
+        console.log('I am getting called baby - ',pollid,allpollid)
+        
+
+        <!-- Now i gotta disable click on all polls with allpollid  -->
+        // Get all elements with the class "pollidea"
+        var pollElements = document.getElementsByClassName('poll-'+allpollid);
+
+        // Loop through each element and disable the onclick function
+        for (var i = 0; i < pollElements.length; i++) {
+            // Disable the onclick function
+            pollElements[i].onclick = null;
+        }
+
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"poll-id": pollid,
+            'action' : 'poll-selected',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+			
+
+                if(data['status'] == "got_data"){ 
+
+                    console.log(data.response)
+                    mydict = data.response
+                    for (var key in mydict) { 
+                        var percentage = mydict[key];
+                        
+                        polltransition = document.getElementById('innerbar-'+key)
+                        {% comment %} polltransition.style.background = '#009cda' {% endcomment %}
+                        polltransition.style.width = percentage + '%';
+                        {% comment %} polltransition.style.transition = 'width 2s ease'; // Adjust the duration and easing as needed {% endcomment %}
+                       
+                        document.getElementById('persia-'+key).innerHTML = percentage + ' %'
+                        {% comment %} document.getElementById('poll-count-'+key).innerHTML = percentage + ' %' {% endcomment %}
+
+                    }
+
+                    var elementa = document.getElementById('tick-'+pollid)
+                    console.log('tick-',pollid, elementa)
+                    elementa.style.display = 'flex';
+
+                    var currentValue = document.getElementById('poll-count-' + allpollid).innerHTML;
+                    {% comment %} console.log('valval - ', currentValue) {% endcomment %}
+                    // Convert the value to a number (assuming it's a numeric value)
+                    var currentNumber = parseInt(currentValue, 10);
+                    
+
+                    // Add 1 to the value
+                    var newValue = currentNumber + 1;
+
+                    // Update the element with the new value
+                    document.getElementById('poll-count-' + allpollid).innerHTML = newValue + ' vibes';
+
+                }
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+
+       }
+
+    function openShareModal(postId) {
+        {% comment %} var dynamicLink = `https://example.com/post/${postId}`; {% endcomment %}
+        {% comment %} var dynamicLink = `https://mystranger.in/confessions/question/${postId}/?question=true`; {% endcomment %}
+        var dynamicLink = `http://127.0.0.1:8000/confessions/question/${postId}/?question=true`;
+        document.getElementById('shareLink').value = dynamicLink;
+        $('#shareModal').modal('show');
+      }
+    
+      function copyLink() {
+        var shareLinkInput = document.getElementById('shareLink');
+        shareLinkInput.select();
+        document.execCommand('copy');
+        Swal.fire('Link Copied!', '', 'success');
+      }
+    
+      // Close modal when clicking outside
+      $(document).mouseup(function (e) {
+        var modal = $('#shareModal');
+        if (!modal.is(e.target) && modal.has(e.target).length === 0) {
+          modal.modal('hide');
+        }
+      });
+
+    function add_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
+        console.log('add friend got clicked')
+        var sendFriendRequestBtn = document.getElementById(send_req_btn_id)
+        if (sendFriendRequestBtn != null){
+           
+                sendFriendRequest(receiver_id, function () {
+                    onFriendRequestSent(send_req_btn_id, cancel_req_btn_id); // Pass the variable to onFriendRequestSent
+               
+            })
+        }
+}
+
+function cancel_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
+
+console.log('cancel friend got clicked')
+var cancelFriendRequestBtn = document.getElementById(cancel_req_btn_id)
+	if(cancelFriendRequestBtn != null){
+		
+			cancelFriendRequest(receiver_id, function(){
+                onFriendRequestCancelled(send_req_btn_id, cancel_req_btn_id)
+            
+		})
+	}
+
+}
+
+function onFriendRequestSent(send_req_btn_id, cancel_req_btn_id){
+    var sendFriendRequestBtn = document.getElementById(send_req_btn_id)
+    sendFriendRequestBtn.style.display = "none"
+
+    var cancelFriendRequestBtn = document.getElementById(cancel_req_btn_id)
+    cancelFriendRequestBtn.classList.remove("d-none");
+    // though reloding the page is the easiest and most convenient way but we can try to do this without reloading the page
+    // if there's a way to do so then that is going to enhance the user experience
+}
+
+function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
+
+    var cancelFriendRequestBtn = document.getElementById(cancel_req_btn)
+    cancelFriendRequestBtn.classList.add("d-none");
+
+    var sendFriendRequestBtn = document.getElementById(send_req_btn)
+    sendFriendRequestBtn.style.display = "inline-block"
+}
+
+    function mytoogleanswersfunc(id){
+        console.log('func getin called')
+        var btn_txt = document.getElementById(id)
+        var textva = btn_txt.innerHTML
+
+        console.log(textva)
+
+        if (textva == 'see more answers'){
+            btn_txt.innerHTML = 'see less comments'
+            {% comment %} console.log('see less answers') {% endcomment %}
+        } else if (textva == 'see more answers'){
+            btn_txt.innerHTML = 'see more comments'
+            {% comment %} console.log('see more answers') {% endcomment %}
+        }
+    }
+
+
+    function myreportfunc(id){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",   
+			"node-id": id,
+            'action' : 'report',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "reported"){
+					// ui is updated
+                    console.log('This answer has been has reported')
+                    alert('The answer/reply has been reported!')
+					
+				}
+                else if(data.response == 'Already Reported')
+                alert('You have already reported this answer/reply')
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+    function myunlikefunc(id,spanid){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"node-id": id,
+            'action' : 'unlike',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "unliked"){
+					// ui is updated
+                    console.log('your unlike has been added')
+
+                    var unlikespan = document.getElementById(spanid);
+                    var unlikecount = document.getElementById('count-'+spanid).innerHTML
+                    unlikespan.style.display = 'none';
+
+                    var likespan = document.getElementById('like-'+id);
+                    var count = document.getElementById('like-count-'+id)
+                    var newNum = parseInt(unlikecount, 10) - 1;
+                    count.innerHTML = newNum;
+                    likespan.style.display = 'inline';
+                    
+					
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+
+    function mylikefunc(id){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",   
+			"node-id": id,
+            'action' : 'like',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "liked"){
+					// ui is updated
+                    console.log('your like has been added')
+                    var likespan = document.getElementById('like-'+id);
+                    likespan.style.display = 'none';
+
+                    var unlikespan = document.getElementById('unlike-'+id);
+                    var count = document.getElementById('count-unlike-'+id)
+                    var likecount = document.getElementById('like-count-'+id).innerHTML
+                    var newNumber = parseInt(likecount, 10) + 1;
+                    count.innerHTML = newNumber;
+                    unlikespan.style.display = 'inline';
+					
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+
+    function mydeletefunc(id,cardId){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"node-id": id,
+            'action' : 'delete',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "card deleted"){
+					// ui is updated
+                    console.log('The post has been deleted', cardId)
+                    var card = document.getElementById(cardId);
+                    card.style.display = 'none';
+					{% comment %} uiUpdateFunction() {% endcomment %}
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+    function myquestiondeletefunc(id,cardId){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"node-id": id,
+            'action' : 'delete_my_question',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "card deleted"){
+					// ui is updated
+                    console.log('The post has been deleted', cardId)
+                    var card = document.getElementById(cardId);
+                    card.style.display = 'none';
+					{% comment %} uiUpdateFunction() {% endcomment %}
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+    function myreadmorefunc(id){
+        console.log('am i even getting called!')
+        readMoreBtn = document.getElementById(id)
+        readMoreBtn.style.display = 'none'
+    }
+
+    function submitForm(event, formId, ansElemental, repElemental, textareaId) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+        // Your AJAX logic here
+        var formData = new FormData(document.getElementById(formId));
+
+
+        $.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url "confessions:addAnswerc" %}",
+			timeout: 5000,
+			data: formData,
+            processData: false, // Set processData and contentType to false
+            contentType: false,
+			success: function(data) {
+				console.log("SUCCESS", data);
+                if(data['status'] == "Answered"){
+					
+                    console.log('Boom your answer has been generated now just gotta have to update the ui')
+                    document.getElementById(textareaId).value = ''
+                    // Create a new element
+                        // Create a new card element
+                        var newCard = document.createElement('div');
+                        newCard.className = 'card';
+                        newCard.classList.add('card-answer'); 
+                        newCard.id = 'card-' + data.nodeId;
+                        newCard.innerHTML = '<div class="card-body card-body-answer" style="flex-direction: column;">' +
+                                                '<p class="text-secondary" style="font-size:12px; margin-bottom:0px;">' + data.name + ' | ' + data.domain + '</p>' + 
+                                                
+                                                '<span><a class="on_add_class" onclick="mydeletefunc(\'' + data.nodeId + '\', \'card-' + data.nodeId + '\')">delete</a></span>' +
+                                                
+                                                '<p>' + data.content + '</p>'
+                                            '</div>';
+
+                        // Find the existing div
+                        var existingDiv = document.getElementById(ansElemental); // Replace with the actual ID of your existing div
+
+                        // Insert the new card before the existing div
+                        existingDiv.insertAdjacentElement('afterend', newCard);
+
+				}
+                if(data['status'] == "Replied"){
+					
+                    console.log('Boom your reply has been generated now just gotta have to update the ui')
+                    inpval = document.getElementById(textareaId).value = ''
+                    
+                        // Create a new card element
+                        var newCard = document.createElement('div');
+                        newCard.className = 'card';
+                        newCard.classList.add('card-answer'); 
+                        newCard.classList.add('card-reply'); 
+                        newCard.id = 'card-' + data.nodeId;
+                        newCard.style.marginLeft = '3em';
+                        newCard.innerHTML = '<div class="card-body card-body-answer" style="flex-direction: column;">' +
+                                                '<p class="text-secondary" style="font-size:12px; margin-bottom:0px;">' + data.name + ' | ' + data.domain + '</p>' +
+                                                
+                                                '<span><a class="on_add_class" onclick="mydeletefunc(\'' + data.nodeId + '\', \'card-' + data.nodeId + '\')">delete</a></span>' +
+                                                
+                                                '<p>' + data.content + '</p>'
+                                            '</div>';
+
+                        // Find the existing div
+                        var existingDiv = document.getElementById(repElemental); // Replace with the actual ID of your existing div
+
+                        // Insert the new card before the existing div
+                        existingDiv.insertAdjacentElement('afterend', newCard);
+                    
+				}
+                if(data['status'] == 'empty_msg'){
+                    console.log('can not add an empty message')
+                }
+				
+			},
+			error: function(data) {
+				console.error("ERROR", data)
+                alert('Some error occured while answering. Please try again later - ', data.message)
+				
+			},
+			complete: function(data){
+				// Req is made
+			}
+		}); 
+    }
+
+</script>
+
+{% endblock body %}

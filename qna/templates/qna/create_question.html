@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style>
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+    .phone-font{
+      font-size:1.2em;
+    } 
+
+  }
+
+  
+.custom-alert label{
+	margin-top:0.5rem;
+}
+
+.custom-alert {
+    display: none;
+    position: fixed;
+	z-index:1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.alert-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+}
+
+
+
+.loading-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background: rgba(255, 255, 255, 0.8); Background color for the overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1; /* Place the spinner above the video */
+}
+
+.loading-spinner::before {
+  content: "";
+  border: 3px solid #009cda; /* Spinner border color */
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+</style>
+
+{% if messages %}
+  
+    {% for message in messages %}
+      
+      <div style="margin-bottom: 0px;" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong></strong> {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+ 
+{% endif %}
+<div class="p-5 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-5" style="padding-top: 0px!important;">
+      
+      <h1 class="display-8 fw-bold phone-font">Ask Stranger's a Question -</h1>
+      <form action="" method="post" enctype="multipart/form-data"  onsubmit="return validateForm();"> {% csrf_token %}
+      <input type="text" name="question" id="question" class="radius form-control" placeholder="ask without being judged ..."
+      autofocus>
+      {% comment %} <p style="margin-bottom:0px; font-size:10px;" class="text-secondary mt-2">If you are adding an image than adding a question is not compulsory</p> {% endcomment %}
+
+
+      {% comment %} <!-- Image input and preview -->
+    <div class="mt-3">
+      <label for="imageInput" class="form-label">Add an image:</label>
+      <input type="file" class="form-control" id="imageInput" name="image" accept="image/*" onchange="previewImage(event)">
+      <div id="imagePreviewContainer" class="mt-2" style="display: none;">
+          <img id="imagePreview" alt="Image Preview" class="img-thumbnail">
+          <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeImagePreview()">Remove Image</button>
+      </div>
+  </div> {% endcomment %}
+
+  {% comment %} {% if request.user.email == 'himanshu.20scse1010431@galgotiasuniversity.edu.in' %} {% endcomment %}
+
+  <!-- Image input and preview -->
+<div class="mt-3">
+  <label for="imageInput" class="form-label">Add image/video (optional)</label>
+  <input type="file" class="form-control" id="imageInput" name="image" accept="image/*,video/*" onchange="previewImage(event)">
+  <!-- <div id="imagePreviewContainer" class="mt-2" style="display: none; position:relative; width: fit-content;">
+      <div style="width: 300px;
+      height: 150px;
+      justify-content: center;
+      display: flex;
+      border: 1px solid #c5c5c5;
+      padding: 1px;">
+          <img id="imagePreview" alt="Image Preview" class="img-thumbnail" style="object-fit: contain; max-width: 100%; max-height: 100%;">
+      </div>
+      <button type="button" style="background: none;
+      border: none;
+      top: -13px;
+      position: absolute;
+      right: -13px;" onclick="removeImagePreview()"><i class="fa-solid fa-circle-xmark" style="color: #fb2323;"></i></button>
+  </div> -->
+  <div id="imagePreviewContainer" class="mt-2" style="display: none; position:relative; width: fit-content;">
+    <div style="width: 300px; height: 150px; justify-content: center; display: flex; border: 1px solid #c5c5c5; padding: 1px;">
+        <img id="imagePreview" alt="Image Preview" class="img-thumbnail" style="object-fit: contain; max-width: 100%; max-height: 100%; display: none;">
+        <video id="videoPreview" style="object-fit: contain; max-width: 100%; max-height: 100%; display: none;" controls></video>
+    </div>
+    <button type="button" style="background: none; border: none; top: -13px; position: absolute; right: -13px;" onclick="removeImagePreview()">
+        <i class="fa-solid fa-circle-xmark" style="color: #fb2323;"></i>
+    </button>
+</div>
+
+</div>
+
+{% comment %} {% endif %} {% endcomment %}
+
+
+
+      {% comment %} polls optional {% endcomment %}
+      <h6 class="text-secondary mt-4">Wanna add polls? (optional)</h6>
+      <div style="position:relative">
+      <input type="text" style="padding-right: 41px;" name="poll1" id="poll1" class="radius form-control mt-1" placeholder="tik tik option1" oninput="limitInput('poll1')" maxlength="22">
+      <span style="top: 12px;
+      font-size: 11px;
+      position: absolute;
+      right: 10px;" class="text-secondary"><span id="charCount-poll1">0</span>/<span id="maxChars-poll1">22</span></span>
+    </div>
+      <div style="position:relative">
+      <input type="text" style="padding-right: 41px;" name="poll2" id="poll2" class="radius form-control mt-1" placeholder="tik tac option2" oninput="limitInput('poll2')" maxlength="22">
+      <span style="top: 12px;
+      font-size: 11px;
+      position: absolute;
+      right: 10px;" class="text-secondary"><span id="charCount-poll2">0</span>/<span id="maxChars-poll2">22</span></span>
+    </div>
+      <div style="position:relative">
+      <input type="text" style="padding-right: 41px;" name="poll3" id="poll3" class="radius form-control mt-1" placeholder="wanna add more... option3" oninput="limitInput('poll3')" maxlength="22">
+      <span style="top: 12px;
+      font-size: 11px;
+      position: absolute;
+      right: 10px;" class="text-secondary"><span id="charCount-poll3">0</span>/<span id="maxChars-poll3">22</span></span>
+    </div>
+      <div style="position:relative">
+      <input type="text" style="padding-right: 41px;" name="poll4" id="poll4" class="radius form-control mt-1" placeholder="huff puff option4" oninput="limitInput('poll4')" maxlength="22">
+      <span style="top: 12px;
+      font-size: 11px;
+      position: absolute;
+      right: 10px;" class="text-secondary"><span id="charCount-poll4">0</span>/<span id="maxChars-poll4">22</span></span>
+    </div>
+      {% comment %} <input type="text" name="poll2" id="poll2" class="radius form-control mt-1" placeholder="tik tac option2">
+      <input type="text" name="poll3" id="poll3" class="radius form-control mt-1" placeholder="wanna add more... option3">
+      <input type="text" name="poll4" id="poll4" class="radius form-control mt-1" placeholder="huff puff option4"> {% endcomment %}
+
+
+      <p class="text-secondary mt-2" style="font-size:14px;">if adding polls minimum of 2 options are required!</p>
+      <button class="btn btn-sm btn-outline-dark mt-2" type="Submit">Submit Question</button>
+    </form>
+    </div>
+  </div>
+
+  <div id="customAlert" class="custom-alert">
+    <div class="alert-content" style="display:flex; flex-direction:column; justify-content:center; align-items:center !important; width: 90%;">
+        {% comment %} <span class="close-btn" onclick="closeCustomAlert()">&times;</span> {% endcomment %}
+        <h6>Uploading Your Video</h6>
+        <p>please wait while your video is getting uploaded it can take upto 30 seconds...</p>
+        <div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+          <div class="spinner-border" style="font-size: 9px; color:#009cda!important; height:1rem; width:1rem;" id="id_chatroom_loading_spinner" role="status" style="">
+              
+          </div>
+      </div>
+       
+    </div>
+  </div>
+
+  
+<script>
+
+  function validateForm() {
+    var question = document.getElementById('question').value.trim();
+    var imageInput = document.getElementById('imageInput');
+    var imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    
+    {% comment %} // Check if either question or image is present
+    if (question === '' && (!imageInput.files || imageInput.files.length === 0)) {
+        alert('Please add either a question or an image before submitting.');
+        return false;
+    } {% endcomment %}
+
+    if(imageInput.files[0].type.startsWith('image/')){
+      if (imageInput.files && imageInput.files[0] && imageInput.files[0].size > 10 * 1024 * 1024) {
+        alert('Image size should be less than 10 MB.');
+        return false;
+    } 
+    } else if(imageInput.files[0].type.startsWith('video/')){
+      if (imageInput.files && imageInput.files[0] && imageInput.files[0].size > 100 * 1024 * 1024) {
+        alert('Image size should be less than 100 MB.');
+        return false;
+    } else if(imageInput.files && imageInput.files[0] && imageInput.files[0].size > 5 * 1024 * 1024){
+      // here i gotta add the what u call alert shoing the loding screen
+      document.getElementById('customAlert').style.display = 'flex';
+      return true;
+    }
+    }
+
+   
+
+    // Additional validation or actions can be added here
+
+    // If everything is valid, allow form submission
+    return true;
+}
+
+function previewImage(event) {
+    const input = event.target;
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImage = document.getElementById('imagePreview');
+    const previewVideo = document.getElementById('videoPreview'); // Assuming you have a video element for previewing videos
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            if (file.type.startsWith('image/')) {
+                // The file is an image
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                previewVideo.style.display = 'none';
+            } else if (file.type.startsWith('video/')) {
+                // The file is a video
+                previewVideo.src = e.target.result;
+                previewVideo.style.display = 'block';
+                previewImage.style.display = 'none';
+            }
+            previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+
+//   function previewImage(event) {
+//     const input = event.target;
+//     const previewContainer = document.getElementById('imagePreviewContainer');
+//     const preview = document.getElementById('imagePreview');
+//     {% comment %} const maxSize = 10 * 1024 * 1024; // 10 MB in bytes {% endcomment %}
+
+//     if (input.files && input.files[0]) {
+//         const file = input.files[0];
+
+//         {% comment %} if (file.size > maxSize) {
+//             // Display an alert for oversized image
+//             alert("Image size exceeds the maximum allowed (10 MB). Please choose a smaller image.");
+//             input.value = ''; // Clear the file input
+//             previewContainer.style.display = 'none'; // Hide the preview container
+//             return;
+//         } {% endcomment %}
+
+//         const reader = new FileReader();
+//         reader.onload = function (e) {
+//             preview.src = e.target.result;
+//             previewContainer.style.display = 'block';
+//             // You can add any additional logic or styling for displaying the preview here
+//         };
+//         reader.readAsDataURL(file);
+//     }
+// }
+  
+  function removeImagePreview() {
+    const input = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+  
+    input.value = ''; // Clear the input field
+    preview.src = ''; // Clear the preview image
+    previewContainer.style.display = 'none'; // Hide the preview container
+  }
+  
+
+  {% comment %} function previewImage(event) {
+
+    const input = event.target;
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeImagePreview() {
+    const input = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+
+    input.value = ''; // Clear the input field
+    preview.src = ''; // Clear the preview image
+    previewContainer.style.display = 'none'; // Hide the preview container
+} {% endcomment %}
+
+// JavaScript
+var modal = document.getElementById("myModal");
+var img = document.getElementById("myImg");
+var modalImg = document.getElementById("img01");
+
+img.onclick = function(){
+  modal.style.display = "block";
+  modalImg.src = this.src;
+}
+
+var span = document.getElementsByClassName("close")[0];
+
+span.onclick = function() { 
+  modal.style.display = "none";
+}
+
+
+
+  function limitInput(id) {
+      var input = document.getElementById(id);
+      var charCount = document.getElementById("charCount-"+id);
+      var maxChars = 22;
+  
+      // Get the current input value
+      var inputText = input.value;
+  
+      // Update the character count
+      charCount.innerText = inputText.length;
+  
+      // Trim the input if it exceeds the maximum length
+      if (inputText.length > maxChars) {
+          input.value = inputText.slice(0, maxChars);
+          charCount.innerText = maxChars; // Update count to maxChars
+      }
+  }
+  </script>
+
+  {% endblock body %}

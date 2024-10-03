@@ -1,0 +1,1396 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<style>
+	body {
+		height: 100vh;
+		/* border: 2px solid red; */
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		/* overflow: hidden; */
+	}
+
+	.main-container {
+		/* border: 2px solid blue; */
+		flex: 1;
+
+	}
+
+
+	.right-column {
+		border: 1px solid #707070;
+		padding: 0px;
+	}
+
+	.right-column p {
+		margin-bottom: 0px;
+		font-size: 18px;
+	}
+
+	.cont-row {
+		height: 100%;
+		/* border: 2px solid green; */
+		/* margin: 0px; */
+		margin: auto;
+		justify-content: center;
+		align-items: center;
+		
+		width: 100%;
+	}
+
+	.left-column {
+		display: flex;
+		flex-direction: column;
+		padding: 0px;
+		/* padding-left: 5px !important; */
+		width: 29vw;
+
+		height: 97%;
+		/* margin: auto; */
+		/* margin-left: 0px; */
+		/* margin-right: 0px; */
+	}
+
+	.right-column {
+		height: 97%;
+		width: 69vw;
+		/* margin: auto; */
+		position: relative;
+		border-radius: 8px;
+		margin-left: 8px;
+	}
+
+
+	.upper-left {
+		border: 2px solid #707070;
+		height: 46%;
+		margin-top: 10px;
+		width: 100%;
+	}
+
+	.lower-left {
+		/* border: 2px solid black; */
+		height: 46%;
+		width: 100%;
+		margin-top: 18px;
+	}
+
+	video,
+	.video {
+		border-radius: 8px;
+	}
+
+	.right-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: 1px solid #707070;
+		height: 3.5em;
+		padding: 1em;
+	}
+
+	.right-header img {
+		margin-right: 10px;
+	}
+
+	.img1 {
+		margin-right: 1em;
+	}
+
+	.bottom-header {
+		margin: auto;
+		width: 70%;
+		display: flex;
+		/* position: absolute; */
+		/* bottom: 0.5em; */
+		/* left: 15%;` */
+		/* border: 2px solid black; */
+
+	}
+
+	.skip-btn {
+		width: 72px;
+		border-radius: 8px;
+		height: 53px;
+	}
+
+	.video-textarea {
+		border: 1px solid #707070;
+		border-radius: 8px;
+		margin-left: 5px;
+		padding-left: 10px;
+		padding-right: 40px;
+	}
+
+	.txtarea-cont {
+		display: contents;
+		position: absolute;
+	}
+
+	.send-btn {
+		position: absolute;
+		right: 13px;
+		top: 15px;
+	}
+
+	.send-btn-cont {
+		border: none;
+		color: black;
+		background-color: white;
+		padding: 0px;
+	}
+
+	.status-txt {
+		color: #343a40;
+		text-align: center;
+	}
+
+	.chat-log {
+		/* height: 450px; */
+		max-height: 69vh;
+		overflow-x: hidden;
+		overflow-y: auto;
+		padding: 10px;
+		background-color: #fff;
+		font-size: 0.9em;
+		flex-direction: column-reverse;
+		flex-grow: 1;
+	}
+
+	.msg-p {
+		font-weight: 450;
+		margin-top: 5px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+		white-space: normal;
+		-ms-word-break: break-all;
+		word-break: break-all;
+	}
+
+	.message-container {
+		margin-top: 10px;
+		justify-content: start;
+		position: relative;
+	}
+	.message-container1 {
+		margin-top: 10px;
+		justify-content: end;
+		position: relative;
+	}
+
+	.username-span {
+		font-weight: 600;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+
+	#id_chatroom_card {
+		height: 100%;
+		/* margin-left: 8px; */
+	}
+
+	#id_chat_log_container{
+		flex: 1;
+	}
+
+	.left-card {
+		height: 100%;
+		border-radius: 8px;
+		border: 1px solid #707070;
+	}
+
+	#id_other_username {
+		font-size: 18px;
+		margin-bottom: 0px;
+		color: black;
+	}
+
+	.friends {
+		justify-content: space-between;
+		width: 100%;
+		position: relative;
+	}
+
+	.notify-badge {
+		position: absolute;
+		background: red;
+		/* border: 2px solid red; */
+		height: 1.2rem;
+		width: 1.2rem;
+		line-height: 1.2rem;
+		top: 1rem;
+		right: 2rem;
+		text-align: center;
+		font-size: 1rem;
+		border-radius: 50%;
+		color: white;
+		font-weight: 630;
+		margin-top: -15px;
+		margin-right: -25px;
+	}
+
+	.zero-badge {
+		display: none;
+	}
+
+	.online-dot {
+		width: 10px;
+		/* Adjust the size as needed */
+		height: 10px;
+		/* Adjust the size as needed */
+		background-color: green;
+		border-radius: 50%;
+		/* Makes it a circle */
+		display: inline-block;
+	}
+
+	.online-dot-display{
+		display: none;
+	}
+
+	.offline-dot-display{
+		display: none;
+	}
+
+	.offline-dot {
+		width: 10px;
+		/* Adjust the size as needed */
+		height: 10px;
+		/* Adjust the size as needed */
+		background-color: red;
+		border-radius: 50%;
+		/* Makes it a circle */
+		display: inline-block;
+	}
+
+	.friend-container:hover{
+		background: #f2f2f2;
+	}
+
+	.no-friend{
+		display: flex;
+		justify-content: center;
+		height: 100%;
+		{% comment %} border: 2px solid red; {% endcomment %}
+		align-items: center;
+	}
+
+	.bottom-header{
+		position: relative;
+	}
+
+	.inside_msg_cont{
+		padding-right: 4px;
+		background: #f0f2f2;
+		min-width: 90px;
+		min-height: 45px;
+		padding-left: 4px;
+		border-radius: 8px;
+	}
+
+	.inside_msg_cont1{
+		padding-right: 4px;
+		background: #f0f2f2;
+		min-width: 90px;
+		min-height: 45px;
+		padding-left: 4px;
+		border-radius: 8px;
+	}
+
+	.inside_msg_cont1::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        /* left: -8px; */
+		right: -8px;
+        height: 9px;
+        width: 15px;
+		
+        /* background-color: red; */
+        background: linear-gradient(135deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+        /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
+	.inside_msg_cont::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -8px;
+		/* right: -8px; */
+        height: 9px;
+        width: 15px;
+		
+        /* background-color: red; */
+        background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+        /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
+	.msg-p{
+		font-size: 18px;
+		margin-right: 1.5em;
+	}
+
+	.top-cont-left{
+		align-items: center;
+	}
+
+	.typo{
+		margin-left: 1em;
+		color: green;
+		font-size: 16px;
+	}
+
+	.msg-c{
+		position: absolute;
+		bottom: 5px;
+		right: 6px;
+		/* font-size: 12px; */
+	}
+
+	/* Styling the scrollbar track (the non-draggable part) */
+::-webkit-scrollbar-track {
+    background: none; /* Set the color of the track */ 
+
+}
+
+	.svg-path {
+    	/* fill: #FF5733; Change the fill color to your desired color */
+	}
+
+	.friends-list-container{
+		/* border: 2px solid; */
+		max-height: 70vh;
+		overflow: scroll;
+	}
+
+	.back-arrow{
+		display: none;
+	}
+
+	.no-selection{
+		height: 100%;
+		position: absolute;
+		border: 1px solid #707070;
+		border-radius: 8px;
+		background: #f0f0f0;
+		z-index: 1;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.contenta{
+		/* border: 2px solid green;
+		height: 40%;
+    	width: 45%; */
+	}
+
+	.contenta p {
+		font-weight: 900px;
+	}
+
+	/* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 500px) {  
+	body{
+		height: unset;
+	}
+	.main-container{
+		/* height: 90vh; */
+		height: calc(100vh - 58px);
+		flex: unset;
+	}
+
+	.cont-row{
+		position: relative;
+		overflow: hidden;
+	}
+
+	.left-column{
+		width: 99%;
+    	height: 99%;
+	}
+
+	.right-column{
+		position: absolute;
+		left: 100%;
+		width: 99%;
+    	height: 99%;
+		margin-left: 0px;
+		transition: left 0.5s; 
+	}
+
+	.back-arrow{
+		display: block;
+		margin-right: 2px;	
+	}
+
+	#id_other_username{
+		font-size: 15px;
+	}
+
+	#offline_dot{
+		font-size: 15px;
+	}
+
+	#online_dot{
+		font-size: 15px;
+	}
+
+	.video-textarea{
+		height: 40px;
+	}
+
+	.send-btn{
+		font-size: 18px;
+		top: 11px;
+	}
+
+	.top-cont-left{
+		width: 70%;
+	}
+
+	.typo{
+		margin-left: 1em;
+    	font-size: 11px;
+	}
+
+  }
+
+</style>
+
+<div class="main-container">
+	<div class="row cont-row">
+		<div class="left-column video">
+			<div class="card left-card">
+				<div class="d-flex flex-row align-items-center card-header">
+					<h3>Friends</h3>
+				</div>
+				<div class="card-body p-1">
+					<div class="d-flex flex-column friends-list-container ">
+						{% if m_and_f %}
+						{% for x in m_and_f %}
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1"
+							onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
+							{% comment %} <img class="profile-image rounded-circle img-fluid"
+								id="id_friend_img_{{x.friend.id}}" src="{% static 'codingwithmitch/dummy_image.png' %}">
+							{% endcomment %}
+							<div class="d-flex flex-row friends">
+								<span class="username-span">{{x.friend.name}}</span>
+								{% if x.unread_messages_count != 0 %}
+								<span class="friend-message-span notify-badge"
+									id="id_friend_count_{{x.friend.id}}">{{x.unread_messages_count}}</span>
+								{% else %}
+								<span class="friend-message-span notify-badge zero-badge"
+									id="id_friend_count_{{x.friend.id}}">{{x.unread_messages_count}}</span>
+
+								{% endif %}
+							</div>
+						</div>
+						{% endfor %}
+						{% else %}
+						<span class="username-span">You don't Have any friends </span>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="right-column">
+			<div class="no-selection">
+				<div class="contenta"><p>Click on the friend whith whom you wanna chat</p></div>
+			</div>
+			<div class="card" id="id_chatroom_card">
+				{% if m_and_f %}
+				<!-- Right column content goes here -->
+				<div class="right-header" id="id_room_title">
+					<div class="d-flex top-cont-left">
+						<div class="back-arrow" id="bk-arrow" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></div>
+					<a class="d-flex flex-row" id="id_user_info_container">
+						<h4 class="ml-2" id="id_other_username"></h4>
+					</a>
+					<span id="typing" class="typo d-none">typing...</span>
+				</div>
+					<div id='online_dot' class="online-dot-display"><span class="online-dot">
+						</span><span style="
+						margin-right: 10px;
+						padding-left: 5px;
+					">online</span>
+					</div>
+
+					<div id='offline_dot' class="offline-dot-display"><span class="offline-dot">
+						</span><span style="
+						margin-right: 10px;
+						padding-left: 5px;
+					">offline</span>
+					</div>
+				</div>
+				<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+					<div class="spinner-border text-primary" id="id_chatroom_loading_spinner" role="status"
+						style="display: none; position: absolute; ">
+						{% comment %} <span class="sr-only">Loading...</span> {% endcomment %}
+					</div>
+				</div>
+				<div class="d-flex flex-column" id="id_chat_log_container">
+					
+					<div class="d-flex chat-log" id="id_chat_log">
+
+					</div>
+					<span class="{% if not debug %}d-none{% endif %} page-number" id="id_page_number">1</span>
+					<div class="bottom-header">
+						{% comment %} <button class="btn btn-dark skip-btn" id="skip_button">
+							<span id="skip">Skip</span>
+						</button>
+						<a href="{% url 'new-chat' %}"><button class="btn btn-dark skip-btn d-none" id="new_button">
+								<span id="new">New</span>
+							</button></a> {% endcomment %}
+						<!-- <textarea disabled class="flex-grow-1 chat-message-input"
+                                id="id_chat_message_input"></textarea> -->
+						<div class="txtarea-cont">
+
+							<textarea class="flex-grow-1 video-textarea" id="id_chat_message_input"></textarea>
+							<button class="chat-message-submit-button send-button send-btn-cont" id="send_button">
+								<span id="id_chat_message_submit" class="material-icons send-btn">send
+								</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				{% else %}
+				<div class="no-friend">
+					<span>You don't Have any messages buddy</span>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Client Error MODAL -->
+<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-toggle="modal"
+	data-target="#id_client_error_modal">
+</button>
+<div class="modal fade" id="id_client_error_modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Socket Client Error</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p id="id_client_error_modal_body">Something went wrong.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal"
+					id="id_client_error_modal_close_btn">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Client Error MODAL -->
+
+<script src="{% static 'collections/collections.min.js' %}"></script>
+
+<script type="text/javascript">
+
+	function goBack(){
+		var rightColumn = document.querySelector('.right-column');
+		rightColumn.style.left = '100%';
+	}
+
+	function submitGeneralMsgNotificationToCache() {
+		// console.log('SGNMTOCAHE is being called')
+
+		friends_dict = {}
+
+
+		{% if m_and_f %}
+
+		// console.log("{{m_and_f}}")
+		{% for item in m_and_f %}
+		//console.log("{{item.friend.id}}")
+		friends_dict["{{item.friend.name}}"] = "{{item.friend.id}}"
+
+
+		{% endfor %}
+
+		// console.log(friends_dict)
+
+		{% endif %}
+
+		return friends_dict
+
+	}
+
+
+	function startMsgNotificationService() {
+		if ("{{request.user.is_authenticated}}" == "True") {
+			setInterval(request_unread_msg_count, 4000)
+		}
+	}
+
+
+	function request_unread_msg_count() {
+		// Start the fun
+		if ("{{request.user.is_authenticated}}") {
+			chatNotifSocket.send(JSON.stringify({
+				"command": "start",
+				"friends_dict": submitGeneralMsgNotificationToCache(),
+			}));
+		}
+	}
+
+	function updateUnreadGeneralNotificationsCount(id_count_dict) {
+
+		// console.log("i am getting called")
+
+
+	for (var key in id_count_dict) {
+		if (id_count_dict.hasOwnProperty(key)) {
+			var value = id_count_dict[key];
+			// console.log("Key: " + key + ", Value: " + value);
+			if (value != 0) {
+				var countSpan = document.getElementById("id_friend_count_" + key)
+				countSpan.innerHTML = value
+				countSpan.style.background = "red"
+				countSpan.style.cssText = "display: block !important;";
+			} else{
+				var countSpan = document.getElementById("id_friend_count_" + key)
+				countSpan.innerHTML = value
+				countSpan.style.background = "transparent"
+				countSpan.style.cssText = "display: none !important;";
+			}
+
+		}
+	}
+			
+	}
+
+
+
+
+	var chatSocket = null;
+	var roomId = null;
+	var room_name = null;
+	var auth_user_id = {{id}};
+
+	// onStart()
+
+	// function onStart() {
+	// 	{% if room %}
+	// 	if ("{{room.user1}}" == "{{request.user}}") {
+	// 		onSelectFriend("{{room.user2.id}}")
+	// 	}
+	// 	else {
+	// 		onSelectFriend("{{room.user1.id}}")
+	// 	}
+	// 	{% else %}
+	// 	{% if m_and_f %}
+	// 	onSelectFriend("{{m_and_f.0.friend.id}}")
+	// 	{% endif %}
+	// 	{% endif %}
+	// }
+
+	function onSelectFriend(userId) {
+		var cleanup = document.querySelector('.no-selection')
+		cleanup.style.display = 'none';
+		createOrReturnPrivateChat(userId)
+		clearHighlightedFriend()
+		highlightFriend(userId)
+		updatePhone()
+	}
+
+	function updatePhone(){
+		var rightColumn = document.querySelector('.right-column');
+		rightColumn.style.left = '0%';
+	}
+
+	function closeWebSocket() {
+		if (chatSocket != null) {
+			chatSocket.close()
+			chatSocket = null
+			// leaveCount = 0;
+			clearChatLog()
+			setPageNumber("1")
+			disableChatLogScrollListener()
+		}
+
+	}
+
+	function setupWebSocket(room_id) {
+
+
+		console.log("setupWebSocket: " + room_id)
+
+		roomId = room_id
+		
+
+
+		// close previous socket if one is open
+		closeWebSocket()
+
+		// Correctly decide between ws:// and wss://
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+	
+		var ws_path = ws_scheme + '://' + window.location.host + ":8001/mchat/" + roomId + "/"; // production
+	
+
+
+		// console.log("Connecting to " + ws_path);
+		chatSocket = new WebSocket(ws_path);
+
+		// let leaveCount = 0;
+
+		// Handle incoming messages
+		chatSocket.onmessage = function (message) {
+			// Decode the JSON
+			console.log("Got chat websocket message " + message.data);
+			console.log("Got websocket message.");
+			var data = JSON.parse(message.data);
+
+			// display the progress bar?
+			displayChatroomLoadingSpinner(data.display_progress_bar)
+
+			// Handle errors (ClientError)
+			if (data.error) {
+				console.error(data.error + ": " + data.message)
+				showClientErrorModal(data.message)
+
+			}
+			// Handle joining (Client perspective)
+			if (data.join) {
+				console.log("Joining room " + data.join);
+				room_name = data.room_name
+				console.log("The group name is -",room_name)
+				getUserInfo()
+				getRoomChatMessages()
+				enableChatLogScrollListener()
+				markRoomCount()
+				console.log("*************** The room id is - ",data.room_id)
+				startStatusCheckService()
+				
+
+			}
+
+			// user info coming in from backend
+			if (data.user_info) {
+				handleUserInfoPayload(data.user_info)
+
+			}
+
+			// Handle leaving (client perspective)
+			if (data.leave) {
+				// do nothing
+				console.log("Leaving room " + data.leave);
+			}
+
+			if (data.status_check){
+				// count++;
+				console.log('This is going to check the status every 10 secs ')
+				if (data.status == "online"){
+					console.log("it's the online status")
+					var offline_dot = document.getElementById('offline_dot')
+					offline_dot.style.display = 'none';
+
+					var online_dot = document.getElementById('online_dot')
+					online_dot.style.display = 'inline-block';
+
+					// var pathElements = document.querySelectorAll('.svg-path')
+					// pathElements.forEach(function(pathElement) {
+					// 	console.log("***********_____________________----------- updating the color of each element")
+					// 	pathElement.style.fill = "#009cda"; // Change the fill color to your desired color
+					// });
+
+				} else {
+					// leaveCount++;
+					// if (leaveCount == 1){
+						console.log('its the offline status')
+						// console.log('The leave count is - ', leaveCount)
+						var online_dot = document.getElementById('online_dot')
+						online_dot.style.display = 'none';
+						
+						var offline_dot = document.getElementById('offline_dot')
+						offline_dot.style.display = 'inline-block';
+					// } else{
+						// console.log("This is the second time of leave message so we will ignore it", leaveCount)
+					// }
+				}
+
+
+			}
+
+			// Handle getting a message
+			if (data.msg_type == 0 || data.msg_type == 1 || data.msg_type == 2) {
+				console.log(data)
+				console.log("The authenticated user id is - ", auth_user_id)
+
+				appendChatMessage(data, false, true, auth_user_id,data.read)
+					
+			}
+
+			if (data.msg_type == 1 || data.msg_type == 2){
+				if (data.status == "online"){
+					console.log("it's the online status")
+					var offline_dot = document.getElementById('offline_dot')
+					offline_dot.style.display = 'none';
+
+					var online_dot = document.getElementById('online_dot')
+					online_dot.style.display = 'inline-block';
+
+					var pathElements = document.querySelectorAll('.svg-path')
+					pathElements.forEach(function(pathElement) {
+						console.log("***********_____________________----------- updating the color of each element")
+						pathElement.style.fill = "#009cda"; // Change the fill color to your desired color
+					});
+
+				} else {
+					// leaveCount++;
+					// if (leaveCount == 1){
+						console.log('its the offline status')
+						// console.log('The leave count is - ', leaveCount)
+						var online_dot = document.getElementById('online_dot')
+						online_dot.style.display = 'none';
+						
+						var offline_dot = document.getElementById('offline_dot')
+						offline_dot.style.display = 'inline-block';
+					// } else{
+						// console.log("This is the second time of leave message so we will ignore it", leaveCount)
+					// }
+				}
+
+			}
+
+			if (data.isTyping) {
+				// Display "user is typing" message
+				if (data.id != auth_user_id){
+					const typingIndicator = document.getElementById('typing');
+					typingIndicator.classList.remove("d-none");
+			
+					// Add a timeout to remove the message after a few seconds
+					setTimeout(() => {
+						typingIndicator.classList.add("d-none");
+					}, 3000); // Remove the message after 1 seconds (adjust as needed)
+			}
+        } 
+
+			// new payload of messages coming in from backend
+			if (data.messages_payload) {
+				// console.log(data.messages)
+				handleMessagesPayload(data.messages, data.new_page_number)
+			}
+
+			if (data.marked) {
+				setMsgNotificationsAsRead()
+			}
+
+		};
+
+		chatSocket.addEventListener("open", function (e) {
+			console.log("ChatSocket OPEN")
+			// join chat room
+			if ("{{request.user.is_authenticated}}") {
+				chatSocket.send(JSON.stringify({
+					"command": "join",
+					"room": roomId
+				}));
+			}
+		})
+
+		chatSocket.onclose = function (e) {
+			console.log('Chat socket closed.');
+		};
+
+		chatSocket.onOpen = function (e) {
+			console.log("ChatSocket onOpen", e)
+		}
+
+		chatSocket.onerror = function (e) {
+			console.log('ChatSocket error', e)
+		}
+
+		if (chatSocket.readyState == WebSocket.OPEN) {
+			console.log("ChatSocket OPEN")
+		} else if (chatSocket.readyState == WebSocket.CONNECTING) {
+			console.log("ChatSocket connecting..")
+		}
+	}
+
+
+	// document.getElementById('id_chat_message_input').focus();
+	document.getElementById('id_chat_message_input').onkeyup = function (e) {
+		if (e.keyCode === 13 && e.shiftKey) {  // enter + return
+			// Handled automatically by textarea
+		}
+		else if (e.keyCode === 13 && !e.shiftKey) { // enter + !return
+			document.getElementById('id_chat_message_submit').click();
+		}
+	};
+
+	
+
+	document.getElementById('id_chat_message_submit').onclick = function (e) {
+		const messageInputDom = document.getElementById('id_chat_message_input');
+		const message = messageInputDom.value;
+		chatSocket.send(JSON.stringify({
+			"command": "send",
+			"message": message,
+			"room": roomId
+		}));
+		messageInputDom.value = '';
+	};
+
+	// typing setup -----
+
+
+
+    const inputField = document.getElementById('id_chat_message_input');
+    inputField.addEventListener('input', () => {
+
+		// console.log('The onchange function is getting called')
+        // Send a "typing" event to the server using WebSocket
+		if (room_name != null){
+			// console.log("----- The group name is - ", room_name)
+			chatSocket.send(JSON.stringify(
+				{
+					"command": "typing",
+					"group_name": room_name,
+					"isTyping": true,
+					// "userName": window.self_name, // Add the username
+					"userId": auth_user_id, // Add the user's ID 
+				}
+			));
+	}
+    });
+
+	function startStatusCheckService() {
+		// if ("{{request.user.is_authenticated}}" == "True") {
+			console.log('The 4sec interval has been set')
+			setInterval(statusCheck, 10000)
+		// }
+	}
+
+	// This function is going to check every 3-5 secs that whether the user is online or not
+	function statusCheck(){
+		// count++;
+		// console.log("sending status check command to the backend - ", count)
+		chatSocket.send(JSON.stringify({
+			"command": "status_check",
+			// "room": roomId
+		}));
+	}
+
+	function selectUser(user_id) {
+		// Weird work-around for passing arg to url
+		var url = "{% url 'account:view' user_id=243823983752487823 %}".replace("243823983752487823", user_id)
+		var win = window.open(url, "_blank")
+		win.focus()
+	}
+
+	function getUserInfo() {
+		chatSocket.send(JSON.stringify({
+			"command": "get_user_info",
+			"room_id": roomId,
+		}));
+	}
+	function markRoomCount() {
+		chatSocket.send(JSON.stringify({
+			"command": "mark_room_read",
+			"room_id": roomId,
+		}));
+	}
+
+	// function mark_room_read(){
+	// 	chatSocket.send(JSON.stringify({
+	// 		"command": "mark_room_read",
+	// 		"roomId": roomId,
+	// 	}));
+	// }
+
+	function setMsgNotificationsAsRead() {
+		var countElement = document.getElementById("id_msg_notifications_count")
+		countElement.style.background = "transparent"
+		countElement.style.display = "none"
+		getUnreadMessageNotificationsCount()
+	}
+
+	function handleUserInfoPayload(user_info) {
+		if (user_info['uni_name'] == ""){
+			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'].slice(0,12) + '...' 
+		} else{
+			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uni_name'].slice(0,25) + '...' 
+		}
+		document.getElementById("id_user_info_container").href = "{% url 'account:view' user_id=4586463456756486676 %}".replace("4586463456756486676", user_info['id'])
+	}
+
+	function showClientErrorModal(message) {
+		document.getElementById("id_client_error_modal_body").innerHTML = message
+		document.getElementById("id_trigger_client_error_modal").click()
+	}
+
+	function appendChatMessage(data, maintainPosition, isNewMessage, auth_user_id,read) {
+		messageType = data['msg_type']
+		msg_id = data['msg_id']
+		message = data['message']
+		uName = data['name']
+		user_id = data['user_id']
+		uniName = data['uniName']
+		timestamp = data['natural_timestamp']
+		readMsg = data['read']
+		// console.log("append chat message: " + messageType)
+
+		// username = uName + " | " + uniName + " :"
+		username = uName + " :"
+		msg = message + '\n'
+		// determine what type of msg it is
+		switch (messageType) {
+			case 0:
+				// new chatroom msg
+				username = uName + ": "
+				msg = message + '\n'
+				if (read == null){
+					createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id,readMsg) 
+				} else if (read == true || read == false || read == 'True' || read == "False"){
+					createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id,read) 
+				}
+				break;
+			case 1:
+				// User joined room
+				// createConnectedDisconnectedElement(message, msg_id, uniName, user_id)
+				break;
+			case 2:
+				// User left room
+				// createConnectedDisconnectedElement(message, msg_id, uniName, user_id)
+				break;
+			default:
+				console.log("Unsupported message type!");
+				return;
+		}
+	}
+
+	/*
+		Build a new ChatMessage element and append to the list
+	*/
+	function createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage,auth_user_id,read) {
+
+		// console.log("***************************************************************************************************************************************************************************************** The value of read is - ",read)
+
+		var chatLog = document.getElementById("id_chat_log")
+
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex")
+		newMessageDiv.classList.add("flex-row")
+		
+		if (auth_user_id == user_id){
+			// console.log('The user_id',user_id)
+			// console.log('The auth_user_id',auth_user_id)
+			newMessageDiv.classList.add("message-container1")
+		} else{
+			newMessageDiv.classList.add("message-container")
+			// console.log('The user_id',user_id)
+			// console.log('The auth_user_id',auth_user_id)
+		}
+
+
+
+		var div1 = document.createElement("div")
+		div1.classList.add("d-flex")
+		div1.classList.add("flex-column")
+		if (auth_user_id == user_id){
+			div1.classList.add("inside_msg_cont1")
+
+		} else{
+			div1.classList.add("inside_msg_cont")
+
+		}
+
+		var div2 = document.createElement("div")
+		div2.classList.add("d-flex")
+		div2.classList.add("flex-row")
+
+		// var usernameSpan = document.createElement("span")
+		// usernameSpan.innerHTML = username
+		// usernameSpan.classList.add("username-span")
+		// usernameSpan.addEventListener("click", function (e) {
+		// 	selectUser(user_id)
+		// })
+		// div2.appendChild(usernameSpan)
+
+		// var timestampSpan = document.createElement("span")
+		// timestampSpan.innerHTML = timestamp
+		// timestampSpan.classList.add("timestamp-span")
+		// timestampSpan.classList.add("d-flex")
+		// timestampSpan.classList.add("align-items-center")
+		// timestampSpan.addEventListener("click", function (e) {
+		// 	selectUser(user_id)
+		// })
+		// div2.appendChild(timestampSpan)
+
+		// div1.appendChild(div2)
+
+		var msgP = document.createElement("p")
+		msgP.innerHTML = validateText(msg)
+		msgP.classList.add("msg-p")
+		div1.appendChild(msgP)
+		
+		if (auth_user_id == user_id){
+			
+			var msgcheck = document.createElement("span")
+			msgcheck.classList.add("msg-c")
+
+			// Create an HTML element with your SVG content
+			if (read == true || read == 'True'){
+				// console.log("The color is going to be ******************************************************************************************************************************************************************************************************************   BBBBLLUUUUEEEEE" )
+				var svgHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" id="double-check"><path class="svg-path" fill="#009cda" fill-rule="evenodd" d="M16.5303 6.46967C16.8232 6.76256 16.8232 7.23744 16.5303 7.53033L6.53033 17.5303C6.38968 17.671 6.19891 17.75 6 17.75 5.80109 17.75 5.61032 17.671 5.46967 17.5303L1.46967 13.5303C1.17678 13.2374 1.17678 12.7626 1.46967 12.4697 1.76256 12.1768 2.23744 12.1768 2.53033 12.4697L6 15.9393 15.4697 6.46967C15.7626 6.17678 16.2374 6.17678 16.5303 6.46967zM22.5303 6.46966C22.8232 6.76254 22.8232 7.23742 22.5303 7.53032L12.5308 17.5303C12.2379 17.8232 11.7631 17.8232 11.4702 17.5304L9.96975 16.0304C9.67681 15.7376 9.67674 15.2627 9.96959 14.9697 10.2624 14.6768 10.7373 14.6767 11.0303 14.9696L12.0004 15.9394 21.4697 6.46968C21.7625 6.17678 22.2374 6.17677 22.5303 6.46966z" clip-rule="evenodd"></path></svg>';
+			}else if (read == false || read == 'False'){
+				// console.log("The color is going to be ******************************************************************************************************************************************************************************************************************   BBBBLLAACCKK" )
+				var svgHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" id="double-check"><path class="svg-path" fill="#212529" fill-rule="evenodd" d="M16.5303 6.46967C16.8232 6.76256 16.8232 7.23744 16.5303 7.53033L6.53033 17.5303C6.38968 17.671 6.19891 17.75 6 17.75 5.80109 17.75 5.61032 17.671 5.46967 17.5303L1.46967 13.5303C1.17678 13.2374 1.17678 12.7626 1.46967 12.4697 1.76256 12.1768 2.23744 12.1768 2.53033 12.4697L6 15.9393 15.4697 6.46967C15.7626 6.17678 16.2374 6.17678 16.5303 6.46967zM22.5303 6.46966C22.8232 6.76254 22.8232 7.23742 22.5303 7.53032L12.5308 17.5303C12.2379 17.8232 11.7631 17.8232 11.4702 17.5304L9.96975 16.0304C9.67681 15.7376 9.67674 15.2627 9.96959 14.9697 10.2624 14.6768 10.7373 14.6767 11.0303 14.9696L12.0004 15.9394 21.4697 6.46968C21.7625 6.17678 22.2374 6.17677 22.5303 6.46966z" clip-rule="evenodd"></path></svg>';
+
+			}
+			// Set the innerHTML of the span to the SVG HTML
+			msgcheck.innerHTML = svgHTML;
+
+			// Append the span to the document or wherever you want to display it
+			div1.appendChild(msgcheck); // Add it to the body as an example
+
+			// // msgP.innerHTML = <i class="fa-solid fa-check"></i>
+			// msgcheck.classList.add("fa-solid")
+			// msgcheck.classList.add("fa-check")
+			// div1.appendChild(msgcheck)
+
+			
+		}
+
+		newMessageDiv.appendChild(div1)
+
+		if (isNewMessage) {
+			chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
+		}
+		else {
+			chatLog.appendChild(newMessageDiv)
+		}
+
+		if (!maintainPosition) {
+			chatLog.scrollTop = chatLog.scrollHeight
+		}
+
+	
+	}
+
+	function createConnectedDisconnectedElement(msg, msd_id, uniName, user_id) {
+		var chatLog = document.getElementById("id_chat_log")
+
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex")
+		newMessageDiv.classList.add("flex-row")
+		newMessageDiv.classList.add("message-container")
+
+	
+
+		var usernameSpan = document.createElement("span")
+		usernameSpan.innerHTML = msg
+		usernameSpan.classList.add("username-span")
+		usernameSpan.addEventListener("click", function (e) {
+			selectUser(user_id)
+		})
+		newMessageDiv.appendChild(usernameSpan)
+
+		chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
+
+		// preloadImage(profile_image, profile_image_id)
+	}
+
+	function setPageNumber(pageNumber) {
+		document.getElementById("id_page_number").innerHTML = pageNumber
+	}
+
+	function clearChatLog() {
+		document.getElementById("id_chat_log").innerHTML = ""
+	}
+
+
+	function setPaginationExhausted() {
+		setPageNumber("-1")
+	}
+
+	/*
+	  Retrieve the chat room messages given the page number.
+  */
+	function getRoomChatMessages() {
+		var pageNumber = document.getElementById("id_page_number").innerHTML
+		if (pageNumber != "-1") {
+			setPageNumber("-1") // loading in progress
+			chatSocket.send(JSON.stringify({
+				"command": "get_room_chat_messages",
+				"room_id": roomId,
+				"page_number": pageNumber,
+			}));
+		}
+	}
+
+
+	function handleMessagesPayload(messages, new_page_number) {
+		if (messages != null && messages != "undefined" && messages != "None") {
+			setPageNumber(new_page_number)
+			// console.log("The messages are ------------ ",messages)
+			messages.forEach(function (message) {
+				appendChatMessage(message, true, false, auth_user_id,null)
+			})
+		}
+		else {
+			setPaginationExhausted() // no more messages
+		}
+	}
+
+	/*
+		Get the next page of chat messages when scrolls to bottom
+	*/
+	function chatLogScrollListener(e) {
+		var chatLog = document.getElementById("id_chat_log")
+		if ((Math.abs(chatLog.scrollTop) + 2) >= (chatLog.scrollHeight - chatLog.offsetHeight)) {
+			getRoomChatMessages()
+		}
+	}
+
+	/*
+		Enable the function "chatLogScrollListener"
+	*/
+	function enableChatLogScrollListener() {
+		document.getElementById("id_chat_log").addEventListener("scroll", chatLogScrollListener);
+	}
+
+	/*
+		Disable the function "chatLogScrollListener"
+	*/
+	function disableChatLogScrollListener() {
+		document.getElementById("id_chat_log").removeEventListener("scroll", chatLogScrollListener)
+	}
+
+	function displayChatroomLoadingSpinner(isDisplayed) {
+		// console.log("displayChatroomLoadingSpinner: " + isDisplayed)
+		var spinner = document.getElementById("id_chatroom_loading_spinner")
+		if (isDisplayed) {
+			spinner.style.display = "block"
+		}
+		else {
+			spinner.style.display = "none"
+		}
+	}
+
+	function highlightFriend(userId) {
+		// select new friend
+		document.getElementById("id_friend_container_" + userId).style.background = "#f2f2f2"
+		document.getElementById("id_friend_count_" + userId).style.display = "none"
+		var countElement = document.getElementById("id_msg_notifications_count")
+		countElement.style.background = "transparent"
+		countElement.style.display = "none"
+	}
+
+	function createOrReturnPrivateChat(id) {
+		payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"user2_id": id,
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'chat:create-or-return-private-chat' %}", // production
+			data: payload,
+			timeout: 5000,
+			success: function (data) {
+				console.log("SUCCESS", data)
+				if (data['response'] == "Successfully got the chat.") {
+					setupWebSocket(data['chatroom_id'])
+				}
+				else if (data['response'] != null) {
+					alert(data['response'])
+				}
+			},
+			error: function (data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+		});
+	}
+
+    
+	function clearHighlightedFriend() {
+		{% if m_and_f %}
+		{% for x in m_and_f %}
+		document.getElementById("id_friend_container_{{x.friend.id}}").style.background = ""
+		{% endfor %}
+		{% endif %}
+
+		// clear the profile image and username of current chat
+		document.getElementById("id_other_username").innerHTML = ""
+	}
+
+
+	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+	{% if debug_mode %}
+	var ws2_path = ws_scheme + '://' + window.location.host + "/mchat-notif/"; // development
+	{% else %}
+	var ws2_path = ws_scheme + '://' + window.location.host + ":8001/mchat-notif/"; // production
+	{% endif %}
+
+
+	// console.log("Connecting to " + ws_path);
+	chatNotifSocket = new WebSocket(ws2_path);
+
+	// Handle incoming messages
+	chatNotifSocket.onmessage = function (message) {
+		// Decode the JSON
+		// console.log("Got chat websocket message " + message.data);
+		// console.log("Got websocket message.");
+		var data = JSON.parse(message.data);
+
+		if (data.receive_unread_msg_count) {
+			// Gotta update the UI with new count
+			// console.log(data.payload_dict)
+			updateUnreadGeneralNotificationsCount(data.payload_dict);
+		}
+
+
+	}
+
+	chatNotifSocket.addEventListener("open", function (e) {
+		console.log("ChatNotifSocket OPEN")
+		startMsgNotificationService()
+	})
+
+	chatNotifSocket.onclose = function (e) {
+		console.log('Chat Notif socket closed.');
+	};
+
+	chatNotifSocket.onOpen = function (e) {
+		console.log("ChatNotifSocket onOpen", e)
+	}
+
+	chatNotifSocket.onerror = function (e) {
+		console.log('ChatNotifSocket error', e)
+	}
+
+	if (chatNotifSocket.readyState == WebSocket.OPEN) {
+		console.log("ChatNotifSocket OPEN")
+	} else if (chatNotifSocket.readyState == WebSocket.CONNECTING) {
+		console.log("ChatNotifSocket connecting..")
+	}
+
+
+</script>
+
+
+{% endblock body %}

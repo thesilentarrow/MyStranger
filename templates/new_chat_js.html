@@ -1,0 +1,914 @@
+{% include 'friend/snippets/send_friend_request.html' %}
+{% include 'friend/snippets/cancel_friend_request.html' %}
+<script type="text/javascript">
+
+    const video = document.getElementById('remote');
+    const loadingSpinner = document.querySelector('.loading-spinner');
+
+    video.addEventListener('loadedmetadata', () => {
+        if (video.getAttribute('src')) {
+            loadingSpinner.style.display = 'none';
+        }
+    }); 
+
+    const our_video = document.getElementById("ours");
+    const remote_video = document.getElementById("remote");
+    let stream;
+    let rtcpeerconnection;
+    const constraints = {
+        'video': true,
+        'audio': true,
+    }
+
+    // Contains the stun server URL we will be using.
+    {% comment %} let iceServers = {
+        iceServers: [
+            { urls: "stun:stun.services.mozilla.com" },
+            { urls: "stun:stun.l.google.com:19302" },
+        ],
+    }; {% endcomment %}
+
+    let iceServers = {
+        iceServers: [
+            {
+                urls: ['stun:stun1.1.google.com:19302', 'stun:stun2.1.google.com:19302']
+            },
+            {
+                urls: 'turn:relay1.expressturn.com:3478',
+                username: 'ef0UZL2TY4FC54X48J',
+                credential: 'aq0vk71QmQp21uWr'
+            }
+        ],
+    };
+    
+
+    // let iceCandidateQueue = [];
+
+
+    {% comment %} function init(){
+    
+    navigator.mediaDevices.getUserMedia(constraints).then(s => {
+        stream = s;
+        our_video.srcObject = s;
+        our_video.muted = true;
+        return stream
+    }).catch(err => {
+        try {
+            navigator.mediaDevices.getUserMedia({'video': true,'audio': false,}).then(s => {
+                stream = s;
+                our_video.srcObject = s; 
+                our_video.muted = true;
+
+                return stream
+            })
+            console.log('Video access granted, but audio access denied');
+            document.getElementById('audio-error').style.display = 'block'
+            // You can display a message to the user indicating that audio is not available.
+        } catch (err) {
+            console.error('Error with video access:', err);
+            document.getElementById('video-error').style.display = 'block'
+        }
+    });
+
+    return stream
+
+}
+
+init() {% endcomment %}
+    
+function init() {
+    return navigator.mediaDevices.getUserMedia(constraints)
+    .then(s => {
+        stream = s;
+        
+        our_video.srcObject = s;
+        // our_video.muted = true;
+        return stream;  // This is correct
+    })
+    .catch(err => {
+        console.log('Video access granted, but audio access denied');
+        document.getElementById('audio-error').style.display = 'block'
+        // You can display a message to the user indicating that audio is not available.
+        return navigator.mediaDevices.getUserMedia({'video': true,'audio': false,})
+        .then(s => {
+            stream = s;
+           
+            our_video.srcObject = s; 
+            // our_video.muted = true;
+            return stream;  // This is also correct
+        })
+        .catch(err => {
+            console.error('Error with video access:', err);
+            document.getElementById('video-error').style.display = 'block'
+        });
+    });
+}
+init()
+
+    // Here we are handling the socket connection and also what happens when socket disconnects.
+    // -----------------------------------------------------------------------------------------
+
+    console.log("Setting up the WebSocket - ")
+
+    // Correctly decide between ws:// and wss://
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path = ws_scheme + '://' + window.location.host + "/chat/"; // development
+    {% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat/"; // development {% endcomment %}
+
+    // console.log("Connecting to " + ws_path);
+    chatSocket = new WebSocket(ws_path);
+
+    let commandCount = 0;
+    let leaveCount = 0;
+
+    // Handle incoming messages
+    chatSocket.onmessage = function (message) {
+
+        // Decode the JSON
+        console.log("Got websocket message.");
+        var data = JSON.parse(message.data);
+        
+
+        
+        if (data.my_id) {
+            // Settting up the self_id so that it can be used further on.
+            window.self_id = data.my_id
+            
+        }
+
+        // seprating code for user1 and user2
+
+        if (data.status_user2) {
+            window.user = 'user2'
+            console.log(window.user)
+        }
+        if (data.status_user1) {
+            window.user = 'user1'
+            console.log(window.user)
+        }
+
+        if (data.grouped) {
+
+           
+
+            console.log(data)
+            commandCount++;
+
+            {% comment %} console.log('The value of grouped count is - ', commandCount) {% endcomment %}
+            if (commandCount === 1){
+
+                statusUpdate(data.response)
+                console.log(data.response)
+                
+                window.group_name = data.grouped
+
+
+                chatSocket.send(JSON.stringify({
+                    "command": 'grouped',
+                    "group_name": data.grouped,
+                }));
+
+                // Enabling the textarea and the send_btn
+                document.getElementById('id_chat_message_input').disabled = false;
+                document.getElementById('send_button').disabled = false;
+                document.getElementById('send_req_btn').disabled = false;
+                
+                var send_icon = document.getElementById('id_chat_message_submit')
+                send_icon.classList.remove("d-none");
+
+
+                // here user1 is creating the offer
+
+                if (window.user == 'user1') {
+                    window.self_name = data.user1_self_name
+                    window.stranger = data.random_user_name
+                    window.stranger_id = data.random_user_id
+                    window.stranger_email = data.random_user_email
+                    window.stranger_gender = data.random_user_gender
+                    createOffer()
+                    console.log('offer created')
+                }
+                else {
+                    window.self_name = data.random_user_name
+                    window.stranger = data.user1_self_name
+                    window.stranger_id = data.user1_self_id
+                    window.stranger_email = data.user1_self_email
+                    window.stranger_gender = data.user1_self_gender
+                }
+
+                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + window.stranger_email {% endcomment %}
+                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger {% endcomment %}
+
+
+                {% comment %} {% if not request.user_agent.is_mobile %}
+                    document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>'
+                    document.getElementById('strangerName').innerHTML = window.stranger 
+                {% else %}
+                    document.getElementById('strangerName').innerHTML = window.stranger
+                {% endif %} {% endcomment %}
+
+                console.log('stranger gender is - ', window.stranger_gender)
+                document.getElementById('strangerName').innerHTML = "Stranger"
+               
+
+                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>' {% endcomment %}
+                document.getElementById('report_btn').disabled = false;
+                document.getElementById('flag_user_id').value = window.stranger_id;
+                document.getElementById('flag_user_name').value = window.stranger;
+                {% comment %} document.getElementById('flagged_by').value = window.; {% endcomment %}
+                
+
+                const loadingSpinner = document.querySelector('.loading-spinner');
+                loadingSpinner.style.display = 'none';
+            } else {
+                {% comment %} console.log("This is the second time of grouped message so we will ignore it") {% endcomment %}
+            }
+
+        }
+
+        if (data.isTyping) {
+            // Display "user is typing" message
+            if (data.id != window.self_id){
+            const typingIndicator = document.getElementById('typing');
+            typingIndicator.classList.remove("d-none");
+    
+            // Add a timeout to remove the message after a few seconds
+            setTimeout(() => {
+                typingIndicator.classList.add("d-none");
+            }, 3000); // Remove the message after 1 seconds (adjust as needed)
+        }
+        } 
+
+        if (data["command"] == "offer") {
+            console.log('offer recieved by ', window.user)
+            if (window.user == 'user2') {
+                console.log('user2 ----------')
+                createanswer(data["offer"]);
+                console.log('answer created')
+            }
+        } else if (data["command"] == "answer") {
+            if (window.user == 'user1') {
+                rtcpeerconnection.setRemoteDescription(data["answer"]);
+                console.log("answer set as remote");
+            }
+        } else if (data["command"] == "candidate") {
+            if (data["iscreated"] != window.user) {
+
+                // sometimes error is comming while adding ice candidates using this code
+                const IceCandidate = new RTCIceCandidate(data["candidate"]);
+                rtcpeerconnection.addIceCandidate(IceCandidate);
+                console.log(window.user, '- added ice')
+
+                // const IceCandidate = new RTCIceCandidate(data["candidate"]);
+                // addIceCandidate(IceCandidate);
+            }
+        }
+
+
+        
+
+        if (data.leave) {
+
+            
+
+            leaveCount++;
+            {% comment %} console.log('The value of leave count is - ', leaveCount) {% endcomment %}
+            
+            if (leaveCount === 1){
+                 remote_video.srcObject = undefined;
+
+                 const loadingSpinner = document.querySelector('.loading-spinner');
+                 loadingSpinner.style.display = 'none';
+               
+                 {% comment %} remote_video.style.backgroundColor = 'rgba(64, 64, 64, 0.5)'; {% endcomment %}
+
+                if (window.self_id == data.disconnector) {
+                    response = 'You have disconnected.'
+                }
+                else {
+                    response = 'Stranger have disconnected.'
+                }
+
+                // if(data.by_skip == 'skip'){
+                //     window.by_skip = true
+                //     statusUpdate(response)
+                // }
+                // else {
+                //     window.by_skip = false
+                // }
+
+                // if (window.by_skip && data.by_skip == 'normal'){
+                //     // we don't have to update the satatus
+                // }
+                // else {
+                //     statusUpdate(response)
+                // }
+
+                
+                statusUpdate(response)
+
+
+
+                // again disabling the textarea and the send_btn
+                document.getElementById('id_chat_message_input').disabled = true;
+                document.getElementById('send_button').disabled = true;
+                document.getElementById('send_req_btn').disabled = true;
+
+                // hiding the skip button and showing new_chat button instead of that.
+                really_btn = document.getElementById('skip_button')
+                really_btn.style.display = 'none';
+                new_btn = document.getElementById('new_button')
+                new_btn.classList.remove("d-none");
+
+                send_icon = document.getElementById('id_chat_message_submit')
+                send_icon.classList.add("d-none");
+            } else{
+                {% comment %} console.log("This is the second time of leave message so we will ignore it") {% endcomment %}
+            }
+        }
+
+        // Handle getting a message
+        if (data.msg_type == 0) {
+            console.log(data);
+            appendChatMessage(data, true)
+        }
+
+        if (data.test) {
+            console.log(data.test)
+        }
+    }
+
+    // basic event listeners for our websocket
+    // ------------------------------------------------------------------------
+
+    chatSocket.addEventListener("open", function (e) {
+        console.log("ChatSocket OPEN")
+        // join chat room
+        if ("{{request.user.is_authenticated}}") {
+            chatSocket.send(JSON.stringify({
+                "command": "join",
+            }));
+        }
+
+    })
+
+
+    chatSocket.onclose = function (e) {
+        console.log('Chat socket closed.');
+
+    };
+
+    chatSocket.onOpen = function (e) {
+        console.log("ChatSocket onOpen", e)
+    }
+
+    chatSocket.onerror = function (e) {
+        console.log('ChatSocket error', e)
+    }
+
+    if (chatSocket.readyState == WebSocket.OPEN) {
+        console.log("ChatSocket OPENN")
+
+    } else if (chatSocket.readyState == WebSocket.CONNECTING) {
+        console.log("ChatSocket connecting..")
+    }
+
+
+
+    // Here we are dealing with submitting our message
+    // -----------------------------------------------------------------------------------
+
+    document.getElementById('id_chat_message_input').focus();
+    document.getElementById('id_chat_message_input').onkeyup = function (e) {
+        if (e.keyCode === 13 && e.shiftKey) {  // enter + return
+            // Handled automatically by textarea
+        }
+        else if (e.keyCode === 13 && !e.shiftKey) { // enter + !return
+            document.getElementById('id_chat_message_submit').click();
+        }
+    };
+
+    document.getElementById('id_chat_message_submit').onclick = function (e) {
+        const messageInputDom = document.getElementById('id_chat_message_input');
+        const message = messageInputDom.value;
+        var trimmedValue = message.trim();
+        if (trimmedValue === ''){
+            {% comment %} console.log('fucker this is an empty msg....') {% endcomment %}
+        } else{
+        chatSocket.send(JSON.stringify({
+            "command": "send",
+            "message": message,
+            "user_id": window.self_id,
+            "group_name": window.group_name,
+        }));
+
+        messageInputDom.value = '';
+    }
+    };
+
+    {% comment %} document.getElementById('id_chat_message_submit').onclick = function (e) {
+        const messageInputDom = document.getElementById('id_chat_message_input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            "command": "send",
+            "message": message,
+            "user_id": window.self_id,
+            "group_name": window.group_name,
+        }));
+
+        messageInputDom.value = '';
+    }; {% endcomment %}
+
+    // Here we are writing the code for skip button so that we can skip the chat using the skip button.
+    // ------------------------------------------------------------------------------------------------
+
+    document.getElementById('skip_button').onclick = function (e) {
+        const skip = document.getElementById('skip').innerHTML;
+
+        if (skip == 'Skip') {
+            {% comment %} console.log('skip button is clicked!') {% endcomment %}
+            document.getElementById('skip').innerHTML = 'really?'
+        }
+        else if (skip == 'really?') {
+            {% comment %} console.log('really button is clicked!') {% endcomment %}
+            if (window.group_name) {
+                group_name = window.group_name
+            }
+            else {
+                group_name = null
+            }
+            chatSocket.send(JSON.stringify({
+                'command': 'skip',
+                'group_name': group_name,
+            }));
+
+        }
+        else {
+            console.log(skip);
+            console.log('check it again')
+        }
+    };
+
+    // typing setup -----
+
+    const inputField = document.getElementById('id_chat_message_input');
+    inputField.addEventListener('input', () => {
+
+        // Send a "typing" event to the server using WebSocket
+        chatSocket.send(JSON.stringify(
+            {
+                "command": "typing",
+                "group_name": window.group_name,
+                "isTyping": true,
+                "userName": window.self_name, // Add the username
+                "userId": window.self_id, // Add the user's ID 
+            }
+        ));
+    });
+    
+
+    var sendFriendRequestBtn = document.getElementById("send_req_btn")
+	if (sendFriendRequestBtn != null){
+		sendFriendRequestBtn.addEventListener("click", function(){
+			sendFriendRequest(window.stranger_id, onFriendRequestSent)
+		})
+	}
+
+    var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
+	if(cancelFriendRequestBtn != null){
+		cancelFriendRequestBtn.addEventListener("click", function(){
+			cancelFriendRequest(window.stranger_id, onFriendRequestCancelled)
+		})
+	}
+
+    // Here when the new button is clicked than simply refresh the page
+    // document.getElementById('new_button').onclick = function (e) {
+    //     location.reload(true);
+    // };
+    // Idk why but this is causing trouble
+
+
+
+    // Some Functions to make our program effiecient 
+    // ------------------------------------------------------------------------
+
+    // status bar to inform the user about it's status 
+
+    function statusUpdate(message) {
+        var spinner = document.getElementById("bar")
+        spinner.innerHTML = message
+    }
+
+    function onFriendRequestSent(){
+		var sendFriendRequestBtn = document.getElementById("send_req_btn")
+        sendFriendRequestBtn.style.display = "none"
+
+		var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
+        cancelFriendRequestBtn.classList.remove("d-none");
+		// though reloding the page is the easiest and most convenient way but we can try to do this without reloading the page
+		// if there's a way to do so then that is going to enhance the user experience
+	}
+
+    function onFriendRequestCancelled(){
+
+        var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
+        cancelFriendRequestBtn.classList.add("d-none");
+
+		var sendFriendRequestBtn = document.getElementById("send_req_btn")
+        sendFriendRequestBtn.style.display = "inline-block"
+	}
+
+    // here we are going to write two lengthy functions which are going to add messages to our htnl template
+
+    function appendChatMessage(data, isNewMessage) {
+        message = data['message']
+        uName = data['id']
+        if (uName == window.self_id) {
+            var username = 'You :'
+            var flex = true
+        }
+        else {
+            var username = window.stranger + ' :'
+            var flex = false
+        }
+        var msg = message + '\n';
+        createChatMessageElement(msg, username, isNewMessage, flex)
+    }
+
+    function createChatMessageElement(msg, username, isNewMessage, flex) {
+        var chatLog = document.getElementById("id_chat_log")
+
+        var newMessageDiv = document.createElement("div")
+        newMessageDiv.classList.add("d-flex")
+        newMessageDiv.classList.add("flex-row")
+        newMessageDiv.classList.add("message-container")
+
+        if (flex){
+            newMessageDiv.style.justifyContent = "end";
+        } else{
+            newMessageDiv.style.justifyContent = "start";
+        }
+
+        var div1 = document.createElement("div")
+        div1.classList.add("d-flex")
+        div1.classList.add("flex-column")
+        if (flex){
+            div1.classList.add("msg-style")
+
+        }else{
+            div1.classList.add("msg-style2")
+        }
+
+        var div2 = document.createElement("div")
+        div2.classList.add("d-flex")
+        div2.classList.add("flex-row")
+
+        var usernameSpan = document.createElement("span")
+        usernameSpan.addEventListener("click", function (e) {
+            //selectUser(user_id)
+        })
+        // usernameSpan.classList.add("username-span")
+        // usernameSpan.innerHTML = username
+        // div2.appendChild(usernameSpan)
+
+
+        // div1.appendChild(div2)
+
+        var msgP = document.createElement("p")
+		msgP.innerHTML = validateText(msg)
+        // msgP.innerHTML = msg
+        msgP.classList.add("msg-p")
+        div1.appendChild(msgP)
+
+        newMessageDiv.appendChild(div1)
+
+        if (isNewMessage) {
+            {% comment %} console.log('yup adding below ig') {% endcomment %}
+            chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
+        }
+
+    }
+
+
+//     function addIceCandidate(candidate) {
+//     if (rtcpeerconnection && rtcpeerconnection.remoteDescription && rtcpeerconnection.remoteDescription.type) {
+//         // If the connection is ready, add the candidate
+//         rtcpeerconnection.addIceCandidate(candidate);
+//     } else {
+//         // Otherwise, queue the candidate
+//         iceCandidateQueue.push(candidate);
+//     }
+// }
+
+    // RTCPR Functions
+
+    function createOffer() {
+        if (!stream){
+            init().then(stream => {
+                createofferva()
+            });
+        } else {
+            createofferva()
+        }
+
+    }
+
+     function createofferva(){
+        rtcpeerconnection = new RTCPeerConnection(iceServers)
+                rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+                rtcpeerconnection.ontrack = OnTrackFunc;
+                stream.getTracks().forEach((track) => {
+                    rtcpeerconnection.addTrack(track, stream);
+                });
+                rtcpeerconnection.createOffer().then((offer) => {
+                    rtcpeerconnection.setLocalDescription(offer);
+                    {% comment %} console.log('Sending offer to consumer - ', offer) {% endcomment %}
+                    chatSocket.send(
+                        JSON.stringify({
+                            command: "offer",
+                            offer: offer,
+                            group: window.group_name,
+                        })
+                    ); 
+                    
+                });
+    } 
+
+    // This function waits for ice gathering before sending the offer
+    // function createofferva() {
+    //     rtcpeerconnection = new RTCPeerConnection(iceServers);
+    //     rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+    //     rtcpeerconnection.ontrack = OnTrackFunc;
+    //     stream.getTracks().forEach((track) => {
+    //         rtcpeerconnection.addTrack(track, stream);
+    //     });
+    //     rtcpeerconnection.createOffer().then((offer) => {
+    //         return rtcpeerconnection.setLocalDescription(offer);
+    //     }).then(() => {
+    //         // Wait for ICE gathering to complete
+    //         return new Promise((resolve) => {
+    //             if (rtcpeerconnection.iceGatheringState === 'complete') {
+    //                 resolve();
+    //             } else {
+    //                 function checkState() {
+    //                     if (rtcpeerconnection.iceGatheringState === 'complete') {
+    //                         rtcpeerconnection.removeEventListener('icegatheringstatechange', checkState);
+    //                         resolve();
+    //                     }
+    //                 }
+    //                 rtcpeerconnection.addEventListener('icegatheringstatechange', checkState);
+    //             }
+    //         });
+    //     }).then(() => {
+    //         // ICE gathering has completed. Send the offer now.
+    //         console.log('Sending offer to consumer - ', rtcpeerconnection.localDescription)
+    //         chatSocket.send(
+    //             JSON.stringify({
+    //                 command: "offer",
+    //                 offer: rtcpeerconnection.localDescription,
+    //                 group: window.group_name,
+    //             })
+    //         );
+    //     }).catch((error) => {
+    //         console.error("Error creating an offer: ", error);
+    //     });
+    // }
+    
+
+//     function createofferva() {
+//     rtcpeerconnection = new RTCPeerConnection(iceServers);
+//     rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+//     rtcpeerconnection.ontrack = OnTrackFunc;
+//     stream.getTracks().forEach((track) => {
+//         rtcpeerconnection.addTrack(track, stream);
+//     });
+//     rtcpeerconnection.createOffer().then((offer) => {
+//         return rtcpeerconnection.setLocalDescription(offer);
+//     }).then(() => {
+//         // Wait for ICE gathering to complete
+//         return new Promise((resolve) => {
+//             if (rtcpeerconnection.iceGatheringState === 'complete') {
+//                 resolve();
+//             } else {
+//                 function checkState() {
+//                     if (rtcpeerconnection.iceGatheringState === 'complete') {
+//                         rtcpeerconnection.removeEventListener('icegatheringstatechange', checkState);
+//                         resolve();
+//                     }
+//                 }
+//                 rtcpeerconnection.addEventListener('icegatheringstatechange', checkState);
+//             }
+//         });
+//     }).then(() => {
+//         // ICE gathering has completed. Send the offer now.
+//         console.log('Sending offer to consumer - ', rtcpeerconnection.localDescription)
+//         chatSocket.send(
+//             JSON.stringify({
+//                 command: "offer",
+//                 offer: rtcpeerconnection.localDescription,
+//                 group: window.group_name,
+//             })
+//         );
+//         // After setting the remote description, add any queued candidates
+//         while (iceCandidateQueue.length) {
+//             let candidate = iceCandidateQueue.shift();
+//             rtcpeerconnection.addIceCandidate(candidate);
+//         }
+//     }).catch((error) => {
+//         console.error("Error creating an offer: ", error);
+//     });
+// }
+
+
+    function OnIceCandidateFunc(e) {
+        if (e.candidate) {
+            chatSocket.send(
+                JSON.stringify({
+                    command: "candidate",
+                    candidate: e.candidate,
+                    iscreated: window.user,
+                    group: window.group_name,
+                })
+            );
+        }
+    }
+
+    function OnTrackFunc(e) {
+        remote_video.srcObject = e.streams[0];
+        remote_video.onloadedmetadata = () => {
+            remote_video.play();
+        };
+    }
+
+    {% comment %} function createanswer(offer) {
+        console.log("answer started");
+        rtcpeerconnection = new RTCPeerConnection(iceServers);
+        rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+        rtcpeerconnection.ontrack = OnTrackFunc;
+        stream.getTracks().forEach((track) => {
+            rtcpeerconnection.addTrack(track, stream);
+        });
+        rtcpeerconnection.setRemoteDescription(offer);
+        rtcpeerconnection.createAnswer().then((answer) => {
+            rtcpeerconnection.setLocalDescription(answer);
+            chatSocket.send(
+                JSON.stringify({
+                    command: "answer",
+                    answer: answer,
+                    group: window.group_name,
+                })
+            );
+        });
+    } {% endcomment %}
+
+
+    function createanswer(offer) {
+
+        if (!stream){
+            init().then(stream => {
+                createanswerva(offer)
+            });
+        } else {
+            createanswerva(offer)
+        }
+
+    } 
+
+
+    function createanswerva(offer){
+        console.log("answer started");
+        rtcpeerconnection = new RTCPeerConnection(iceServers);
+        rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+        rtcpeerconnection.ontrack = OnTrackFunc;
+    
+        // First, set the remote description
+        rtcpeerconnection.setRemoteDescription(new RTCSessionDescription(offer)).then(() => {
+            // After setting the remote description, add the tracks
+            stream.getTracks().forEach((track) => {
+                rtcpeerconnection.addTrack(track, stream);
+            });
+    
+            // Then, create the answer
+            return rtcpeerconnection.createAnswer();
+        }).then((answer) => {
+            rtcpeerconnection.setLocalDescription(answer);
+            chatSocket.send(
+                JSON.stringify({
+                    command: "answer",
+                    answer: answer,
+                    group: window.group_name,
+                })
+            );
+        }).catch((error) => {
+            console.error("Error creating an answer: ", error);
+        });
+    }
+
+    // function createanswer(offer) {
+    //     console.log("answer started");
+    //     rtcpeerconnection = new RTCPeerConnection(iceServers);
+    //     rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+    //     rtcpeerconnection.ontrack = OnTrackFunc;
+    
+    //     rtcpeerconnection.setRemoteDescription(new RTCSessionDescription(offer)).then(() => {
+    //         stream.getTracks().forEach((track) => {
+    //             rtcpeerconnection.addTrack(track, stream);
+    //         });
+    
+    //         return rtcpeerconnection.createAnswer();
+    //     }).then((answer) => {
+    //         return rtcpeerconnection.setLocalDescription(answer);
+    //     }).then(() => {
+    //         // Wait for ICE gathering to complete
+    //         return new Promise((resolve) => {
+    //             if (rtcpeerconnection.iceGatheringState === 'complete') {
+    //                 resolve();
+    //             } else {
+    //                 function checkState() {
+    //                     if (rtcpeerconnection.iceGatheringState === 'complete') {
+    //                         rtcpeerconnection.removeEventListener('icegatheringstatechange', checkState);
+    //                         resolve();
+    //                     }
+    //                 }
+    //                 rtcpeerconnection.addEventListener('icegatheringstatechange', checkState);
+    //             }
+    //         });
+    //     }).then(() => {
+    //         // ICE gathering has completed. Send the answer now.
+    //         chatSocket.send(
+    //             JSON.stringify({
+    //                 command: "answer",
+    //                 answer: rtcpeerconnection.localDescription,
+    //                 group: window.group_name,
+    //             })
+    //         );
+    //     }).catch((error) => {
+    //         console.error("Error creating an answer: ", error);
+    //     });
+    // }
+
+
+//     function createanswer(offer) {
+//     console.log("answer started");
+//     rtcpeerconnection = new RTCPeerConnection(iceServers);
+//     rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+//     rtcpeerconnection.ontrack = OnTrackFunc;
+
+//     rtcpeerconnection.setRemoteDescription(new RTCSessionDescription(offer)).then(() => {
+//         stream.getTracks().forEach((track) => {
+//             rtcpeerconnection.addTrack(track, stream);
+//         });
+
+//         return rtcpeerconnection.createAnswer();
+//     }).then((answer) => {
+//         return rtcpeerconnection.setLocalDescription(answer);
+//     }).then(() => {
+//         // Wait for ICE gathering to complete
+//         return new Promise((resolve) => {
+//             if (rtcpeerconnection.iceGatheringState === 'complete') {
+//                 resolve();
+//             } else {
+//                 function checkState() {
+//                     if (rtcpeerconnection.iceGatheringState === 'complete') {
+//                         rtcpeerconnection.removeEventListener('icegatheringstatechange', checkState);
+//                         resolve();
+//                     }
+//                 }
+//                 rtcpeerconnection.addEventListener('icegatheringstatechange', checkState);
+//             }
+//         });
+//     }).then(() => {
+//         // ICE gathering has completed. Send the answer now.
+//         chatSocket.send(
+//             JSON.stringify({
+//                 command: "answer",
+//                 answer: rtcpeerconnection.localDescription,
+//                 group: window.group_name,
+//             })
+//         );
+//         // After setting the remote description, add any queued candidates
+//         while (iceCandidateQueue.length) {
+//             let candidate = iceCandidateQueue.shift();
+//             rtcpeerconnection.addIceCandidate(candidate);
+//         }
+//     }).catch((error) => {
+//         console.error("Error creating an answer: ", error);
+//     });
+// }
+    
+   
+
+
+// // Later, when the connection is ready
+// rtcpeerconnection.onnegotiationneeded = async () => {
+//     // ... your negotiation code here ...
+
+//     // After setting the remote description, add any queued candidates
+//     while (iceCandidateQueue.length) {
+//         let candidate = iceCandidateQueue.shift();
+//         await rtcpeerconnection.addIceCandidate(candidate);
+//     }
+// };
+
+
+</script>

@@ -1,0 +1,758 @@
+{% extends "base.html" %}
+
+{% block tailwind %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.js" defer></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock tailwind %}
+{% load static %}
+{% block body %}
+<div class="image-cont w-full text-center">
+    <img src="{% static 'images/knp.png' %}" width="100px" alt="" srcset="">
+</div>
+
+<style>
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+    .phone-font{
+      padding-top: 3px;
+    font-size: 14px;
+    } 
+
+  }
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 766px) { 
+
+    .mobile{
+        margin: auto;
+        width: 45%;
+    } 
+
+  }
+
+  .dropdown {
+    --max-scroll: 8;
+    --text: #3F4656;
+    --border: #2F3545;
+    --borderActive: #23C4F8;
+    --background: #151924;
+    {% comment %} --arrow: #6C7486;
+    --arrowActive: #E4ECFA; {% endcomment %}
+    --listText: #99A3BA;
+    --listBackground: #F5F9FF;
+    --listActive: #E4ECFA;
+    --listTextActive: #6C7486;
+    --listBorder: none;
+    --textFilled: #99A3BA;
+    &.light {
+        --text: #CDD9ED;
+        --border: #CDD9ED;
+        --borderActive: #23C4F8;
+        --background: #fff;
+        --arrow: #99A3BA;
+        --arrowActive: #6C7486;
+        --listText: #99A3BA;
+        --listBackground: #fff;
+        --listActive: #F5F9FF;
+        --listTextActive: #6C7486;
+        --listBorder: #E4ECFA;
+        --textFilled: #6C7486;
+    }
+    width: 115px;
+    position: relative;
+    select {
+        display: none;
+    }
+    & > span {
+      font-size:13px;
+        cursor: pointer;
+        padding: 6px 10px;
+        border-radius: 6px;
+        display: block;
+        position: relative;
+        color: var(--text);
+        border: 1px solid var(--border);
+        background: var(--background);
+        transition: all .3s ease;
+        &:before,
+        &:after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 8px;
+            height: 2px;
+            border-radius: 1px;
+            top: 50%;
+            right: 15px;
+            background: var(--arrow);
+            transition: all .3s ease;
+        }
+        &:before {
+            margin-right: 4px;
+            transform: scale(.96, .8) rotate(50deg);
+        }
+        &:after {
+            transform: scale(.96, .8) rotate(-50deg);
+        }
+    }
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        max-height: calc(var(--max-scroll) * 42px);
+        top: 42px;
+        left: 0;
+        z-index: 1;
+        right: 0;
+        background: var(--listBackground);
+        border-radius: 6px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        transform-origin: 0 0;
+        transition: opacity .2s ease, visibility .2s ease, transform .3s cubic-bezier(.4, .6, .5, 1.32);
+        transform: scale(.8) translate(0, 4px);
+        border: 1px solid var(--listBorder);
+        li {
+            opacity: 0;
+            transform: translate(6px, 0);
+            transition: all .3s ease;
+            a {
+                cursor: pointer;
+                display: block;
+                padding: 10px 16px;
+                color: var(--listText);
+                text-decoration: none;
+                outline: none;
+                position: relative;
+                transition: all .3s ease;
+                &:hover {
+                    color: var(--listTextActive);
+                }
+            }
+            &.active {
+                a {
+                    color: var(--listTextActive);
+                    background: var(--listActive);
+                    &:before,
+                    &:after {
+                        --scale: .6;
+                        content: '';
+                        display: block;
+                        width: 10px;
+                        height: 2px;
+                        position: absolute;
+                        right: 17px;
+                        top: 50%;
+                        opacity: 0;
+                        background: var(--listText);
+                        transition: all .2s ease;
+                    }
+                    &:before {
+                        transform: rotate(45deg) scale(var(--scale));
+                    }
+                    &:after {
+                        transform: rotate(-45deg) scale(var(--scale));
+                    }
+                    &:hover {
+                        &:before,
+                        &:after {
+                            --scale: .9;
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+            &:first-child {
+                a {
+                    border-radius: 6px 6px 0 0;
+                }
+            }
+            &:last-child {
+                a {
+                    border-radius: 0 0 6px 6px;
+                }
+            }
+        }
+    }
+    &.filled {
+        & > span {
+            color: white;
+        }
+    }
+    &.open {
+        & > span {
+            border-color: var(--borderActive);
+            &:before,
+            &:after {
+                background: var(--arrowActive);
+            }
+            &:before {
+                transform: scale(.96, .8) rotate(-50deg);
+            }
+            &:after {
+                transform: scale(.96, .8) rotate(50deg);
+            }
+        }
+        ul {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translate(0, 12px);
+            transition: opacity .3s ease, visibility .3s ease, transform .3s cubic-bezier(.4, .6, .5, 1.32);
+            li {
+                opacity: 1;
+                transform: translate(0, 0);
+                $i: 1;
+                @while $i <= 10 {
+                    $delay: $i * 80;
+                    &:nth-child(#{$i}) {
+                        transition-delay: #{$delay}ms;
+                    }
+                    $i: $i + 1;
+                }
+            }
+        }
+    }
+}
+
+select {
+    --text: #3F4656;
+    --border: #2F3545;
+    --background: #151924;
+    &.dropdown {
+        padding: 9px 12px;
+        border-radius: 6px;
+        color: var(--text);
+        border: 1px solid var(--border);
+        background: var(--background);
+        line-height: 20px;
+        font-size: 13px;
+        font-family: inherit;
+        {% comment %} -webkit-appearance: none; {% endcomment %}
+    }
+}
+
+html {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+* {
+    box-sizing: inherit;
+    &:before,
+    &:after {
+        box-sizing: inherit;
+    }
+}
+
+// switch
+
+.switch {
+    height: 20px;
+    display: block;
+    position: relative;
+    cursor: pointer;
+    input {
+        display: none;
+        & + span {
+            padding-left: 38px;
+            min-height: 20px;
+            line-height: 20px;
+            display: block;
+            color: #3F4656;
+            position: relative;
+            white-space: nowrap;
+            &:not(:empty) {
+                padding-left: 38px + 8;
+            }
+            &:before,
+            &:after {
+                content: '';
+                display: block;
+                position: absolute;
+                border-radius: 10px;
+            }
+            &:before {
+                top: 0;
+                left: 0;
+                width: 38px;
+                height: 20px;
+                border: 1px solid #2F3545;
+                transition: all .3s ease;
+            }
+            &:after {
+                width: 14px;
+                height: 14px;
+                background: #2F3545;
+                top: 3px;
+                left: 3px;
+                transition: all .45s ease;
+            }
+            & + svg {
+                display: none;
+            }
+        }
+        &:checked {
+            & + span {
+                &:before {
+                    background: #5628EE;
+                    border-color: #5628EE;
+                }
+                &:after {
+                    background: #fff;
+                    transform: translate(18px, 0);
+                }
+            }
+        }
+    }
+    &:hover {
+        input {
+            &:not(:checked) {
+                & + span {
+                    &:before {
+                        border-color: #23C4F8;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Center & dribbble
+body {
+    --bg: #ffffff;
+    min-height: 100vh;
+    font-family: 'Mukta Malar', Arial;
+    line-height: 22px;
+    font-size: 13px;
+    color: #ADAFB6;
+    display: flex;  
+    justify-content: center;
+    transition: background .3s ease;
+    background: var(--bg);
+    &.light {
+        --bg: #F5F9FF;
+    }
+    .switch {
+        position: absolute;
+        bottom: 24px;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+    .dropdown {
+        margin-top: 60px;
+    }
+    .dribbble {
+        position: fixed;
+        display: block;
+        right: 20px;
+        bottom: 20px;
+        img {
+            display: block;
+            height: 28px;
+        }
+    }
+}
+
+.selectDropdown{
+  width:37%;
+}
+
+.custom-select {
+    position: relative;
+    width: 37%;
+    font-family: Arial, sans-serif;
+}
+
+{% comment %} .custom-select select {
+    display: none;
+} {% endcomment %}
+
+.select-styled {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.select-styled:after {
+    content: '\25BC';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.select-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    border-radius: 0 0 4px 4px;
+    box-sizing: border-box;
+    z-index: 1;
+    background-color: #fff;
+}
+
+.select-option {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.select-option:hover {
+    background-color: #f2f2f2;
+}
+
+</style>
+
+{% if messages %}
+  
+    {% for message in messages %}
+      
+      <div style="margin-bottom: 0px;" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong></strong> {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+ 
+{% endif %}
+<div class="tw-p-2 tw-mb-2 tw-rounded-3 mobile">
+    <div class="container-fluid">
+      
+    <div class="imge" style="display: flex;
+    justify-content:center;
+    margin: auto;
+    margin-bottom: 1em;">
+    {% comment %} <img width="64px;" src="{% static "images/kgi.png" %}" alt=""> {% endcomment %}
+</div>
+      
+      <form> {% csrf_token %}
+      {% comment %} <input type="text"  class="radius form-control" placeholder="Confess without being judged" required
+      autofocus> {% endcomment %}
+      <div>
+        <div class="tw-bg-[#343A40] tw-rounded-[10px] tw-h-16">
+        <h4 class="tw-display-8 tw-text-white phone-font tw-text-center tw-translate-y-2">Blind date with someone you know</h4>
+        </div>
+        <textarea name="question" id="question" class="radius form-control tw-rounded-[20px] tw-z-100 tw-drop-shadow-lg -tw-translate-y-6" style="font-size:14px;" placeholder="please enter your message for them..." cols="30" rows="2" required autofocus></textarea>
+      </div>
+      
+      
+      <div x-data="{ open: false }">
+        <p class="tw-flex tw-flex-col tw-gap-1 tw-text-sm" style="font-size:12px; margin-bottom: 0px;">
+          <span>We are going to send this message to the receiver anonymously (don't worry they are not going to know your name). This is what they are going to receive.</span>
+          
+          <p>
+  <a style="font-size:13px;" class="tw-text-[#009cda]" id="collapseButton" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+    show me
+  </a>
+</p>
+<div class="collapse" id="collapseExample">
+  <div class="card card-body tw-drop-shadow-lg">
+    <div class="">
+            <p style="font-size:13px;" >Hi Receiver's Name,</p>
+            <p style="font-size:13px;">Someone you know has requested a blind date with you on mystranger.in</p>
+            <p style="font-size:13px;">Message - "<span style="font-size:13px;" id="output"></span>"</p>            <p style="font-size:13px;" class="mt-6">You can connect with them for 24 hrs by visiting mystranger.in now. Use this token to form the connection with them - Token = 'the token'. "</p>
+          </div>
+  </div>
+</div>
+        
+        </p>
+        <div x-show="open" x-transition>
+          
+        </div>
+      </div>
+      
+      
+      
+
+      {% comment %} polls optional
+      <h6 class="text-secondary mt-4">Wanna Tag Someone? (optional)</h6>
+      <p class="text-secondary mt-2" style="font-size:14px;">No other user can see this information, these are just required to send your anonymous confession to the taggie.</p>
+       {% endcomment %}
+      <div>
+        <div class="tw-bg-[#343A40] tw-rounded-[10px] tw-h-16 tw-text-center">
+          <label class="tw-mt-2 tw-text-white" for="taggiename" style="padding-top: 2px;
+          font-size: 14px;">Receiver's Name - </label>
+        </div>
+        <input type="text" name="taggiename" style="font-size:14px;" id="taggiename" class="radius form-control tw-rounded-[20px] tw-z-100 tw-drop-shadow-lg -tw-translate-y-6" placeholder="Enter Receiver's Name -">
+      </div>
+      <p style="    font-size: 14px;
+      margin-bottom: 4px;">Enter Reciever's Id -</p>
+      <div class="tw-flex tw-justify-between">
+        {% comment %} <div class="bg-[#343A40] rounded-[10px] h-10 w-24 text-center flex-initial btn-group">
+          <label class="mt-2 p-2 text-white text-sm -translate-y-2 dropdown-toggle" id="drop-down" data-toggle="dropdown" for="taggiemail">whatsapp</label>
+          <div class="dropdown-menu dropdown-menu-right">
+          <button class="dropdown-item" type="button">whatsapp</button>
+          <button class="dropdown-item" type="button">instagram</button>
+          <button class="dropdown-item" type="button">sms</button>
+          <button class="dropdown-item" type="button">telegram</button>
+          </div>
+        </div> {% endcomment %}
+        <div class="iaddress" style="align-items: center;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;">
+        <select style="width:37%; color:white;" class="dropdown" name='selecti' id="selecti" placeholder="Please choose">
+          <option style="color:white;" class="dropdown-item">Whatsapp <i class="fa-solid fa-angle-down" style="color: #ffffff;"></i></option>
+          <option style="color:white;" class="dropdown-item">Instagram <i class="fa-solid fa-angle-down" style="color: #ffffff;"></i></option>
+          <option style="color:white;" class="dropdown-item">Sms <i class="fa-solid fa-angle-down" style="color: #ffffff;"></i></option>
+          <option style="color:white;" class="dropdown-item">Snapchat <i class="fa-solid fa-angle-down" style="color: #ffffff;"></i></option>
+          <option style="color:white;" class="dropdown-item">Telegram <i class="fa-solid fa-angle-down" style="color: #ffffff;"></i></option>
+          <option style="color:white;" class="dropdown-item">Discord <i class="fa-solid fa-angle-down" style="color: #ffffff;"></i></option>
+        </select>
+
+      {% comment %} <label class="switch">
+        <input type="checkbox">
+        <span>Light</span>
+    </label>
+                
+    <!-- dribbble -->
+    <a class="dribbble" href="https://dribbble.com/shots/5430765-Select-dropdown" target="_blank"><img src="https://cdn.dribbble.com/assets/dribbble-ball-mark-2bd45f09c2fb58dbbfb44766d5d1d07c5a12972d602ef8b32204d28fa3dda554.svg" alt=""></a> {% endcomment %}
+
+      <input type="text" style="font-size: 14px;
+      width: 60%;" name="taggiemail" id="taggiemail" class="radius tw-p-2 tw-rounded-[10px] tw-z-100 tw-drop-shadow-lg tw-flex-initial " placeholder="reciever's whatsapp no.">
+      </div>
+    </div>
+      
+      {% comment %} <label class="switch">
+          <input type="checkbox">
+          <span>Light</span>
+      </label> {% endcomment %}
+                  
+      <!-- dribbble -->
+      {% comment %} <a class="dribbble" href="https://dribbble.com/shots/5430765-Select-dropdown" target="_blank"><img src="https://cdn.dribbble.com/assets/dribbble-ball-mark-2bd45f09c2fb58dbbfb44766d5d1d07c5a12972d602ef8b32204d28fa3dda554.svg" alt=""></a>
+        <div> {% endcomment %}
+        
+      </div>
+      {% comment %} <p class="text-secondary" style="font-size:12px;">Email is the fastest way to reach that person.</p>
+
+
+      <label class="" for="taggieinfo">Enter any valid id of the taggie - </label>
+      <textarea name="taggieinfo" id="taggieinfo" class="form-control" style="font-size:14px;" placeholder="Enter any valid id of the taggie where mystranger.in can reach them it can be their instagram, snapchat , telegram, discord username etc.. , whatsapp no. or a valid mobile number or anything else where your confession can reach them. Makesure to specify the format - 'whatsapp : 87xxxxxxxx , instagram : Hixxxxx44 , Mobile Number : 87xxxxxxxx , etc ....'" cols="30" rows="5"></textarea>
+
+      <p class="text-secondary mt-2" style="font-size:12px;">You can add multiple id's of the same person (Taggie) to make sure your confession reaches them</p>
+      <p class="text-secondary mt-2" style="font-size:12px;">It can take upto 1 hr to 24 hrs for your confession to reach the taggie.</p> {% endcomment %}
+      <div style="display:flex; justify-content:center;">
+      <button class="btn btn-sm bg-dark mt-4 tw-w-20 tw-rounded-[15px]" style="color:white; width: 130px;
+      margin-top: 16px!important;">Comming Soon</button></div>
+      <p class="text-secondary" style="font-size:12px; text-align:center;">This Feature is going to be available on site after 1 Feb</p>
+    </form>
+    </div>
+  </div>
+
+
+
+<script>
+    tailwind.config = {
+        prefix: "tw-",
+        corePlugins: {
+          preflight: false,
+        }
+      }
+{% comment %} 
+
+  $('select.dropdown').each(function() {
+
+    var dropdown = $('<div />').addClass('dropdown selectDropdown');
+
+    $(this).wrap(dropdown);
+
+    var label = $('<span />').text($(this).attr('placeholder')).insertAfter($(this));
+    var list = $('<ul />');
+
+    $(this).find('option').each(function() {
+        list.append($('<li />').append($('<a />').text($(this).text())));
+    });
+
+    list.insertAfter($(this));
+
+    if($(this).find('option:selected').length) {
+        label.text($(this).find('option:selected').text());
+        
+        list.find('li:contains(' + $(this).find('option:selected').text() + ')').addClass('active');
+        $(this).parent().addClass('filled');
+    }
+
+});
+
+$(document).on('click touch', '.selectDropdown ul li a', function(e) {
+    e.preventDefault();
+    var dropdown = $(this).parent().parent().parent();
+    var active = $(this).parent().hasClass('active');
+    
+    var label = active ? dropdown.find('select').attr('placeholder') : $(this).text();
+    console.log(label);
+    
+    switch(label) {
+    case "Whatsapp":
+      input.placeholder = "receiver's whatsapp no.";
+      break;
+    case "Instagram":
+      input.placeholder = "receiver's instagram username";
+      break;
+    case "Sms":
+      input.placeholder = "receiver's phone no.";
+      break;
+    case "Snapchat":
+      input.placeholder = "receiver's snapchat username";
+      break;
+    case "Telegram":
+      input.placeholder = "receiver's telegram username";
+      break;
+    case "Discord":
+      input.placeholder = "receiver's discord username";
+      break;
+    default:
+      input.placeholder = "please choose an option";
+  }
+
+    dropdown.find('option').prop('selected', false);
+    dropdown.find('ul li').removeClass('active');
+
+    dropdown.toggleClass('filled', !active);
+    dropdown.children('span').text(label);
+
+    if(!active) {
+        dropdown.find('option:contains(' + $(this).text() + ')').prop('selected', true);
+        $(this).parent().addClass('active');
+    }
+
+    dropdown.removeClass('open');
+}); {% endcomment %}
+{% comment %} 
+$('.dropdown > span').on('click touch', function(e) {
+    
+    var self = $(this).parent();
+    self.toggleClass('open');
+
+});
+
+$(document).on('click touch', function(e) {
+    var dropdown = $('.dropdown');
+    if(dropdown !== e.target && !dropdown.has(e.target).length) {
+        dropdown.removeClass('open');
+    }
+}); {% endcomment %}
+{% comment %} // light
+$('.switch input').on('change', function(e) {
+    $('.dropdown, body').toggleClass('light', $(this).is(':checked'));
+}); {% endcomment %}
+
+
+$(document).ready(function () {
+    // Get the select and input elements by their IDs
+    var select = document.getElementById("selecti");
+    var input = document.getElementById("taggiemail");
+
+    // Add a change event listener to the select element
+    select.addEventListener("change", function () {
+        // Log to the console to check if the event is being triggered
+        console.log("Select change event triggered");
+
+        // Get the selected option value
+        var option = select.value;
+        // Log the selected option for further debugging
+        console.log("Selected option:", option);
+
+        // Set the input placeholder based on the option value
+        switch (option) {
+            case "Whatsapp":
+                input.placeholder = "Receiver's Whatsapp no.";
+                break;
+            case "Instagram":
+                input.placeholder = "Receiver's Instagram username";
+                break;
+            case "Sms":
+                input.placeholder = "Receiver's phone no.";
+                break;
+            case "Snapchat":
+                input.placeholder = "Receiver's Snapchat username";
+                break;
+            case "Telegram":
+                input.placeholder = "Receiver's Telegram username";
+                break;
+            case "Discord":
+                input.placeholder = "Receiver's Discord username";
+                break;
+            default:
+                input.placeholder = "Please choose an option";
+        }
+    });
+});
+
+// Get the text area element by its id
+var textarea = $("#question");
+// Check if the text area is empty by its length
+textarea.on("change keyup paste", function() {
+    console.log("oh you pressed");
+    var collaps = $("#collapseExample");
+    
+    // Check if the text area is empty by its length
+    if ($(this).val().length == 0) {
+        // Do something if the text area is empty
+        if (collaps.hasClass("show")) {
+            collaps.removeClass("show");
+        }
+    } else {
+        // Do something else if the text area is not empty
+        console.log("The text area is not empty!");
+        if (!collaps.hasClass("show")) {
+        collaps.addClass("show");
+        }
+    }
+});
+
+   // Get references to the textarea and the output div
+   var textarea = document.getElementById('question');
+   var outputDiv = document.getElementById('output');
+
+   // Add an event listener for the 'input' event on the textarea
+   textarea.addEventListener('input', function() {
+       // Update the content of the output div with the textarea's value
+
+       outputDiv.textContent = textarea.value;
+   });
+
+  {% comment %} function limitInput(id) {
+      var input = document.getElementById(id);
+      var charCount = document.getElementById("charCount-"+id);
+      var maxChars = 22;
+  
+      // Get the current input value
+      var inputText = input.value;
+  
+      // Update the character count
+      charCount.innerText = inputText.length;
+  
+      // Trim the input if it exceeds the maximum length
+      if (inputText.length > maxChars) {
+          input.value = inputText.slice(0, maxChars);
+          charCount.innerText = maxChars; // Update count to maxChars
+      }
+  } {% endcomment %}
+
+  
+// Get the select and input elements by their IDs
+let select = document.getElementsByClassName("dropdown-item");
+let input = document.getElementById("taggiemail");
+
+
+
+  </script>
+
+  {% endblock body %}

@@ -1,0 +1,808 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<style>
+    
+body {
+    height: 100svh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-container {
+    flex: 1;
+}
+
+.box2{
+    align-items: center;
+}
+
+.video_count{
+    /* float: inline-end;  */
+    /* position: absolute; */
+    right: 2px;
+    font-size: 14px; 
+    color: #007bff; 
+    padding: 1px; 
+    /* margin-right: 2px; */
+
+}
+
+
+
+    .right-column {
+        border: 2px solid #707070;
+        padding: 0px;
+    }
+
+    .right-column p {
+        margin-bottom: 0px;
+        font-size: 18px;
+    }
+
+    .cont-row {
+    height: 100%;
+    width: 99%;
+    display: flex;
+    align-items: center;
+    margin: auto;
+}
+
+    .left-column {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    {% comment %} height: 98%; {% endcomment %}
+    height: 89vh;
+    width: auto;
+    justify-content: space-between;
+}
+
+
+/* Custom CSS to hide the dropdown arrow */
+.dropdown-toggle::after {
+    display: none;
+}
+
+.add-fr-menu{
+    position: absolute;
+    top: 3.5em;
+    right: 2px;
+    z-index: 1000;
+    /* display: none; */
+    float: left;
+    width:4.5rem;
+    min-width: 8rem;
+    padding: 0.5rem 0.5rem;
+    margin: 0.125rem 0 0;
+    color: #212529;
+    border:1px solid;
+    border-radius: 0.25rem;
+}
+
+.add-fr-menu p{
+    font-size:14px
+}
+
+.right-column {
+    height: 98%;
+    width: auto;
+    flex: 1;
+    position: relative;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 4px;
+}
+
+    .upper-left {
+    {% comment %} border: 2px solid #707070; {% endcomment %}
+    /* min-width : 392px; */
+    
+    width: auto;
+    height: 49.5%;
+    {% comment %} width: min-content; {% endcomment %}
+    {% comment %} width:67%; {% endcomment %}
+}
+
+    .lower-left {
+        {% comment %} border: 2px solid black; {% endcomment %}
+        height: 49.5%;
+        /* min-width : 392px; */
+        width: auto;
+
+        {% comment %} width: fit-content; {% endcomment %}
+
+        {% comment %} margin-top: 18px; {% endcomment %}
+
+        width: fit-content;
+    }
+
+    #remote {
+    border-radius: 8px;
+    object-fit: cover; /* Maintain aspect ratio and cover the container */
+    {% comment %} object-fit: fill; {% endcomment %}
+    height: 100%;
+    {% comment %} height: -webkit-fill-available; {% endcomment %}
+    {% comment %} height: inherit; {% endcomment %}
+    width: 100%;
+    background-color: gainsboro;
+}
+
+#ours {
+    border-radius: 8px;
+    {% comment %} object-fit: cover; /* Maintain aspect ratio and cover the container */ {% endcomment %}
+    object-fit: fill;
+    height: 100%;
+    width: 100%;
+}
+
+
+    .right-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid #707070;
+        height: 3.5em;
+        padding: 1em;
+    }
+
+    .right-header img {
+        margin-right: 10px;
+    }
+
+    /* .img1 {
+        margin-right: 1em;
+    } */
+
+    .bottom-header {
+        margin: auto;
+        width: 70%;
+        display: flex;
+        {% comment %} position: absolute; {% endcomment %}
+        {% comment %} bottom: 0.5em; {% endcomment %}
+        {% comment %} left: 15%; {% endcomment %}
+        /* border: 2px solid black; */
+        justify-content: center;
+        align-items: center;
+}
+
+    
+
+    .skip-btn {
+        width: 72px;
+        border-radius: 8px;
+        height: 53px;
+    }
+
+    .video-textarea {
+        border: 1px solid #707070;
+        border-radius: 8px;
+        margin-left: 5px;
+        padding-left: 10px;
+        padding-right: 40px;
+        width: 100%;
+        position: relative;
+    }
+
+    .txtarea-cont {
+        position: relative;
+        width: 75%;
+        display: flex;
+        align-items: center;
+        height: 53px;
+    }
+
+    .send-btn {
+        position: absolute;
+        right: 10px;
+        top: 13px;
+    }
+
+    .send-btn-cont {
+        border: none;
+        color: black;
+        background-color: white;
+        padding: 0px;
+    }
+
+    .status-txt {
+        color: #343a40;
+        text-align: center;
+    }
+
+    .chat-log {
+        {% comment %} height: 450px; {% endcomment %}
+        max-height:67vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #fff;
+        font-size: 0.9em;
+        flex-direction: column-reverse;
+        /* border:2px solid green; */
+        flex-grow: 1;
+        {% comment %} overflow: auto; {% endcomment %}
+    }
+
+    .msg-p {
+        font-weight: 400;
+        margin-top: 5px;
+        margin-bottom: auto;
+        margin-left: 5px;
+        margin-right: 5px;
+        white-space: normal;
+        -ms-word-break: break-all;
+        word-break: break-all;
+    }
+
+    .message-container {
+        margin-top: 10px;
+        justify-content: start;
+    }
+
+    .msg-style{
+        padding-right: 4px;
+        /* padding: 3px; */
+        padding-left: 4px;
+        /* color: wheat; */
+        /* color: white; */
+        min-height: 43px;
+        min-width: 90px;
+        max-width: 45%;
+        /* background: #343a40; */
+        /* background: #f9f8f8; */
+        background: #f0f2f2;
+        /* background: #ebf0f0; */
+
+        position: relative;
+        /* border: 1px solid black; */
+        border-radius: 8px;
+    }
+    .msg-style2{
+        padding-right: 4px;
+        /* padding: 3px; */
+        padding-left: 4px;
+        /* color: wheat; */
+        /* color: white; */
+        min-height: 43px;
+        min-width: 90px;
+        max-width: 45%;
+        /* background: #343a40; */
+        /* background: #daf5ff;  */
+        /* background: #fafafa;  The best up until now */
+        /* background: #f9f8f8; */
+
+        background: #f0f2f2;
+        /* background: #ebf0f0; */
+
+        position: relative;
+        /* border: 1px solid black; */
+        border-radius: 8px;
+    }
+
+    .msg-style::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        right: -8px;
+        height: 9px;
+        width: 15px;
+        /* background-color: red; */
+        background: linear-gradient(135deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+        /* background: linear-gradient(135deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
+    .msg-style2::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -8px;
+        height: 9px;
+        width: 15px;
+        /* background-color: red; */
+        background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+        /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
+    .username-span {
+        font-weight: 600;
+        margin-top: 0px;
+        margin-bottom: auto;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .typo{
+        margin-left: 1em;
+		color: green;
+		font-size: 16px;
+        
+    }
+
+    /* .bottom-header{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bottom2{
+        display: flex;
+        flex-direction: row;
+    } */
+
+    #id_chat_log_container{
+        /* border:2px solid red; */
+        flex:1;
+    }
+
+    #send_req_btn{
+        border: none;
+        background: none;
+    }
+
+    #report_btn{
+        border: none;
+        background: none;
+    }
+
+    #cancel_req_btn{
+        border: none;
+        margin-right: 1.79em;
+        /* display: block; */
+        background: none;
+        font-size: 20px;
+    }
+
+    .box1{
+        display: flex;
+        align-items: center;
+    }
+
+    .dropdown-menu-flag{
+        width: 300px;
+        /* transform: translate3d(-211.5px, 47.5px, 0px); */
+        transform: translate3d(14px, 49.5px, 0px) !important;
+
+    }
+
+    .flag-p{
+        font-size: 1rem;
+    }
+
+    .btn.dropdown-toggle::after {
+    display: none;
+}
+
+.btn.dropdown-toggle:focus,
+.btn.dropdown-toggle:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.upper-left {
+    position: relative;
+}
+
+.loading-spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background: rgba(255, 255, 255, 0.8); Background color for the overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1; /* Place the spinner above the video */
+}
+
+.loading-spinner::before {
+    content: "";
+    border: 3px solid #009cda; /* Spinner border color */
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.bottom-header{
+    margin-bottom: 8px;
+}
+
+
+
+/* Media query for tablet width 320px */
+@media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+
+    #stranger_email{
+        display:none;
+    }
+
+    .video_count{
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+    .cont-row{
+        display: flex;
+        flex-direction: column;
+        align-items: unset;
+    }
+
+    
+    .msg-style{
+        max-width: 70%;
+    }
+
+    .msg-style2{
+        max-width: 70%;
+    }
+
+    .left-column {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        height: 40vh;
+        /* width: auto; */
+        justify-content: space-between;
+        margin-top: 2px;
+        
+}
+
+.upper-left {
+    position: relative;
+    width: 100%;
+    /* min-width: 315px; */
+    /* width: auto; */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#remote {
+    border-radius: 8px;
+    object-fit: cover;
+    height: 100%;
+    width: 99% !important;
+    background-color: gainsboro;
+}
+
+.lower-left {
+    height: auto;
+    width: auto;
+    position: absolute;
+    right: 2px;
+
+    /* min-width: 315px; */
+    /* width: auto; */
+    /* width: fit-content; */
+}
+
+
+#ours {
+    width: 80px !important;
+    border-radius: 8px;
+    /* object-fit: fill; */
+    height: 100%;
+}
+
+.right-column{
+    margin-top: 2px;
+    margin-left: 0px;
+    height: 30%;
+}
+
+.right-header{
+    height: 2.5em;
+    padding: 0.5em;
+}
+
+.right-column p {
+    font-size: 14px;
+}
+
+.typo{
+    margin-left: 4px;
+    /* color: green; */
+    font-size: 11px;
+}
+
+.img1 img {
+    width: 24px !important;
+}
+
+#cancel_req_btn{
+    font-size: 18px;
+    margin-right: 1em;
+}
+
+.status-txt span {
+    font-size: 12px;
+}
+
+.bottom-header {
+    margin-bottom: 4px;
+}
+
+.send-btn{
+    font-size: 18px;
+    top: 11px;
+}
+
+.txtarea-cont{
+    align-items: unset;
+    height: 40px;
+}
+
+.skip-btn{
+    width: 63px;
+    /* border-radius: 8px; */
+    height: 40px;
+    font-size: 15px;
+}
+
+.msg-style{
+    min-height: 32px;
+    min-width: 55px;
+}
+
+.msg-style p {
+    font-size:12px
+}
+
+.msg-style2 p {
+    font-size:12px
+}
+
+.msg-style2{
+    min-height: 32px;
+    min-width: 55px;
+}
+
+.chat-log{
+    max-height: 30vh;
+}
+
+.flagy{
+    right: 8px !important;
+    /* top: 100%; */
+    top: -6px !important;
+}
+
+}
+
+</style>
+
+<div class="main-container">
+    <!-- <div id="confirmationDialog" style="display: none;">
+        <p>Are you sure you want to leave this page?</p>
+        <button id="returnButton">Return</button>
+        <button id="leaveButton">Leave</button>
+    </div> -->
+
+
+    <div class="row cont-row">
+        <div class="left-column">
+            <div class="upper-left" id="upr-lft">
+                <div class="loading-spinner"></div>
+                <video autoplay playsinline id="remote" style="width : 392px"></video>
+            </div>
+            <div class="lower-left">
+                <video autoplay playsinline muted id="ours" style="width:392px"></video>
+            </div>
+        </div>
+        <div class="right-column">
+            <!-- Right column content goes here -->
+            <div class="right-header">
+                <div class="box1">
+                    <p><strong id="strangerName">Stranger</strong></p>
+                    <span id="typing" class="typo d-none">typing...</span>
+                    
+                </div>
+                <div class="d-flex box2">
+                </span> <span  id="video-count" class="mr-2 video_count"></span>
+                <div class="d-flex align-items-center" style="appearance:none;" id="reg-info" style=""> <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                    width="32px" alt="" srcset=""></span></button>
+                </div>
+
+                {% comment %} {% if not request.user_agent.is_mobile %} {% endcomment %}
+                <div class="reg-menu add-fr-menu" style="display:none;">
+                    <p>Add friend</p>
+                    
+                </div>
+
+              {% comment %} {% endif %} {% endcomment %}
+                    
+                    {% comment %} <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                                width="32px" alt="" srcset=""></span></button> {% endcomment %}
+                    <button class="d-none" id="cancel_req_btn"><i class="fa-solid fa-xmark "
+                            style="color:red;"></i></button>
+                   
+                      <div class="dropdown">
+                        <button disabled type="button" class="btn btn-primary dropdown-toggle"  id="report_btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                            <span class="img2"><img src="{% static 'images/report.svg' %}" width="22px" alt="" srcset=""></span>
+                        </button>
+
+                        <form class="dropdown-menu dropdown-menu-flag  p-4 flagy" id="flag-form" action="{% url "chat:flag" %}" method='post'>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="flag-reason" class="form-label">Reason To Flag - </label>
+                                <input type="textarea" name="flag-reason" class="form-control" id="flag-reason" required placeholder="Reason ...">
+                            </div>
+                            
+                            <input type="text" name="flag_user_id" id="flag_user_id" hidden>
+                            <input type="text" name="flag_user_name" id="flag_user_name" hidden>
+                            <input type="text" name="flagged_by_id" id="flagged_by_id" hidden>
+                            {% comment %} <div class="mb-3">
+                                <label for="exampleDropdownFormPassword2" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="exampleDropdownFormPassword2" placeholder="Password">
+                            </div> {% endcomment %}
+                            <div class="mb-3">
+                                <p class="flag-p">Flagged person is going to be monitored and than banned if necessary</p>
+                                {% comment %} <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="dropdownCheck2">
+                                <label class="form-check-label" for="dropdownCheck2">
+                                    Remember me
+                                </label>
+                                </div> {% endcomment %}
+                            </div> 
+                            <button type="submit" class="btn btn-dark">Flag</button>
+                        </form>
+
+                      </div>
+                    
+                </div>
+            </div>
+            <div class="status-txt" id="id_chatroom_loading_spinner" role="status" style="display: block; ">
+                <span id="audio-error" style="
+                    display: none;
+                    color: red;
+                    font-size: 12px;
+                ">Audio access denied! please check your browser or device settings.</span>
+                <span id="video-error" style="
+                    display: none;
+                    color: red;
+                    font-size: 12px;
+                ">Video access denied! please check your browser or device settings.</span>
+                <div style="position: relative;"> <span id="bar" style="">looking for someone nearby you can chat with....</div>
+                
+                {% comment %} <span id='bar'>looking for someone you can chat with....</span> {% endcomment %}
+                
+            </div>
+            <div class="d-flex flex-column" id="id_chat_log_container">
+                <div class="d-flex chat-log" id="id_chat_log">
+
+                </div>
+                {% comment %} <div><span id="typing" class="typo d-none">Stranger is typing...</span></div> {% endcomment %}
+                <div class="bottom-header">
+                    <!-- <div class="bottom2"> -->
+                        <button class="btn btn-dark skip-btn" id="skip_button">
+                            <span id="skip">Skip</span>
+                        </button>
+                        <a href="{% url 'new-chat' %}"><button class="btn btn-dark skip-btn d-none" id="new_button">
+                                <span id="new">New</span>
+                            </button></a>
+                        <!-- <textarea disabled class="flex-grow-1 chat-message-input"
+                                id="id_chat_message_input"></textarea> -->
+                        
+                        <div class="txtarea-cont">
+                            <textarea disabled class="flex-grow-1 video-textarea" id="id_chat_message_input"></textarea>
+                            <button disabled class="chat-message-submit-button send-button send-btn-cont" id="send_button">
+                                <span id="id_chat_message_submit" class="material-icons send-btn d-none">send
+                                </span>
+                            </button>
+                        </div>
+                <!-- </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+<script>
+
+    {% if not request.user_agent.is_mobile %}
+
+    const hoverDiv = document.getElementById('reg-info');
+	hoverDiv.addEventListener("mouseover", () => {
+		// Handle mouseover (hover)
+		const hovermenu = document.querySelector('.reg-menu')
+		hovermenu.style.display = 'block';
+		  
+		console.log("Mouse over the element.");
+	  });
+	
+	  hoverDiv.addEventListener("mouseout", () => {
+		  // Handle mouseout (leave hover)
+		  const hovermenu = document.querySelector('.reg-menu')
+		  hovermenu.style.display = 'none';
+		  console.log("Mouse left the element.");
+	  });
+      {% endif %}
+
+$(document).ready(function() {
+    $("#flag-form").on("submit", function(event) {
+        event.preventDefault();  // Prevent the default form submission behavior
+
+        // $.ajax({
+        //     type: "POST",
+        //     dataType: "json",
+        //     // Replace with the actual URL of your view
+		// 	url: "",
+		// 	timeout: 5000,
+        //     data: new FormData(this),
+        //     processData: false,
+        //     contentType: false,  // Serialize the form data
+        //     success: function(data) {
+        //         // Handle the successful response from the server
+        //         alert(data.message);  // Display a message or perform further actions
+        //     },
+        //     error: function(data) {
+        //         // Handle errors or failed submissions
+        //         alert('Got the error');
+        //     }
+        // });
+
+         // Get the form element using $(this)
+         var form = $(this);
+
+         // Create a new FormData object with the form
+         var formData = new FormData(form[0]);
+
+        
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url "chat:flag" %}",
+			timeout: 5000,
+			data: formData,
+            processData: false, // Set processData and contentType to false
+            contentType: false,
+			success: function(data) {
+				console.log("SUCCESS", data);
+				if(data['status'] == "Already Flagged"){
+					alert(data.message)
+                    var cont = document.getElementById('flag-reason')
+                    cont.value = ""
+                    document.getElementById("report_btn").click();
+				}
+                else if(data['status'] == 'Flagged'){
+                    alert(data.message)
+                    var cont = document.getElementById('flag-reason')
+                    cont.value = ""
+                    document.getElementById("report_btn").click();
+				}
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert('Unable to flag - ', data.message)
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+
+    });
+
+});
+
+
+</script>
+
+{% include 'new_chat_js.html' %}
+
+
+
+{% endblock body %}

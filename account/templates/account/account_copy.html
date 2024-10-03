@@ -1,0 +1,520 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+<style type="text/css">
+
+	.bio-content{
+		max-height:200px;
+		overflow-y:auto;
+		{% comment %} border:2px solid red; {% endcomment %}
+	}
+
+	body{
+		height: 100vh;
+        {% comment %} border: 2px solid red; {% endcomment %}
+		display: flex;
+		flex-direction: column;
+        
+	}
+
+	.image-container{
+		max-width: 250px;
+		height: auto;
+	}
+	.field-heading{
+		color: var(--secondary-text-color);
+	}
+	.icon-container:hover {
+		opacity: 0.3;
+		cursor: pointer;
+	}
+	.friends-icon{
+		/* color: #4287f5; */
+		color: #009cda;
+		font-size: 40px;
+	}
+	.person-add-icon{
+		/* color: #4287f5; */
+		color: #009cda;
+		font-size: 40px;
+	}
+	.friend-text{
+		font-weight: 500;
+		color: black;
+	}
+	.friends-btn{
+		background-color: #cccccc;
+		border-color: #cccccc;
+		color: #000;
+		font-weight: 500;
+	}
+	.friends-btn:hover {
+		background-color: #bfbfbf;
+		border-color: #bfbfbf;
+	}
+	.dropdown-toggle::after { 
+		content: none; 
+	}
+	.card{
+		border-radius: 8px;
+	}
+
+	.card-body{
+		min-width: 22vw;
+	}
+
+	.material-icons{
+		font-size: 30px;
+	}
+	.material-icons:hover{
+		cursor: pointer;
+	}
+	.confirm-friend-request{
+		color: green;
+	}
+	.confirm-friend-request:hover {
+		opacity: 0.3;
+	}
+	.decline-friend-request:hover {
+		opacity: 0.3;
+	}
+	.decline-friend-request{
+		color: red;
+	}
+	.message-btn-text{
+		font-weight: 500;
+	}
+
+	.cont-main{
+		flex: 1;
+		border: 1px solid rgba(0,0,0,.125);
+		padding:0px;
+		width:50vw;
+		{% comment %} margin-top: 2em; {% endcomment %}
+	}
+
+	/* .update-btn:hover{	
+    background-color:  #F9F9F9;
+    color: #343A40;
+} */
+
+	.blue-color{
+		color: #009cda;
+	}
+
+	/* input[type='radio']:checked:after {
+	background-color: black;
+	} */
+
+	.radio2{
+		{% comment %} border: 2px solid red; {% endcomment %}
+    display: flex;
+    height: 40px;
+	}
+
+	.radio2 p{
+		margin-top: 0;
+		margin-bottom: 1rem;
+	}
+
+	.radio-sec{
+		display: flex;
+		justify-content: space-between;
+		margin-top: 1em;
+	}
+
+	.btn-send{
+		background-color: #009cda;
+	}
+
+	/* .btn-send:hover{
+		background-color: #0c87b8;
+	} */
+
+
+	.ac-header{
+		height:58px;
+		{% comment %} border:2px solid red; {% endcomment %}
+		border-bottom: 1px solid rgba(0,0,0,.125);
+		display: flex;
+		align-items: center;
+		padding: 10px;
+		justify-content: space-between;
+		{% comment %} width:100%; {% endcomment %}
+	}
+
+
+	.down-layer{
+		{% comment %} border:2px solid black; {% endcomment %}
+	}
+
+
+	.vibe-layer{
+		{% comment %} border:2px solid black; {% endcomment %}
+		padding:1em;
+		{% comment %} height:10px; {% endcomment %}
+	}
+
+	.bio-content p{
+		margin:0px;
+		font-size:10px;
+	}
+
+	.uplayer{
+		justify-content: space-between;
+		align-items:center;
+	}
+
+	.vibe-span{
+		display: flex;
+    flex-direction: column;
+    {% comment %} border: 1px solid green; {% endcomment %}
+    justify-content: center;
+    align-items: center;
+	}
+
+	.btn-vibe{
+		
+	}
+
+	.btn:hover{
+        background-color: #343a40!important;
+        cursor: default;
+    }
+
+    .btn-answer{
+		padding: 0px;
+		border-radius: 100px;
+		width: 72px;
+		height: 23px;
+		{% comment %} margin-left: 10px; {% endcomment %}
+		display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+	.btn-nearby-ans{
+		width: 122px;
+	}
+
+	.btn-nearby-req{
+		width: 142px;
+	}
+
+    .btn-answer:hover{
+        background-color:white!important;
+        color:black;
+    }
+
+    .btn-answer span {
+        font-size:10px
+    }
+
+	.span-up-left{
+		display: flex;
+    flex-direction: column;
+    align-items: center;
+	}
+
+	a{
+		color:#343a40;
+	}
+
+	.frnd-dropdown{
+		padding: 2px;
+    min-width: 90px;
+    {% comment %} max-width: 100px; {% endcomment %}
+    font-size: 10px;
+	}
+
+
+	/* Media query for tablet width 320px */
+	@media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+		.cont-main{
+			width:100vw;
+		}
+
+		
+
+	}
+
+
+
+</style>
+
+
+<div class="container cont-main">
+
+	<div class="ac-header">
+
+		<div class="lefti">
+			<span><strong style="font-size: 12px;">{{name}}</strong> <span class="ml-2" style="font-size:10px;"> {% if gender == 'M' %}
+		
+					(Him)
+			
+			{% else %}
+				
+					(Her)
+				
+			{% endif %} </span></span>
+			<p class="text-secondary" style="font-size:9px; margin-bottom:0px;">{% if request.user.is_authenticated and is_self %}
+
+				<span>{{email}}</span>
+
+			  {% else %}
+
+			  <span>{{hidden_email}}</span>
+
+			{% endif %}</p>
+		</div>
+
+		{% if request.user.is_authenticated and is_self %}
+		<div class="righti">
+			<a  class="" style="color:#343a40;" href="{% url 'account:edit' user_id=request.user.id %}"><i class="fa-regular fa-pen-to-square"></i></a>
+		</div>
+		{% endif %}
+
+	</div>
+
+
+	<div class="vibe-layer">
+		<div class="uplayer d-flex">
+			<div class="up-right">
+
+				<span class="vibe-span">
+					<span style="font-size:10px">{{vibe_score}}</span>
+					<strong style="font-size:13px" >Vibe Score</strong>
+				</span>
+
+
+			</div>
+
+			<div class="up-left" style="">
+
+				<span class="d-flex">
+					{% if is_self %}
+
+					<a href="{% url 'friend:list' user_id=id %}" style="margin-right: 0.5em;">
+						<span class='span-up-left'>
+
+						<span style="font-size:10px" class="">{{friends|length}}</span>
+						{% comment %} <button style="font-size:10px" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-user-group" style="color: #009cda; font-size:10px;"></i> Friends</button> {% endcomment %}
+
+						<button class="btn btn-sm btn-answer btn-outline-dark" type="button"><span><i class="fa-solid fa-user-group" style="color: #009cda; font-size:10px;"></i> Friends</span></button>
+
+					</span>
+				</a>
+
+					<a href="{% url "account:nearby-uni" %}"><span class="span-up-left">
+						<span style="font-size:10px" class="">{{nearby_list_count}}</span>
+						{% comment %} <button style="font-size:10px" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-location-dot" style="color: #009cda; font-size:10px;"></i> Nearby Universities</button> {% endcomment %}
+						<button class="btn btn-sm btn-answer btn-outline-dark btn-nearby-ans" type="button"><span><i class="fa-solid fa-location-dot" style="color: #009cda; font-size:10px;"></i> Nearby Universities</span></button>
+					</span></a>
+
+					
+					
+			{% endif %}
+
+			{% if is_friend %}
+
+					
+						<span class='span-up-left dropdown' style="margin-right:1em;">
+
+						{% comment %} <span style="font-size:10px" class="">{{friends|length}}</span> {% endcomment %}
+						{% comment %} <button style="font-size:10px" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-user-group" style="color: #009cda; font-size:10px;"></i> Friends</button> {% endcomment %}
+
+						<button class="btn btn-sm btn-answer btn-outline-dark dropdown-toggle"  type="button" id="id_friends_toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Friends</span></button>
+
+						<div class="dropdown-menu frnd-dropdown" aria-labelledby="id_friends_toggle">
+							<a class="dropdown-item" href="#" onclick="removeFriend('{{id}}', onFriendRemoved)">Unfriend</a>
+						</div>
+
+					</span>
+				
+
+				{% comment %} <div class="dropdown pt-4 m-auto">
+					<button class="btn btn-secondary dropdown-toggle friends-btn" type="button" id="id_friends_toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Friends
+					</button>
+					<div class="dropdown-menu" aria-labelledby="id_friends_toggle">
+						<a class="dropdown-item" href="#" onclick="removeFriend('{{id}}', onFriendRemoved)">Unfriend</a>
+					</div>
+				</div> {% endcomment %}
+
+					<a href="{% url "account:nearby-uni" %}"><span class="span-up-left">
+						{% comment %} <span style="font-size:10px" class="">{{nearby_list_count}}</span> {% endcomment %}
+						
+						<button onclick="createOrReturnPrivateChat('{{id}}')" class="btn btn-sm btn-answer btn-outline-dark" type="button"><span>Message</span></button>
+					</span></a>
+
+					{% comment %} <div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" style="background-color: #009cda;" onclick="createOrReturnPrivateChat('{{id}}')">
+						<span class="material-icons m-auto" >
+						message
+						</span>
+						<span class="message-btn-text m-auto pl-2">Message</span>
+					</div>
+					 {% endcomment %}
+					
+			{% endif %}
+
+
+			{% if is_friend == False and is_self == False %}
+
+						<!-- THEM to YOU -->
+						{% if request_sent == 0 %}
+						<div class="" style="padding: 5px 10px !important;
+						border: 1px solid #343049; border-radius: 21px;">
+							<div class="d-flex flex-row align-items-center">
+								<span style="font-size: 10px;" class="friend-text align-items-center mr-2">Accept Friend Req</span>
+								<span style="font-size: 10px;" id="id_cancel_{{id}}" class="decline-friend-request material-icons p-1" onclick='triggerDeclineFriendRequest("{{pending_friend_request_id}}")'>cancel</span>
+								<span style="font-size: 10px;" id="id_confirm_{{id}}" class="confirm-friend-request material-icons p-1" onclick='triggerAcceptFriendRequest("{{pending_friend_request_id}}")'>check</span>
+							</div>
+						</div>
+
+						
+						{% endif %}
+
+						<!-- You sent them a request -->
+						{% if request_sent == 1 %}
+						{% comment %} <div class="d-flex flex-column align-items-center pt-4"> {% endcomment %}
+							{% comment %} <button class="btn btn-danger" id="id_cancel_friend_request_btn">
+								Cancel Friend Request
+							</button> {% endcomment %}
+
+							<button  id="id_cancel_friend_request_btn" class="btn btn-sm btn-answer btn-outline-danger btn-nearby-ans" type="button"><span>Cancel Friend Req..</span></button>
+							
+						{% comment %} </div> {% endcomment %}
+						{% endif %}
+
+						<!-- No requests have been sent -->
+						{% if request_sent == -1 %}
+						{% comment %} <div class="d-flex flex-column align-items-center pt-4">
+							<button class="btn btn-primary btn-send" style="background-color: #009cda;" id="id_send_friend_request_btn">
+								Send Friend Request
+							</button>
+						</div> {% endcomment %}
+						<button  id="id_send_friend_request_btn" class="btn btn-sm btn-answer btn-outline-dark" type="button"><span>Add Friend</span></button>
+						{% endif %}
+				{% endif %}
+
+
+			</span>
+
+			</div>
+		</div> 
+		<div class="down-layer mt-2">
+
+			{% if bio %}
+
+					
+			<div class="bio-content">
+				<p style="height:auto; overflow-y:auto;">{{bio}}</p>
+			</div>
+				
+			{% else %}
+
+			{% if is_self %}
+
+			<a style="font-size:10px; color:#009cda" href="{% url 'account:edit' user_id=request.user.id %}"><u>click here to add bio...</u></a>
+
+			{% endif %}
+
+			{% endif %}
+
+			{% if friend_requests and is_self %}
+			<div class="d-flex justify-content-center mt-2">
+			<div class="btn-nearby-req" style="padding: 5px 10px !important;
+			border: 1px solid #343049; border-radius: 21px;">
+				<!-- Friend requests -->
+		  		<div class="d-flex flex-column">
+					<a href="{% url 'friend:friend-requests' user_id=id %}">
+						<div class="d-flex flex-row align-items-center justify-content-center icon-container">
+							<span style="font-size:10px" class="material-icons mr-2 person-add-icon">person_add</span><span class="friend-text" style="font-size:10px">Friend Requests ({{friend_requests|length}})</span>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+			{% endif %}
+
+		</div> 
+	</div>
+
+</div>
+
+<script type="text/javascript">
+
+	// called from base_js.html
+	//preloadImage("{{profile_image|safe}}", 'id_profile_image')
+
+	function onFriendRequestSent(){
+		location.reload();
+		// though reloding the page is the easiest and most convenient way but we can try to do this without reloading the page
+		// if there's a way to do so then that is going to enhance the user experience
+
+	}
+
+	function onFriendRequestAccepted(){
+		location.reload();
+	}
+
+
+	function onFriendRemoved(){
+		location.reload();
+	}
+
+	function onFriendRequestDeclined(){
+		location.reload();
+	}
+
+	function onFriendRequestCancelled(){
+		location.reload();
+	}
+
+
+	var sendFriendRequestBtn = document.getElementById("id_send_friend_request_btn")
+	if (sendFriendRequestBtn != null){
+		sendFriendRequestBtn.addEventListener("click", function(){
+			sendFriendRequest("{{id}}", onFriendRequestSent)
+		})
+	}
+
+	
+	function triggerAcceptFriendRequest(friend_request_id){
+		acceptFriendRequest(friend_request_id, onFriendRequestAccepted)
+	}
+
+	function triggerDeclineFriendRequest(friend_request_id){
+		declineFriendRequest(friend_request_id, onFriendRequestDeclined)
+	}
+
+	var removeFriendBtn = document.getElementById("id_unfriend_btn")
+	if (removeFriendBtn != null){
+		removeFriendBtn.addEventListener("click", function(){
+			removeFriend("{{id}}", onFriendRemoved)
+		})
+	}
+
+	var cancelFriendRequestBtn = document.getElementById("id_cancel_friend_request_btn")
+	if(cancelFriendRequestBtn != null){
+		cancelFriendRequestBtn.addEventListener("click", function(){
+			cancelFriendRequest("{{id}}", onFriendRequestCancelled)
+		})
+	}
+
+
+</script>
+
+{% include 'friend/snippets/send_friend_request.html' %}
+{% include 'friend/snippets/accept_friend_request.html' %}
+{% include 'friend/snippets/remove_friend.html' %}
+{% include 'friend/snippets/decline_friend_request.html' %}
+{% include 'friend/snippets/cancel_friend_request.html' %}
+{% include 'chat/snippets/create_or_return_private_chat.html' %}
+
+
+
+{% endblock body %}

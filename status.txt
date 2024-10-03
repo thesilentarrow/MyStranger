@@ -1,0 +1,75 @@
+This is the ultimate template for omegle_text 
+In this template the connection and diconnection have been handled very efficiently 
+and beside that nothing else has been updated so that from here any changes can be made into it , to make it fit according to one's own needs.
+
+so when we added the skip system here , we got some inconsistencies while connecting the two strangers and later we found out that this can be because of the channel layers , that we have to user seperate channel layers for the users.
+
+This code contains that bug discussed above.
+and with cleaned code.
+
+here we are using channels==4.0.0 instead of channels==3.0.5
+
+the skip bug has been resolved but here stil are issues with the skip , we have to fix that shit as soon as possible.
+
+In short this is the perfect text code. The code that works and hence someone said , if it works then don't touch it
+
+-----------------------------------------------------------------------------------------------------------------
+
+video feature is now working fine , though whether it is scalable or not , that is still a question 
+but as of now the video feature is working smoothly.
+-----------------------------------------------------------------------------------------------------------------
+
+The first part of nearby feature which is gathering the exact location at the time of registration is now approximately complete and from now on 
+the focus has to be on the second part.
+
+The Second Part of connecting users on the basis of nearby and origin has also been done 
+Though there are some defects left like - 
+
+.edu.in - only works for .edu.in universitites while registration | Done - Now you can register with either .edu or .edu.in or .ac.in
+
+count is generic not specific
+The final update from the backend for patient zero is not present
+origin and nearby does not work entirely , they are specific not generic
+
+beside these defects everything is working fine, the only thing left is the friend system
+The Friend System is now complete, therefore now only the notification system is what's left and then the site is complete.
+
+
+_________________________________________________________________________________________________________
+4/8/2023
+The above four defects are fixed.
+
+Now the site can handle both origin and nearby functions at will but still smooth connect and disconnect remains same as before therefore we have to figure out a way of finding out that what is it that is causing the trouble.
+
+Now i just have to create the notification system and then have to update the front-end after that the site is going to be technically completed after that i just have to optimize it for production and that's it. we are going to talk about optimization after building the notification system and the front-end.
+___________________________________________________________________________________________________________
+24/8/2023
+well notifications updates in realtime but still new notifs don't come in realtime not till this commit
+
+well now general notifications are working perfectly fine in realtime now we just have to focus on the private chat notifications and also have to focus on improving the chat section.
+
+_______________________________________________________________________________________________________________
+25/8/2023
+
+there is no need for private chat notification but we do have to set up a whatsapp like message updating feature on our message section but that is not a priority now therefore now i just have to build the front-end for now.
+
+_________________________________________________________________________________________________________________
+5/9/2023 - working on front-end of the website - build the navigation bar
+6/9/2023 - Home Page is Updated - currently everything is for pc not mobile
+
+9/9/2023 - working on the front-end of the video section
+12/9/2023 - video section
+19/9/23 - Mostly unresponsive front-end updated without any change in the back-end
+4/10/2023 - working on the faulty video section
+12/10/2023 - send_rqst_btn from video section
+16/10/23 - 17/10/2023 - improving video fron-end
+19/10/203 - 20/10/2023 - improving message front-end
+21/10/2023 - 22/10/203  working on the page
+25/10/2023  working on the page - Mos wants to finish this page today 
+-----------------------------------------------------------------------------------
+twisted-iocpsupport==1.0.2 - this bastard is giving wheels error
+mi tukon - 
+from prod_new to git to pull to server on master | or from server to git to pull to laptop (prod_new)
+
+
+

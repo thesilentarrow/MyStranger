@@ -1,0 +1,1089 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang=en>
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ 
+  {% comment %} <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"> {% endcomment %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+
+  <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+  {% comment %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> {% endcomment %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  {% comment %}
+  <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script> {% endcomment %}
+
+  <script src="https://kit.fontawesome.com/7b372b72ba.js" crossorigin="anonymous"></script>
+
+  <!-- Markdown it -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/11.0.1/markdown-it.min.js"
+    integrity="sha512-hW0KbtvDnXCHbh2UCNP/6R+oXxCKiOfm9ciuUekdGBCQF1+57bGqZAk3sAFir7PMQstyRW0UecsSc2HQotH2vg=="
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/default.min.css"
+    integrity="sha512-kZqGbhf9JTB4bVJ0G8HCkqmaPcRgo88F0dneK30yku5Y/dep7CZfCnNml2Je/sY4lBoqoksXz4PtVXS4GHSUzQ=="
+    crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js"
+    integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/kotlin.min.js"
+    integrity="sha512-8aYTnyDstX39PHxorDD+6ROknf98Vqr5KTOjwRCl/442uAVKOpCJ5wY9I3VQ6y46rdDJKYBIglIfE2+GQk8U5Q=="
+    crossorigin="anonymous"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&family=Rubik&display=swap');
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .chat-dropdown-header:hover {
+      cursor: pointer;
+      background: var(--main-background-color);
+    }
+
+    .chat-dropdown-header {
+      color: var(--light-primary-text-color);
+    }
+
+    .scrollable-menu {
+      height: auto;
+      max-height: 90vh;
+      width: 500px;
+      overflow-x: hidden;
+    }
+
+    .notifications-material-icon {
+      font-size: 28px;
+
+    }
+
+    .notifications-icon-container {
+      width: 40px;
+      height: 40px;
+      background-color: var(--main-background-color);
+    }
+
+    .notifications-icon-container:hover {
+      cursor: pointer;
+      background-color: var(--secondary-text-color)
+    }
+
+    .notify-badge {
+      position: absolute;
+      background: transparent;
+      height: 1.2rem;
+      width: 1.2rem;
+      line-height: 1.2rem;
+      top: 1rem;
+      right: 2rem;
+      text-align: center;
+      font-size: 1rem;
+      border-radius: 50%;
+      color: white;
+      font-weight: 630;
+      margin-top: -15px;
+      margin-right: -25px;
+    }
+
+    #id_notifications_spinner {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .chat-dropdown-header:hover {
+      cursor: pointer;
+      background: var(--main-background-color);
+    }
+
+    .chat-dropdown-header {
+      color: var(--light-primary-text-color);
+    }
+
+    .scrollable-menu {
+      height: auto;
+      max-height: 90vh;
+      width: 500px;
+      overflow-x: hidden;
+    }
+
+    .notifications-material-icon {
+      font-size: 28px;
+
+    }
+
+    .notifications-icon-container {
+      width: 40px;
+      height: 40px;
+      background-color: var(--main-background-color);
+    }
+
+    .notifications-icon-container:hover {
+      cursor: pointer;
+      background-color: var(--secondary-text-color)
+    }
+
+    .notify-badge {
+      position: absolute;
+      background: transparent;
+      height: 1.2rem;
+      width: 1.2rem;
+      line-height: 1.2rem;
+      top: 1rem;
+      right: 2rem;
+      text-align: center;
+      font-size: 1rem;
+      border-radius: 50%;
+      color: white;
+      font-weight: 630;
+      margin-top: -15px;
+      margin-right: -25px;
+    }
+
+    #id_notifications_spinner {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+
+    .bar .drop-btn {
+      /* width: 400px; */
+      background: #242526;
+      border-radius: 5px;
+      line-height: 55px;
+      font-size: 20px;
+      font-weight: 500;
+      color: #ffffff;
+      padding: 0 20px;
+    }
+
+    .bar .drop-btn span {
+      float: right;
+      line-height: 39px;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .bar .drop-btn span i {
+      font-size: 23px;
+    }
+
+    .bar .tooltip {
+      position: absolute;
+      right: 20px;
+      bottom: -20px;
+      height: 15px;
+      width: 15px;
+      background: #242526;
+      ;
+      transform: rotate(45deg);
+      display: none;
+    }
+
+    .bar .tooltip.show {
+      display: block;
+    }
+
+    .bar .wrapper {
+      margin-top: 2px;
+      position: absolute;
+      top: 55px;
+      right: 4px;
+      display: flex;
+      width: 400px;
+      overflow: hidden;
+      border-radius: 5px;
+      background: #242526;
+      display: none;
+      transition: all 0.3s ease;
+      margin-top: 5px;
+      z-index: 1;
+    }
+
+    .bar .wrapper.show {
+      display: block;
+      display: flex;
+    }
+
+    .wrapper ul {
+      width: 400px;
+      list-style: none;
+      padding: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .wrapper ul li {
+      line-height: 55px;
+    }
+
+    .wrapper ul li a {
+      position: relative;
+      color: #b0b3b8;
+      font-size: 18px;
+      font-weight: 500;
+      padding: 0 10px;
+      display: flex;
+      border-radius: 8px;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .wrapper ul li:hover a {
+      background: #3A3B3C;
+    }
+
+    ul li a .icon {
+      height: 40px;
+      width: 40px;
+      margin-right: 13px;
+      background: #ffffff1a;
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      border-radius: 50%;
+    }
+
+    ul li a .icon span {
+      line-height: 40px;
+      font-size: 20px;
+      color: #b0b3b8;
+    }
+
+    ul li a i {
+      position: absolute;
+      right: 10px;
+      font-size: 25px;
+      pointer-events: none;
+    }
+
+    .wrapper ul.setting-drop,
+    .wrapper ul.help-drop {
+      display: none;
+    }
+
+    .wrapper .arrow {
+      padding-left: 10px;
+      font-size: 20px;
+      font-weight: 500;
+      color: #b0b3b8;
+      cursor: pointer;
+    }
+
+    .wrapper .arrow span {
+      margin-right: 15px;
+    }
+
+    /* ------------------------------------------------------ */
+
+    .btn-group {
+      padding-top: 2px;
+      margin-right: 2em;
+    }
+
+    .notif-icon {
+      font-size: 22px;
+    }
+
+    nav .search-ul {
+      display: flex;
+      list-style: none;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0px;
+    }
+
+    nav .search-ul .search-icon {
+      height: 30px;
+      width: 220px;
+      display: flex;
+      background: #f2f2f2;
+      border-radius: 5px;
+      margin-right: 1em;
+    }
+
+    nav .search-ul .search-icon input {
+      height: 100%;
+      width: 180px;
+      border: none;
+      outline: none;
+      padding: 0 10px;
+      color: #000;
+      font-size: 15px;
+      border-radius: 5px 0 0 5px;
+    }
+
+    nav .search-ul .search-icon .icon {
+      height: 100%;
+      width: 40px;
+      line-height: 33px;
+      text-align: center;
+      border: 1px solid #cccccc;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+
+    nav .search-ul .search-icon .icon:hover {
+      background: #e6e6e6;
+    }
+
+    nav .search-ul .search-icon .icon span {
+      color: #222222;
+      font-size: 18px;
+    }
+
+    .msg-notif{
+      display:none;
+    }
+
+    .main-msg-notif{
+      flex-direction: column;
+    }
+
+    .navbar{
+      background-color: #343a40!important;
+      height: 53px;
+      font-size: 0.9rem;
+    }
+
+    
+/* Styling the scrollbar track */
+::-webkit-scrollbar {
+    width: 10px; /* Set the width of the scrollbar */
+}
+
+/* Styling the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+    background: #e1e1e9; /* Set the color of the thumb */
+    border-radius: 5px; /* Round the corners of the thumb */
+}
+
+/* Styling the scrollbar track (the non-draggable part) */
+::-webkit-scrollbar-track {
+    background: #dfdfdf; /* Set the color of the track */
+    /* background: #eee;  */
+    /* background: #bcdfed; Set the color of the track */
+}
+
+
+.btn:focus,
+.btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.bar-left{
+  display: none;
+}
+
+.nav-left{
+  display: flex;
+  align-items: center;
+}
+
+.search-bar{
+  margin-right: 2em;
+}
+
+.nav-msg2{
+  display: none;
+}
+
+.navbar-brand{
+  font-size: 1.25rem;
+  margin-left: 0.5em;
+}
+
+/* Remove the blue outline on focus for all input elements */
+input:focus, textarea:focus, select:focus {
+    box-shadow: none!important;
+}
+
+
+  /* Media query for tablet width 768px */
+  @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+    
+    .nav-msg{
+      display: none;
+    }
+
+    .nav-msg2{
+      height: 40px;
+    width: 40px;
+    /* display: none; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    .nav-msg2 i{
+      font-size: 16px;
+    }
+
+    .btn-group{
+      margin-right: 1em;
+    }
+
+    .nav-notif{
+      margin-right: 0px;
+    }
+
+    
+
+  }
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+    #wrapper-btn2{
+      left: 2px;
+    /* display: flex; */
+      width: 315px;
+      right: 0px;
+    }
+
+    .navbar-brand{
+      font-size: 18px;
+      /* margin-left: 1em; */
+      margin-right: 0em;
+    }
+
+    .search-bar{
+      display: none;
+    }
+
+    .nav-phone{
+      flex-direction: row-reverse;
+    }
+
+    .btn-group {
+    padding-top: 0px;
+    margin-right: 0em;
+}
+
+.nav-msg{
+  display: none;
+}
+
+.nav-msg2{
+  display: block;
+}
+
+  .account-nav{
+    display: none;
+  }
+
+  .bar-big {
+    display: none;
+  }
+
+  .bar-left .drop-btn{
+    padding: 0px;
+    background: none;
+    line-height: 0px;
+  }
+
+  .bar-left .drop-btn span {
+    /* float: right; */
+    line-height: 0px;
+    font-size: 0px;
+    /* cursor: pointer; */
+}
+
+  .left-icon{
+    display: flex;
+    align-items: center;
+  }
+
+  .bar-left{
+    display: flex;
+  }
+
+  .bar-left .dropleft .dropdown-menu {
+    top: 3em;
+    right: -100%;
+    left: auto; 
+  }
+
+  .bar-left .scrollable-menu {
+    height: auto;
+    max-height: 75vh;
+    width: 318px;
+    overflow-x: hidden;
+}
+
+
+
+.bar-left .wrapper ul {
+    width: 315px; 
+  }
+
+  }
+    
+    
+  </style>
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex">
+    <div class="container-fluid">
+      <div class="left-icon">
+        {% if request.user.is_authenticated %}
+      <span class="bar-left bar" id="bar-btn2">
+        <div class="drop-btn">
+          <span><i class="fa-solid fa-bars p-2"></i></span>
+        </div>
+        <!-- <div class="tooltip"></div> -->
+        <div class="wrapper" id="wrapper-btn2">
+          <ul class="menu-bar">
+            <li>
+              <!-- <a href="#">
+                <div class="icon">
+                  <span class="fas fa-home"></span>
+                </div>
+                Home
+              </a> -->
+              <a class="p-2 dropleft" style='text-decoration:none;' href="{% url 'logout' %}">
+              
+                <div class="icon">
+                  <span class="fas fa-sign-out-alt"></span>
+                </div>
+                Log out
+              </a>
+            </li>
+            <li class="setting-item">
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-cog"></span>
+                </div>
+                Settings & privacy <i class="fas fa-angle-right"></i>
+              </a>
+            </li>
+            <li class="help-item">
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-question-circle"></span>
+                </div>
+                Help & support <i class="fas fa-angle-right"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-user"></span>
+                </div>
+                About us
+              </a>
+            </li>
+            <li>
+              <a href="{% url "feedback" %}">
+                <div class="icon">
+                  <span class="fas fa-comment-alt"></span>
+                </div>
+                Found a bug \ Feedback 
+              </a>
+            </li>
+          </ul>
+          <!-- Settings & privacy Menu-items -->
+          <ul class="setting-drop">
+            <li class="arrow back-setting-btn"><span class="fas fa-arrow-left"></span>Settings & privacy
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-user"></span>
+                </div>
+                Personal info
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-lock"></span>
+                </div>
+                Password
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-address-book"></span>
+                </div>
+                Activity log
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-globe-asia"></span>
+                </div>
+                Languages
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-sign-out-alt"></span>
+                </div>
+                Log out
+              </a>
+            </li>
+          </ul>
+          <!-- Help & support Menu-items -->
+          <ul class="help-drop">
+            <li class="arrow back-help-btn"><span class="fas fa-arrow-left"></span>Help & support</li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-question-circle"></span>
+                </div>
+                Help centre
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-envelope"></span>
+                </div>
+                Support Inbox
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-comment-alt"></span>
+                </div>
+                Send feedback
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <div class="icon">
+                  <span class="fas fa-exclamation-circle"></span>
+                </div>
+                Report problem
+              </a>
+            </li>
+          </ul>
+        </div>
+      </span>
+      {% endif %}
+      <a class="navbar-brand" href="/">MyStranger</a>
+      <span class='ml-4' id="active-count" style="color:white;"></span>
+    </div>
+      <div class="nav-left">
+        <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
+          <!-- <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search using email..."> -->
+          <ul class="search-ul mr-2">
+            <li class="search-icon">
+              <input type="search" name="q" id="id_q_large" placeholder="Search using email...">
+              <label class="icon" onclick="executeQuery();">
+                <span id="sicon-logo" onclick="executeQuery();" class="fas fa-search"></span>
+              </label>
+            </li>
+          </ul>
+        </form>
+      
+
+      {% if request.user.is_authenticated %}
+      <div class='d-flex nav-phone' style="align-items: center;">
+        <div class="btn-group dropleft">
+          <div class="d-flex notifications-icon-container rounded-circle align-items-center main-msg-notif" onclick="setMsgNotificationsAsRead()">
+            <span id="id_msg_notifications_count" class="notify-badge msg-notif" style="
+              right: 10px !important;"></span>
+            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a>
+            <a class="text-light p-2 nav-msg2" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}"><i class="fa-solid fa-message" style="color: #ffffff;"></i></a>
+          </div>
+        </div>
+
+        <div class="btn-group dropleft nav-notif ">
+          <div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3"
+            id="id_notification_dropdown_toggle" data-bs-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
+            <span id="id_general_notifications_count" class="notify-badge msg-notif"></span>
+            <span style='color:white;'
+              class="d-flex material-icons notif-icon notifications-material-icon m-auto align-items-center">notifications</span>
+            <div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle"
+              id="id_general_notifications_container">
+            </div>
+          </div>
+        </div>
+
+        <a class="text-light p-2 nav-msg account-nav" style='text-decoration:none;'
+          href="{% url 'account:view' user_id=request.user.id %}">Account</a>
+        <a class="text-light p-2 nav-msg2 account-nav" style='text-decoration:none;'
+          href="{% url 'account:view' user_id=request.user.id %}"><i class="fa-solid fa-user" style="color: #ffffff;"></i></a>
+
+        <span class="bar bar-big" id="bar-btn">
+          <div class="drop-btn drop-btn2">
+            <span><i class="fa-solid fa-bars p-2"></i></span>
+          </div>
+          <!-- <div class="tooltip"></div> -->
+          <div class="wrapper wrapper2" id="wrapper-btn">
+            <ul class="menu-bar menu-bar2">
+              <li>
+                <!-- <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-home"></span>
+                  </div>
+                  Home
+                </a> -->
+                <a class="p-2 dropleft" style='text-decoration:none;' href="{% url 'logout' %}">
+                
+                  <div class="icon">
+                    <span class="fas fa-sign-out-alt"></span>
+                  </div>
+                  Log out
+                </a>
+              </li>
+              <li class="setting-item setting-item2">
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-cog"></span>
+                  </div>
+                  Settings & privacy <i class="fas fa-angle-right"></i>
+                </a>
+              </li>
+              <li class="help-item help-item2">
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-question-circle"></span>
+                  </div>
+                  Help & support <i class="fas fa-angle-right"></i>
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-user"></span>
+                  </div>
+                  About us
+                </a>
+              </li>
+              <li>
+                <a href="{% url "feedback" %}">
+                  <div class="icon">
+                    <span class="fas fa-comment-alt"></span>
+                  </div>
+                  Found a bug \ Feedback 
+                </a>
+              </li>
+            </ul>
+            <!-- Settings & privacy Menu-items -->
+            <ul class="setting-drop setting-drop2">
+              <li class="arrow back-setting-btn back-setting-btn2"><span class="fas fa-arrow-left"></span>Settings & privacy
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-user"></span>
+                  </div>
+                  Personal info
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-lock"></span>
+                  </div>
+                  Password
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-address-book"></span>
+                  </div>
+                  Activity log
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-globe-asia"></span>
+                  </div>
+                  Languages
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-sign-out-alt"></span>
+                  </div>
+                  Log out
+                </a>
+              </li>
+            </ul>
+            <!-- Help & support Menu-items -->
+            <ul class="help-drop help-drop2">
+              <li class="arrow back-help-btn back-help-btn2"><span class="fas fa-arrow-left"></span>Help & support</li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-question-circle"></span>
+                  </div>
+                  Help centre
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-envelope"></span>
+                  </div>
+                  Support Inbox
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-comment-alt"></span>
+                  </div>
+                  Send feedback
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-exclamation-circle"></span>
+                  </div>
+                  Report problem
+                </a>
+              </li>
+            </ul>
+          </div>
+        </span>
+
+      </div>
+    </div>
+  </div>
+
+    {% else %}
+    <div class='d-flex'>
+      <a class="p-2 text-light dropleft" href="{% url 'login' %}">Login</a>
+      <a class=" p-2 text-light dropleft" href="{% url 'register' %}">Register</a>
+    </div>
+    {% endif %}
+  </nav>
+
+  <script>
+    {% if request.user.is_authenticated %}
+    const drop_btn = document.querySelector(".drop-btn span");
+    const tooltip = document.querySelector(".tooltip");
+    const menu_wrapper = document.querySelector(".wrapper");
+    const menu_bar = document.querySelector(".menu-bar");
+    const setting_drop = document.querySelector(".setting-drop");
+    const help_drop = document.querySelector(".help-drop");
+    const setting_item = document.querySelector(".setting-item");
+    const help_item = document.querySelector(".help-item");
+    const setting_btn = document.querySelector(".back-setting-btn");
+    const help_btn = document.querySelector(".back-help-btn");
+    drop_btn.onclick = (() => {
+      menu_wrapper.classList.toggle("show");
+      tooltip.classList.toggle("show");
+    });
+    setting_item.onclick = (() => {
+      menu_bar.style.marginLeft = "-321px";
+      setTimeout(() => {
+        setting_drop.style.display = "block";
+      }, 100);
+    });
+    help_item.onclick = (() => {
+      menu_bar.style.marginLeft = "-321px";
+      setTimeout(() => {
+        help_drop.style.display = "block";
+      }, 100);
+    });
+    setting_btn.onclick = (() => {
+      menu_bar.style.marginLeft = "0px";
+      setting_drop.style.display = "none";
+    });
+    help_btn.onclick = (() => {
+      help_drop.style.display = "none";
+      menu_bar.style.marginLeft = "0px";
+    });
+
+    const drop_btn2 = document.querySelector(".drop-btn2 span");
+    const tooltip2 = document.querySelector(".tooltip2");
+    const menu_wrapper2 = document.querySelector(".wrapper2");
+    const menu_bar2 = document.querySelector(".menu-bar2");
+    const setting_drop2 = document.querySelector(".setting-drop2");
+    const help_drop2 = document.querySelector(".help-drop2");
+    const setting_item2 = document.querySelector(".setting-item2");
+    const help_item2 = document.querySelector(".help-item2");
+    const setting_btn2 = document.querySelector(".back-setting-btn2");
+    const help_btn2 = document.querySelector(".back-help-btn2");
+    drop_btn2.onclick = (() => {
+      menu_wrapper2.classList.toggle("show");
+      tooltip2.classList.toggle("show");
+    });
+    setting_item2.onclick = (() => {
+      menu_bar2.style.marginLeft = "-400px";
+      setTimeout(() => {
+        setting_drop2.style.display = "block";
+      }, 100);
+    });
+    help_item2.onclick = (() => {
+      menu_bar2.style.marginLeft = "-400px";
+      setTimeout(() => {
+        help_drop2.style.display = "block";
+      }, 100);
+    });
+    setting_btn2.onclick = (() => {
+      menu_bar2.style.marginLeft = "0px";
+      setting_drop2.style.display = "none";
+    });
+    help_btn.onclick = (() => {
+      help_drop2.style.display = "none";
+      menu_bar2.style.marginLeft = "0px";
+    });
+
+    {% endif %}
+
+  </script>
+
+  {% block body %}{% endblock body %}
+
+  <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script> 
+
+  {% include 'general_notifications.html' %}
+
+  <!-- Setup SOCKET for NOTIFICATIONS -->
+  <script type="text/javascript">
+    // Correctly decide between ws:// and wss://
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path = ws_scheme + '://' + window.location.host + ":8001/"; // PRODUCTION
+ 
+    // console.log("Connecting to " + ws_path);
+    var notificationSocket = new WebSocket(ws_path);
+
+    // Handle incoming messages
+    notificationSocket.onmessage = function (message) {
+      // console.log("Got notification websocket message.");
+      var data = JSON.parse(message.data);
+
+      // console.log(data)
+
+      /*
+      GENERAL NOTIFICATIONS
+    */
+      // new 'general' notifications data payload
+      if (data.general_msg_type == 0) {
+        console.log('data.general_msg_type == 0')
+        handleGeneralNotificationsData(data['notifications'], data['new_page_number'])
+      }
+
+      // "General" Pagination exhausted. No more results.
+      if (data.general_msg_type == 1) {
+        setGeneralPaginationExhausted()
+      }
+
+      // Refresh [newest_timestamp >= NOTIFICATIONS >= oldest_timestamp]
+      if (data.general_msg_type == 2) {
+        // console.log('Got the notification')
+        refreshGeneralNotificationsData(data['notifications'])
+      }
+
+      if (data.general_msg_type == 3) {
+        console.log('Got the new notification')
+        handleNewGeneralNotificationsData(data['notifications'])
+      }
+
+      if (data.general_msg_type == 4) {
+        console.log('Got the unread notifications count')
+        setUnreadGeneralNotificationsCount(data['count'])
+      }
+
+      if (data.general_msg_type == 8) {
+        console.log('Got the unread message notifications count')
+        setUnreadMessageNotificationsCount(data['count'])
+      }
+
+
+
+      if (data.general_msg_type == 5) {
+        updateGeneralNotificationDiv(data['notification'])
+      }
+
+
+    }
+
+    notificationSocket.onclose = function (e) {
+      console.error('Notification Socket closed unexpectedly');
+    };
+
+    notificationSocket.onopen = function (e) {
+      console.log("Notification Socket on open: " + e)
+      setupGeneralNotificationsMenu()
+      getFirstGeneralNotificationsPage()
+      getUnreadGeneralNotificationsCount()
+      getUnreadMessageNotificationsCount()
+    }
+
+    notificationSocket.onerror = function (e) {
+      console.log('Notification Socket error', e)
+    }
+
+    if (notificationSocket.readyState == WebSocket.OPEN) {
+      console.log("Notification Socket OPEN complete.")
+    }
+    else if (notificationSocket.readyState == WebSocket.CONNECTING) {
+      console.log("Notification Socket connecting..")
+    }
+ 
+    function executeQuery() {
+      // var query = ""
+      // query = document.getElementById('id_q_small').value;
+      // if (query == "") {
+      query = document.getElementById('id_q_large').value;
+      // }
+      console.log(query, 'fsrefsdrf')
+      window.location.replace("{% url 'search' %}?q=" + query)
+
+      return false
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    /*
+      Build a <p> for messages using markdown
+      https://github.com/markdown-it/markdown-it
+    */
+    function validateText(str) {
+      var md = window.markdownit({
+        highlight: function (str, lang) {
+          if (lang && hljs.getLanguage(lang)) {
+            try {
+              return '<pre class="hljs"><code>' +
+                hljs.highlight(lang, str, true).value +
+                '</code></pre>';
+            } catch (__) { }
+          }
+          return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+        },
+        linkify: true,
+      });
+      var result = md.render(str);
+      return result
+    }
+
+
+  </script>
+
+</body>
+
+</html>

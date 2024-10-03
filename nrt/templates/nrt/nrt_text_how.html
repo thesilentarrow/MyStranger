@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block body %}
+
+<style>
+    
+    /* Media query for tablet width 320px */
+  @media only screen and (min-width: 800px) { 
+
+    .cont-width{
+        width:28%!important;
+    }
+
+  }
+</style>
+
+<div class="container" style="display:flex; justify-content:center; flex-direction:column; align-items:center">
+    <div style="margin-top:10px;">
+    <h6>How Blind Dates Work?</h6>
+    <p style="font-size:14px;">Slide the images to get a complete understanding how how blind dates work</p></div>
+    <div id="carouselExampleDark" class="carousel carousel-dark slide cont-width">
+        <div class="carousel-indicators">
+          <!-- Adjust the data-bs-slide-to values accordingly -->
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="3" aria-label="Slide 4"></button>
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="4" aria-label="Slide 5"></button>
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="5" aria-label="Slide 6"></button>
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="6" aria-label="Slide 7"></button>
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="7" aria-label="Slide 8"></button>
+          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="8" aria-label="Slide 9"></button>
+        </div>
+        <div class="carousel-inner">
+          <!-- Add more carousel items as needed -->
+          <div class="carousel-item active" data-bs-interval="10">
+            <img src="{% static 'images/bd1.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 1</h5>
+              <p>Some representative placeholder content for the first slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <!-- Repeat similar blocks for each additional slide -->
+          <div class="carousel-item" data-bs-interval="10">
+            <img src="{% static 'images/bd2.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 2</h5>
+              <p>Some representative placeholder content for the second slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <div class="carousel-item" data-bs-interval="10">
+            <img src="{% static 'images/bd3.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 3</h5>
+              <p>Some representative placeholder content for the third slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <div class="carousel-item" data-bs-interval="10">
+            <img src="{% static 'images/bd4.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 3</h5>
+              <p>Some representative placeholder content for the third slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <div class="carousel-item" data-bs-interval="10">
+            <img src="{% static 'images/bd5.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 3</h5>
+              <p>Some representative placeholder content for the third slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <div class="carousel-item" data-bs-interval="10">
+            <img src="{% static 'images/bd6.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 3</h5>
+              <p>Some representative placeholder content for the third slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <div class="carousel-item" data-bs-interval="10">
+            <img src="{% static 'images/bd7.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 3</h5>
+              <p>Some representative placeholder content for the third slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <div class="carousel-item" data-bs-interval="10">
+            <img src="{% static 'images/bd8.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 3</h5>
+              <p>Some representative placeholder content for the third slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <div class="carousel-item" data-bs-interval="10">
+            <img src="{% static 'images/bd9.png' %}" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              {% comment %} <h5>Slide 3</h5>
+              <p>Some representative placeholder content for the third slide.</p> {% endcomment %}
+            </div>
+          </div>
+          <!-- Add more slides as needed -->
+        </div>
+        <button class="carousel-control-prev" style="left: -23px;" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" style="right: -23px;" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+      
+</div>
+
+{% endblock body %}

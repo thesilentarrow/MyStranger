@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<style>
+
+    body{
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+
+    }
+
+    .ftco-section{
+        flex: 1;
+        display: flex;
+        {% comment %} align-items: center; {% endcomment %}
+        margin-top: 4em;
+        /* border: 2px solid red; */
+    }
+
+    .info-wrap{
+        background: #272a34;
+    }
+
+    .contact-wrap{
+        background: #1c1e25;
+    }
+
+    .wrapper {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+    -moz-box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+    box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+}
+
+.btn-feedback{
+    background-color: #009cda;
+}
+.btn-feedback:hover{
+    background-color: #038ac0;
+}
+
+/* Media query for tablet width 768px */
+  @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+
+    .ftco-section{
+        margin-top: 1em;
+      }
+
+  }
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+    .ftco-section{
+        margin-top: 1em;
+      }
+
+
+  }
+
+</style>
+
+<div class="ftco-section" style="color: whitesmoke;">
+
+
+    <div class="container">
+        <div class="row justify-content-center">
+            
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="wrapper">
+                    <div class="row no-gutters">
+                        
+                        <div class="col-md-6 d-flex align-items-stretch">
+                            <div class="info-wrap w-100 p-md-5 p-4 py-5 img">
+                                <h3 style="color: white;">Found a bug</h3>
+                                <p class="mb-4 mt-2">If you have faced any problem while using this site than please tell us</p>
+                                <div class="dbox w-100 d-flex align-items-start">
+                                    <!-- <div class="icon d-flex align-items-center justify-content-center">
+                                        <span class="fa fa-map-marker"></span>
+                                    </div> -->
+                                    <div class="text pl-3">
+                                        <p>- Found a bug | Report it along with some cuss words for the developer</p>
+                                    </div>
+                                </div>
+                                <div class="dbox w-100 d-flex align-items-center">
+                                    <!-- <div class="icon d-flex align-items-center justify-content-center">
+                                        <span class="fa fa-phone"></span>
+                                    </div> -->
+                                    <div class="text pl-3">
+                                        <p>- Didn't like the front-end | smash that feedback form with what u want it to look like </p>
+                                    </div>
+                                </div>
+                                <div class="dbox w-100 d-flex align-items-center">
+                                    <!-- <div class="icon d-flex align-items-center justify-content-center">
+                                        <span class="fa fa-paper-plane"></span>
+                                    </div> -->
+                                    <div class="text pl-3">
+                                        <p>- Any problem u have faced | Just name it | We are going to fix it</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="dbox w-100 d-flex align-items-center">
+                                    <!-- <div class="icon d-flex align-items-center justify-content-center">
+                                        <span class="fa fa-globe"></span>
+                                    </div> -->
+                                    <!-- <div class="text pl-3">
+                                        <p>(because we are an exploitative company with currently one developer | Your's truely : me)</p>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-stretch">
+                            <div class="contact-wrap w-100 p-md-5 p-4 py-5">
+                                <h3 class="mb-4" style="color: white;">Feedback</h3>
+                                {% if response %}
+                                <div id="form-message-warning" class="mb-4"></div>
+                                <div id="form-message-success" class="mb-4 ml-2">
+                                    <p>{{response}}</p>
+                                    {% comment %} <p>{{msg}}</p> {% endcomment %}
+                                </div>
+                                {% else %}
+                                
+                                    <form method="POST" id="contactForm" name="contactForm" class="contactForm">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                    
+                                            <!-- <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" name="subject" id="subject"
+                                                        placeholder="Subject">
+                                                </div>
+                                            </div> -->
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <textarea name="message" class="form-control" id="message" cols="30"
+                                                        rows="6" placeholder="your response..."></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <input type="submit" value="Send Message" class="btn btn-primary btn-feedback">
+                                                    <div class="submitting"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

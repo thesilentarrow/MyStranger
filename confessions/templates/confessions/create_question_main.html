@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style>
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+    .phone-font{
+      font-size:1.2em;
+    } 
+
+  }
+
+</style>
+
+{% if messages %}
+  
+    {% for message in messages %}
+      
+      <div style="margin-bottom: 0px;" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong></strong> {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+ 
+{% endif %}
+<div class="p-2 mb-2 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-5">
+      
+      <h4 class="display-8 fw-bold phone-font">Confess anything anonymously-</h4>
+      <form action="" method="post"> {% csrf_token %}
+      {% comment %} <input type="text"  class="radius form-control" placeholder="Confess without being judged" required
+      autofocus> {% endcomment %}
+      <textarea name="question" id="question" class="radius form-control" style="font-size:14px;" placeholder="Confess without being judged" cols="30" rows="2" required
+      autofocus></textarea>
+
+      <div class="demmo">
+
+        <p class="d-flex gap-1 d-link" style="flex-direction:column; margin-top:8px; font-size:14px;">
+					<span>Wanna see what the taggie is gonna recieve - </span>
+					<a class="" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+					Show Me
+					</a>
+					
+				</p>
+				<div class="collapse" id="collapseExample">
+					<div class="d-card" style="font-size:12px;">
+            <p>Hi Taggie Name, </p>
+            <p>Someone you know has confessed this about you on mystranger.in</p>
+            
+            "<span id="output"></span>"
+            
+            <p style="margin-top:6px;"> You can respond to their confession by visiting mystranger.in now. 
+            you can only reply to their confession using the below link because it contains your unique token for that particular confession - "https:mystranger.in/confessions/questions/29/?question=True&Taggie_token=Token" </p>
+           
+					</div>
+					
+				</div>
+
+      </div>
+
+      {% comment %} polls optional {% endcomment %}
+      <h6 class="text-secondary mt-4">Wanna Tag Someone? (optional)</h6>
+      <p class="text-secondary mt-2" style="font-size:14px;">No other user can see this information, these are just required to send your anonymous confession to the taggie.</p>
+      
+      <label class="mt-2" for="taggiename">Taggie Name - </label>
+      <input type="text" name="taggiename" id="taggiename" class="radius form-control" placeholder="Taggie Name -">
+
+      <label class="mt-2" for="taggiemail">Taggie Email - </label>
+      <input type="email" name="taggiemail" id="taggiemail" class="radius form-control" placeholder="Taggie Email (optional)">
+      <p class="text-secondary" style="font-size:12px;">Email is the fastest way to reach that person.</p>
+
+
+      <label class="" for="taggieinfo">Enter any valid id of the taggie - </label>
+      <textarea name="taggieinfo" id="taggieinfo" class="form-control" style="font-size:14px;" placeholder="Enter any valid id of the taggie where mystranger.in can reach them it can be their instagram, snapchat , telegram, discord username etc.. , whatsapp no. or a valid mobile number or anything else where your confession can reach them. Makesure to specify the format - 'whatsapp : 87xxxxxxxx , instagram : Hixxxxx44 , Mobile Number : 87xxxxxxxx , etc ....'" cols="30" rows="5"></textarea>
+
+      <p class="text-secondary mt-2" style="font-size:12px;">You can add multiple id's of the same person (Taggie) to make sure your confession reaches them</p>
+      <p class="text-secondary mt-2" style="font-size:12px;">It can take upto 1 hr to 24 hrs for your confession to reach the taggie.</p>
+      <button class="btn btn-sm btn-outline-dark mt-4" type="Submit">Submit Confession</button>
+    </form>
+    </div>
+  </div>
+
+
+  
+<script>
+
+   // Get references to the textarea and the output div
+   var textarea = document.getElementById('question');
+   var outputDiv = document.getElementById('output');
+
+   // Add an event listener for the 'input' event on the textarea
+   textarea.addEventListener('input', function() {
+       // Update the content of the output div with the textarea's value
+       outputDiv.textContent = textarea.value;
+   });
+
+  {% comment %} function limitInput(id) {
+      var input = document.getElementById(id);
+      var charCount = document.getElementById("charCount-"+id);
+      var maxChars = 22;
+  
+      // Get the current input value
+      var inputText = input.value;
+  
+      // Update the character count
+      charCount.innerText = inputText.length;
+  
+      // Trim the input if it exceeds the maximum length
+      if (inputText.length > maxChars) {
+          input.value = inputText.slice(0, maxChars);
+          charCount.innerText = maxChars; // Update count to maxChars
+      }
+  } {% endcomment %}
+  </script>
+
+  {% endblock body %}

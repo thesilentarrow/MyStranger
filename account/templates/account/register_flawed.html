@@ -1,0 +1,599 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+
+<style type="text/css">
+
+    body{
+        height: 100vh;
+        /* border: 2px solid red; */
+		display: flex;
+		flex-direction: column;
+        /* align-items: center; */
+    }
+
+  .card-signin {
+    width: 100%;
+    max-width: 400px;
+    padding: 15px;
+    margin: auto;
+  }
+
+  .form-signin input[type="email"] {
+    margin-bottom: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .form-signin input[type="text"] {
+    margin-bottom: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .form-signin input[type="password"] {
+    margin-bottom: -1px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .rectangle {
+    margin-top: 10vh;
+    display: flex;
+    justify-content: center;
+    /* background-color: red; */
+  }
+
+  .box1 {
+    /* border: 2px solid black; */
+    width: 30vw;
+  }
+
+  .box2 {
+    /* border: 2px solid purple; */
+    width: 25vw;
+  }
+
+  .pass2{
+    margin-top: 10px;
+  }
+  
+  .radius{
+    border-radius: 4px !important;
+  }
+
+  .gender{
+    margin-left: 4px;
+    font-size: 0.94rem;
+  }
+
+  .terms-cons{
+    font-size: 0.94rem;
+    margin-top: 10px;
+    align-items: center;
+    display: flex;
+
+  }
+
+  .form-control{
+    border: 1px solid #707070;
+  }
+
+  .card-signin{
+    border: 1px solid #707070;
+  }
+
+  .card-signin a{
+    color: #009cda ;
+  }
+
+.main-cont{
+    flex: 1;
+    margin-top: 5em;
+    /* border: 2px solid blue; */
+
+}
+
+.rectangle{
+    margin-top: 0px;
+}
+
+#map2{
+    display: none;
+}
+
+#map{
+    border: 1px solid #707070;
+}
+
+.errors{
+    /* border: 2px solid red; */
+    margin-left: 21em;
+}
+
+#not_my_uni{
+  text-decoration: underline;
+    color: #009cda;
+    display: block;
+    background: none;
+    border: none;
+}
+
+#not_my_uni:hover{
+  text-decoration:none;
+  cursor: pointer;
+}
+
+.box1{
+  width: 50%;
+    display: flex;
+    justify-content: end;
+    margin-right: 1em;
+}
+
+.box2{
+  width: 50%;
+}
+
+#reg-info{
+  margin-left: 0.5em;
+  padding : 3px;
+}
+
+#reg-info:hover{
+
+}
+
+.box2-upper{
+  display: flex;
+}
+
+/* Custom CSS to hide the dropdown arrow */
+.dropdown-toggle::after {
+    display: none;
+}
+
+.reg-menu{
+  min-width: 8rem;
+  padding : 5px;
+}
+
+.dropdown-menu p {
+  margin-bottom : 0px;
+  font-size:10px;
+}
+
+
+</style>
+
+<div class="container-fluid main-cont">
+  <div class='rectangle'>
+    <div class='box1'>
+      <div class="">
+        <div class="card card-signin" style="max-height: 314px; max-width: 371px;">
+          <div class="card-body" style="padding-top: 0px !important;">
+            <form class="form-signin" method="post" onsubmit="return validateForm()">{% csrf_token %}
+              <div class="d-flex flex-column pb-3">
+              </div>
+              <input type="email" name="email" id="inputEmail" class="radius form-control" placeholder="Student Email address" required
+                autofocus>
+              <input type="text" name="lat" id="lat" placeholder="lat" hidden>
+              <input type="text" name="lon" id="lon" placeholder="lon" hidden>
+              <input type="checkbox" name="notrust" id="notrust">
+              <input type="text" name="universityName" id="universityName" hidden>
+
+              <input type="password" name="password1" id="inputPassword1" class="radius form-control" placeholder="Password"
+                required>
+
+              <input type="password" name="password2" id="inputPassword2" class="radius form-control pass2"
+                placeholder="Confirm password" required>
+              <div class="pl-3" style="margin-top: 10px;">
+                <span class=" mb-1">Gender : </span>
+
+                <span class="gender">
+                    <input type="radio" name="gender" value="M" required> Male
+                    <input type="radio" name="gender" value="F" style="margin-left: 4px;"> Female
+                </span>
+            </div>
+                <div class="terms-cons">
+                <input type="checkbox" name="terms" id="terms-conditions" required><span class="ml-2">I Accept the <a href="#">Terms & Conditions</a></span>
+            </div>
+
+              <button class="btn btn-md btn-outline-dark btn-block mt-3" type="submit">Register</button>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class='box2'>
+      <div class="box2-upper">
+        <h6 id="uniName"></h6>
+        {% comment %} <span class="ml-1 reg-info dropdown-toggle"></span> {% endcomment %}
+        <div class="dropdown">
+          <div class="dropdown-toggle" id="reg-info" style="display:none;" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"> <i class="fa-solid fa-circle-info"></i>
+          </div>
+          
+          <div class="dropdown-menu reg-menu" style="display:none;">
+            <p>If your university is not present in the search result than please either select any nearby location or search the coordinates of your university in this format lat,lon  </p>
+          </div>
+          
+        </div>
+      </div>
+      <h6 id="uniAddress"></h6>
+      <div id="map" style="height: 292px; width: 350px;"></div>
+    </div>
+      <button style="display: none;" id="not_my_uni" onclick="notMyUni()">Not My University</button>
+      
+    </div>
+  </div>
+  <div class="errors">
+  {% for field in registration_form %}
+              <p>
+                {% for error in field.errors %}
+              <p style="color: red">{{ error }}</p>
+              {% endfor %}
+              </p>
+              {% endfor %}
+              {% if registration_form.non_field_errors %}
+              <div style="color: red">
+                <p>{{registration_form.non_field_errors}}</p>
+              </div>
+
+              {% endif %}
+            </div>
+</div>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js'></script>
+<link rel='stylesheet'
+  href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css' type='text/css' />
+
+<script>
+
+  const hoverDiv = document.getElementById('reg-info');
+  var loadCount = 0;
+  
+  hoverDiv.addEventListener("mouseover", () => {
+    // Handle mouseover (hover)
+    const hovermenu = document.querySelector('.reg-menu')
+    hovermenu.style.display = 'block';
+      
+    console.log("Mouse over the element.");
+  });
+
+  hoverDiv.addEventListener("mouseout", () => {
+      // Handle mouseout (leave hover)
+      const hovermenu = document.querySelector('.reg-menu')
+      hovermenu.style.display = 'none';
+      console.log("Mouse left the element.");
+  });
+
+  // we don't wanna load map everytime a user registers , we only wanna load map when the university isn't registered in the database
+
+  function loadMapInstance(){
+    loadCount++;
+    console.log('############ THe load count is - ', loadCount)
+
+    if(loadCount > 1){
+      console.log('Load count is > 1 so we are gonna ignore it', loadCount)
+    } else {
+      
+
+      mapboxgl.accessToken = '{{accesstoken}}';
+    
+      console.log('initializing the map instance for once')
+
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [77.2219388, 28.6517178],
+        zoom:  2 // Default zoom level
+      });
+
+      // Create a default Marker and add it to the map.
+      const marker1 = new mapboxgl.Marker()
+        .setLngLat([77.2219388, 28.6517178])
+        .addTo(map);
+      
+      console.log('initializing the map geocoder instance for once')
+      
+
+      var geocoder = new MapboxGeocoder({ // Initialize the geocoder
+        accessToken: mapboxgl.accessToken, // Set the access token
+        mapboxgl: mapboxgl, // Set the mapbox-gl instance
+        marker: false, // Do not use the default marker style
+        placeholder: 'Search for universities and colleges', // Placeholder text for the search bar
+        // bbox: [79.0000, 5.0000, 82.0000, 10.0000], // Boundary for Berkeley
+        {% comment %} types: 'point', {% endcomment %}
+        types: 'poi',
+        countries: 'IN',
+        bbox: [68.1766451354, 6.754087679, 97.4025614766, 35.4940095078],
+
+        proximity: {
+          longitude: 77.2167, // Longitude of New Delhi
+          latitude: 28.6139 // Latitude of New Delhi
+        }
+  }); 
+
+    function getGeocoder (){
+      return geocoder
+    }
+    function getMap (){
+      return map
+    }
+
+  
+    geocoder.on('result', function (ev) {
+      var notrust = document.getElementById('notrust')
+      notrust.checked = true
+      console.log('printing the search reesult', ev.result);
+      document.getElementById('uniName').innerHTML = 'University Name : ' + ev.result['text']
+      document.getElementById('universityName').value = ev.result['text']
+      document.getElementById('uniAddress').innerHTML = 'Address : ' + ev.result['place_name']
+      document.getElementById('lon').value = ev.result['geometry']['coordinates'][0] 
+      document.getElementById('lat').value = ev.result['geometry']['coordinates'][1]
+      marker1.setLngLat([ev.result['geometry']['coordinates'][0], ev.result['geometry']['coordinates'][1]]);
+      console.log('Updated all the values')
+
+    });
+
+    }
+
+    
+
+  }
+
+
+  
+
+
+
+
+  // Here we are handling the socket connection and also what happens when socket disconnects.
+  // -----------------------------------------------------------------------------------------
+
+  console.log("Setting up the WebSocket - ")
+
+  // Correctly decide between ws:// and wss://
+  var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+  var ws_path = ws_scheme + '://' + window.location.host + "/register/"; // development
+
+  // console.log("Connecting to " + ws_path);
+  chatSocket = new WebSocket(ws_path);
+
+  // Handle incoming messages
+  chatSocket.onmessage = function (message) {
+
+    // Decode the JSON
+    console.log("Got websocket message.");
+    var data = JSON.parse(message.data);
+    console.log(data)
+
+    if (data.connected) {
+      console.log(data.connected)
+    }
+
+    if (data.universityName != null && data.universityName != 'nope' && data.fetched_from != 1) {
+      console.log('hurrah ', data.universityName)
+      
+      document.getElementById('not_my_uni').style.display = 'none'
+      document.getElementById('uniName').innerHTML = 'University Name : ' + data.universityName
+      document.getElementById('uniAddress').innerHTML = 'Address : ' + data.universityAddress
+      document.getElementById('universityName').value = data.universityName
+      document.getElementById('lat').value = data.lat
+      document.getElementById('lon').value = data.lon
+      {% comment %} showMap(data.lon, data.lat, 14) {% endcomment %}
+      window.nomap = true
+      var notrust = document.getElementById('notrust')
+      notrust.checked = false
+      
+    } else if (data.fetched_from == 1 && data.universityName != null && data.universityName != 'nope'){
+      console.log('hurrah no trust ', data.universityName)
+      
+      document.getElementById('uniName').innerHTML = 'University Name : ' + data.universityName
+      document.getElementById('universityName').value = data.universityName
+      document.getElementById('lat').value = data.lat
+      document.getElementById('lon').value = data.lon
+      loadMapInstance();
+      showMap(data.lon, data.lat, 14)
+      document.getElementById('not_my_uni').style.display = 'block'
+      var notrust = document.getElementById('notrust')
+      notrust.checked = true
+
+      // This means that the result is fetched from uni_profile which can be wrong , therefore we are going to give user a btn saying not my uni, so that if its not users uni then after clicking that button we are going to show him the search so that he can select his uni
+        
+    } else if (data.universityName == 'nope') {
+
+      // This means that the university doesn't exist thus we gotta show the search tot ake the input
+
+      loadMapInstance()
+      console.log('This university does not exist in the database.')
+      document.getElementById('uniName').innerHTML = 'Unable to find your university'
+      document.getElementById('universityName').value = ''
+      document.getElementById('uniAddress').innerHTML = ''
+      showSearchBar()
+    }
+
+   
+  }
+
+  // basic event listeners for our websocket
+  // ------------------------------------------------------------------------
+
+  chatSocket.addEventListener("open", function (e) {
+    console.log("ChatSocket OPEN")
+
+  })
+
+
+  chatSocket.onclose = function (e) {
+    console.log('Chat socket closed.');
+
+  };
+
+  chatSocket.onOpen = function (e) {
+    console.log("ChatSocket onOpen", e)
+  }
+
+  chatSocket.onerror = function (e) {
+    console.log('ChatSocket error', e)
+  }
+
+  if (chatSocket.readyState == WebSocket.OPEN) {
+    console.log("ChatSocket OPENN")
+
+  } else if (chatSocket.readyState == WebSocket.CONNECTING) {
+    console.log("ChatSocket connecting..")
+  }
+
+  const email = document.getElementById('inputEmail');
+
+  // Function to be executed when the first field has complete input
+  function onInputChange() {
+    
+    console.log('calling email input')
+    const emailAddress = email.value;
+    if (emailAddress.endsWith('.edu') || emailAddress.endsWith('.edu.in') || emailAddress.endsWith('.ac.in')) {
+      console.log(emailAddress);
+      chatSocket.send(JSON.stringify({
+        "command": "email",
+        "email_address": emailAddress,
+      }));
+    } else if (emailAddress == '') {
+      if (window.nomap){
+
+        document.getElementById('uniName').innerHTML = ''
+        document.getElementById('universityName').value = ''
+        document.getElementById('uniAddress').innerHTML = ''
+      } else {
+
+        showMap(77.2219388, 28.6517178, 2)
+        document.getElementById('uniName').innerHTML = ''
+        document.getElementById('universityName').value = ''
+        document.getElementById('uniAddress').innerHTML = ''
+      }
+      window.nomap = false
+
+
+    }
+  }
+
+  $('#inputEmail').on('input', function () {
+    onInputChange()
+  });
+
+  function showMap(lon, lat, zoom) {
+
+    removeSearchBar()
+
+    marker1.setLngLat([lon, lat]);
+    map.setCenter([lon, lat]);
+
+    var options = {
+      zoom: zoom,
+      duration: 3000, // Duration of the animation in milliseconds
+    };
+
+    map.flyTo(options);
+    
+  }
+
+  function notMyUni(){
+    document.getElementById('uniName').innerHTML = 'Unable to find your university'
+    showSearchBar()
+  }
+
+  function showSearchBar() {
+    document.getElementById('not_my_uni').style.display = 'none'
+    document.getElementById('reg-info').style.display = 'flex'
+    let geocoder = getGeocoder()
+    let map = getMap()
+    if (map.hasControl(geocoder)) {
+      // Remove the geocoder control from the map
+      map.removeControl(geocoder);
+  }
+    map.addControl(geocoder);
+
+    var geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input')
+    geocoderInput.addEventListener('input', function(event) {
+
+    var inputVal = document.querySelector('.mapboxgl-ctrl-geocoder--input').value
+    
+    {% comment %} console.log('The input value - ', inputVal) {% endcomment %}
+    // Split the input value by comma, remove spaces, and trim any leading/trailing spaces
+    const parts = inputVal.split(',').map(part => part.trim());
+
+    // Check if the parts can be parsed as floats
+    const lat = parseFloat(parts[0]);
+    const lon = parseFloat(parts[1]);
+
+    if (!isNaN(lat) && !isNaN(lon)) {
+      console.log(`lat: ${lat}, lon: ${lon}`);
+
+      marker1.setLngLat([lon, lat]);
+      map.setCenter([lon, lat]);
+
+      var options = {
+        zoom: 14,
+        duration: 3000, // Duration of the animation in milliseconds
+      };
+
+      map.flyTo(options);
+      document.getElementById('lat').value = lat
+      document.getElementById('lon').value = lon
+      document.getElementById('universityName').value = "unknown"
+      document.getElementById('uniName').innerHTML = ""
+      document.getElementById('reg-info').style.display = 'none'
+      
+
+      var suggetions = document.querySelector('.suggestions')
+      suggetions.style.display = "none"
+
+
+
+
+    } else {
+      console.log("This is a string");
+    }
+
+
+    
+
+    
+
+
+    });
+
+  }
+
+  function removeSearchBar() {
+    document.getElementById('reg-info').style.display = 'none'
+    var notrust = document.getElementById('notrust')
+    notrust.checked = false
+    if (map.hasControl(geocoder)) {
+    // Remove the geocoder control from the map
+    map.removeControl(geocoder); }
+  }
+
+
+  function validateForm(){
+    var universityName = document.getElementById('universityName').value.trim();
+    var emailAddress = email.value;
+    console.log(universityName)
+    if (universityName === '' && (emailAddress.endsWith('.edu') || emailAddress.endsWith('.edu.in') || emailAddress.endsWith('.ac.in')) == true ){
+      alert('Please Select Your University')
+      return false; // Prevent form submission
+    }
+
+    return true; // Allow form submission
+
+  }
+
+</script>
+
+{% endblock body %}

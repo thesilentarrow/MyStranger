@@ -1,0 +1,1611 @@
+{% extends "base.html" %}
+{% block body %}
+{% load humanize %}
+{% load static %}
+
+
+<style>
+
+    {% comment %} For the polls {% endcomment %}
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+    
+    .wrapper{
+      background: #fff;
+      border-radius: 15px;
+      padding: 25px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+    }
+    .wrapper header{
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .wrapper .poll-area{
+      margin: 20px 0 15px 0;
+    }
+    .poll-area label{
+      display: block;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      padding: 8px 15px;
+      border: 2px solid #e6e6e6;
+      transition: all 0.2s ease;
+    }
+    .poll-area label:hover{
+      border-color: #ddd;
+    }
+    label.selected{
+      border-color: #6665ee!important;
+    }
+    label .row{
+      display: flex;
+      pointer-events: none;
+      justify-content: space-between;
+    }
+    label .row .column{
+      display: flex;
+      align-items: center;
+    }
+    label .row .circle{
+      height: 19px;
+      width: 19px;
+      display: block;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      margin-right: 10px;
+      position: relative;
+    }
+    label.selected .row .circle{
+      border-color: #6665ee;
+    }
+    label .row .circle::after{
+      content: "";
+      height: 11px;
+      width: 11px;
+      background: #6665ee;
+      border-radius: inherit;
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      display: none;
+    }
+    .poll-area label:hover .row .circle::after{
+      display: block;
+      background: #e6e6e6;
+    }
+    label.selected .row .circle::after{
+      display: block;
+      background: #6665ee!important;
+    }
+    label .row span{
+      font-size: 16px;
+      font-weight: 500;
+    }
+    label .row .percent{
+      display: none;
+    }
+    label .progress{
+      height: 7px;
+      width: 100%;
+      position: relative;
+      background: #f0f0f0;
+      margin: 8px 0 3px 0;
+      border-radius: 30px;
+      display: none;
+      pointer-events: none;
+    }
+    label .progress:after{
+      position: absolute;
+      content: "";
+      height: 100%;
+      background: #ccc;
+      width: calc(1% * var(--w));
+      border-radius: inherit;
+      transition: all 0.2s ease;
+    }
+    label.selected .progress::after{
+      background: #6665ee;
+    }
+    label.selectall .progress,
+    label.selectall .row .percent{
+      display: block;
+    }
+    input[type="radio"],
+    input[type="checkbox"]{
+      display: none;
+    }
+
+    .poll-area{
+        padding: 20px;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+{% comment %}      
+/* Styling the scrollbar track */
+::-webkit-scrollbar {
+    width: 10px; /* Set the width of the scrollbar */
+}
+
+/* Styling the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+    background: white; /* Set the color of the thumb */
+    border-radius: 5px; /* Round the corners of the thumb */
+}
+
+/* Styling the scrollbar track (the non-draggable part) */
+::-webkit-scrollbar-track {
+    background: white; /* Set the color of the track */
+    /* background: #eee;  */
+    /* background: #bcdfed; Set the color of the track */
+} {% endcomment %}
+
+    .share-btn{
+        border:none;
+        background:none;
+        margin-top:5px;
+        font-size:14px;
+    }
+
+    .card-header{
+        font-family: 'Varela Round', sans-serif;
+    }
+    
+
+    .nearby-container{
+        {% comment %} border: 2px solid green; {% endcomment %}
+        width: 60vw;
+        margin: auto;
+        margin-top: 0.5em;
+
+    }
+
+    .card-main{
+        width: 100%;
+        border: 2px solid #e3e3e3;
+        {% comment %} border: 1px solid #343a40; {% endcomment %}
+        border-radius:4px;
+        
+    }
+
+    .nearby-container{
+        max-height: 80vh;
+        overflow-y: scroll;
+        {% comment %} border:2px solid green; {% endcomment %}
+        width:100%;
+    }
+
+    .container{
+        max-height: 80vh;
+        width:58%;
+        {% comment %} overflow-y: scroll;
+        border:2px solid red; {% endcomment %}
+    }
+
+    .card-header{
+        display: flex;
+        justify-content: space-between;
+        height: 80px;
+        align-items: center;
+        {% comment %} background:whitesmoke; {% endcomment %}
+        background:fafaf8;
+        padding-top:1em;
+        padding-bottom:1em;
+        border-radius: 14px 14px 0px 0px!important;
+
+        /* margin-bottom: 2em; */
+    }
+    
+    /* .heading-top{
+        border: 1px solid#d5cfcf; 
+        {% comment %} font-size: 18px; {% endcomment %}
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    } */
+
+    .card-body{
+        border-bottom: 1px solid #d5cfcf;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .nearby-num:hover{
+        cursor: default;
+    }
+
+    .btn:hover{
+        background-color: #343a40!important;
+        cursor: default;
+    }
+
+    .btn-answer{
+        border-radius : 100px;
+        width: 100px;
+        height: 35px;
+        margin-left:10px;
+    }
+
+    .btn-answer:hover{
+        background-color:white!important;
+        color:black;
+    }
+
+    .btn-answer span {
+        font-size:13px
+    }
+
+    .quora-textarea{
+        height: 36px;
+        border-radius: 100px;
+        padding: 6px;
+        font-size:13px;
+        padding-left: 1em;
+    }
+
+    .answer-form{
+        display:flex;
+        align-items: center;
+        width: 70%;
+        margin:auto;
+        margin-top:1em;
+        margin-bottom:1em;
+    }
+
+
+    .card-header{
+        min-height:80px;
+        height:auto;
+    }
+
+    .card-main{
+        border-radius:16px!important;
+    }
+
+    .card{
+        border-radius:0px;
+    }
+
+    .add-friend-btn{
+        border: none;
+        background: none;
+    }
+
+    .tp1{
+        display: flex;
+    /* border: 1px solid red; */
+    justify-content: space-between;
+    align-items:center;
+    }
+
+    .tp1-right{
+        display: flex;
+    align-items: center;
+    }
+
+    .tp2{
+        display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+    .answers-card{
+        overflow-y: scroll;
+    {% comment %} border: 1px solid red; {% endcomment %}
+    max-height: 300px;
+    }
+
+    .card-answer {
+        border:none;
+        {% comment %} border-bottom:2px solid #fafaf8; {% endcomment %}
+        border-bottom:2px solid #d5dbdd;
+    }
+    
+    .card-body-answer{
+        border:none;
+    }
+
+    .like-btn{
+        background: none;
+    border: none;
+    }
+    
+    .like-btn:hover{
+        background-color:none!important;
+        background:none;
+    }
+    
+    .card-reply-main{
+        max-height:130px;
+        overflow-y:scroll;
+    }
+
+    .cancel_btn{
+        background: none;
+        border: none;
+    }
+
+    .dots{
+        background: none!important;
+        color: #343a40!important;
+        border: none;
+    }
+
+    .dots:hover{
+        background:none!important;
+    }
+
+    .dropdown-toggle::after {
+        display: none;
+    }
+
+    .dropdown-toggle:focus {
+        background-color: transparent !important;
+    }
+
+    .report-dpn{
+        min-width: 6em!important;
+        font-size:14px;
+    }
+
+    .on_add_class{
+        color:#009cda;
+        font-size:13px;
+        cursor:pointer;
+    }
+
+    .innerbar{
+        top: 0;
+        position: absolute;
+        z-index: 2;
+        height: 29px;
+        width: 0%;
+        left: 0px;
+        background: #7cdaff;
+        transition: width 1s ease;
+        border-radius: 8px 10px 10px 8px;
+    }
+
+    {% comment %} .btn-answer:focus,
+.btn-answer:active {
+    outline: none !important;
+    box-shadow: none !important;
+} {% endcomment %}
+
+    
+
+    /* Media query for tablet width 320px */
+  @media only screen and (min-width: 800px) { 
+
+    .thepoll-cont{
+        height: 45px!important;
+    }
+
+    .innerbar{
+        height: 44px!important;
+    }
+
+    .poll-optieon{
+        top: 7px!important;
+    font-size: 17px!important;
+    }
+
+    .percetion{
+        position: absolute;
+    right: 25px !important;
+    z-index: 2;
+    font-size: 16px!important;
+    top: 10px !important;
+    }
+
+    .tick-percetion{
+        right: 10px!important;
+    top: 16px!important;
+    font-size:12px!important;
+    }
+
+  }
+
+    /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+	.nearby-container{
+        width:unset;
+    }
+
+    .container{
+        width:100%;
+    }
+
+    .img1 img{
+        width: 22px;
+    }
+
+    .small-text{
+        font-size: 11px!important;
+        margin-bottom: 4px!important;
+        display: flex;
+    flex-direction: column;
+
+    
+    }
+
+    .timepamper{
+        font-size: 9px;
+    }
+
+    .tp2{
+        {% comment %} flex-direction:column; {% endcomment %}
+        position:relative;
+    }
+
+    .total_ans_box{
+        font-size: 10px!important;
+        margin-left: 0em;
+        position:absolute;
+        right:0px;
+        bottom:-14px;
+    }
+
+    .the-ques{
+        {% comment %} font-size: 12px!important; {% endcomment %}
+        font-size: 1em!important;
+    }
+
+    .ans_texti{
+        font-size:13px;
+    }
+
+    .like-btn{
+        font-size:12px!important;
+    }
+
+    .f12{
+        font-size:12px!important;
+    }
+
+    .smaf{
+        font-size: 11px!important;
+    }
+
+    .quora-textarea{
+        width: 200px;
+    height: 27px;
+    border-radius: 100px;
+    padding: 6px;
+    font-size: 10px;
+    padding-left: 1em;
+
+    }
+
+    .answer-form{
+        display: flex;
+    align-items: center;
+    width: 88%;
+    margin: auto;
+    /* margin-top: 1em; */
+    margin-bottom: 0.5em;
+    }
+
+    .btn-answer span {
+        font-size: 9px;
+    }
+
+    .btn-answer{
+        height: 27px;
+        display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    .view_rep_btn{
+        margin-top: -1.5em!important;
+    }
+
+
+    .replybox{
+        margin-top: 6px;
+    }
+
+    .replybox button{
+        margin-bottom: 1em;
+    }
+
+  }
+
+</style>
+<p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'confessions:create-postc' %}">Create question</a></p>
+<div class="nearby-container">
+
+    <div class="container">
+        {% for question in question_top2_answers %}
+        <div class="card card-main mb-4" id="card-main-{{question.0.id}}">
+            <div class="card-header">
+                <div style="width:100%" >
+                    <div class="tp1">
+                        <span class="text-secondary small-text" style="font-size:12px; margin-bottom:0px;">
+                            
+                            <span class="heading-top"><a style="color:#009cda; margin-right:0.5em;" href=""><span>{{question.0.owner.name}} | {{question.0.owner.university_name}}</span> </a></span> 
+                            
+                            <span class="timepamper"> {{question.0.timestamp|naturaltime}} </span></span>
+
+                        <div class="tp1-right">
+
+                        {% if question.0.owner != request.user %}
+                            
+                            <button class="add-friend-btn" onclick="add_friend('send_req_btn-{{question.0.pk}}','{{question.0.owner.pk}}', 'cancel_req_btn-{{question.0.pk}}')" id="send_req_btn-{{question.0.pk}}"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                                width="26px" alt="" srcset=""></span></button>
+                            <button class="d-none cancel_btn" onclick="cancel_friend('send_req_btn-{{question.0.pk}}','{{question.0.owner.pk}}', 'cancel_req_btn-{{question.0.pk}}')" id="cancel_req_btn-{{question.0.pk}}"><i class="fa-solid fa-xmark "
+                            style="color:red;"></i></button>
+
+                            <button class="share-btn" onclick="openShareModal('{{question.0.pk}}')"><i class="fa-solid fa-share-from-square" style="color: #343a40;"></i></button>
+
+
+                            {% comment %} <div class="dropdown">
+                        
+                                <button class="btn btn-secondary dropdown-toggle dots" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+        
+                                    
+                                    <ul class="dropdown-menu report-dpn">
+                                      
+                                    <li><button class="dropdown-item" type="button">Report</button></li>
+                                    
+                                      
+                                    </ul>
+                                  </div> {% endcomment %}
+                            
+
+                        {% endif %}
+
+
+                        {% if question.0.owner == request.user %}
+
+                        <button class="share-btn" onclick="openShareModal('{{question.0.pk}}')"><i class="fa-solid fa-share-from-square" style="color: #343a40;"></i></button>
+
+                        <div class="dropdown">
+                        
+                            <button class="btn btn-secondary dropdown-toggle dots" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+    
+                                
+                                <ul class="dropdown-menu report-dpn">
+
+                                {% if request.user.is_authenticated %}
+
+                                  
+                                <li><button class="dropdown-item" onclick="myquestiondeletefunc('{{question.0.id}}', 'card-main-{{question.0.id}}')" type="button">Delete</button></li>
+
+                                {% else %}
+                                    <li><button disabled class="dropdown-item" onclick="myquestiondeletefunc('', 'card-main')" type="button">Delete</button></li>
+                                {% endif %}
+                                
+                                  
+                                </ul>
+                            </div>
+
+                        {% endif %}
+
+
+                        
+                    </div>
+
+                </div>
+
+                <div class="tp2">
+                    <strong class="the-ques"  style="font-size: 17px; word-break: break-word;">{{question.0.question}}</strong>
+                    <span class="text-secondary total_ans_box d-flex justify-content-center" style="font-size:12px; margin-left: 2em; min-width:78px; " >{{ question.0.ans_count }} {% if question.0.ans_count < 2 %}answer{% else %}answers{% endif %}</span>
+                </div>
+                
+                </div>
+                
+            </div>
+            <!-- <div class="card-body heading-top">
+            
+                <p>Nearby Universities</p>
+                <p>Users</p>  
+            
+            </div> -->
+
+            {% if not question.0.polls.all %}
+                        {% comment %} <p class="p-4" >No polls</p> {% endcomment %}
+                {% else %}
+                <div class="poll-area">
+                    <div style="border: 1px solid #343a40;
+                    position: relative;
+                    padding: 20px 20px 5px 20px;
+                    border-radius: 14px;" class="total-line">
+                        <div style="    background: white;
+                        left: 17px;
+                        position: absolute;
+                        top: -17px;
+                        padding: 5px;" class="total-count">
+                            <span style="font-size:14px;" id="poll-count-{{question.0.id}}">{{question.0.poll_count}} vibes</span>
+                        </div>
+                    
+                    {% for poll in question.0.polls.all %}
+                    
+
+                            {% comment %} <div class="row">
+                              <div class="column">
+                                <span class="circle"></span>
+                                <span class="text">{{poll.option}}</span>
+                              </div>
+                              <span class="percent"></span>
+                            </div>
+                            <div class="progress" style=''></div>
+                          {% endcomment %}
+
+                          <div class="poll-{{question.0.id}} thepoll-cont" id="poll-{{poll.id}}" style="padding: 6px 12px;
+                          border: 1px solid #8d8d8d;
+                          border-radius: 8px;
+                          margin-bottom: 8px;
+                          position: relative;
+                          height: 30px;" 
+                          
+                          {% if request.user.is_authenticated %} onclick="myselecfunc('{{poll.id}}','{{question.0.id}}')"  {% endif %} >
+                          <div style="z-index:1;" class="innerbar" id="innerbar-{{poll.id}}">
+                        </div>
+                          <span class="poll-optieon" style="position: absolute;
+                          z-index: 2;
+                          top: 2px;
+                          font-size: 14px;">{{poll.option}}
+                            </span>
+                            <span style="font-size: 12px;"><span class="percetion" style="position:absolute; right:20px; z-index:2;" class="percentage" id="persia-{{poll.id}}"></span><span style="font-size: 10px;
+                            display: none;
+                            position: absolute;
+                            right: 6px;
+                            top: 10px;
+                            z-index: 2;" class='tick-percetion' id="tick-{{poll.id}}"><i class="fa-solid fa-check" style="color: #009cda;"></i></span></span>
+                        </div>
+                          
+                    {% endfor %}
+                </div>
+                    </div>
+            {% endif %}
+           
+            <div class="card">
+                {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+                    
+                    {% if not question.0.answers.all %}
+                        {% if not question.0.polls.all %}
+                        <p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
+                        {% endif %}
+                    {% else %}
+                        {% comment %} {% for answer in question.answers.all %} {% endcomment %}
+                        {% load mptt_tags %}
+                        {% if not question.0.polls.all %}
+                            {% recursetree question.1 %}
+
+                            {% comment %} {% if node.ans_reported.all|length > 5 %}{% endif %} {% endcomment %}
+                            <div class="card card-answer card-reply" id="card-{{node.id}}">
+                                <div class="card-body card-body-answer" style="flex-direction: column;">
+
+                                
+                                {% comment %} {% if node.level ==0 %}{% endif %} {% endcomment %}
+
+                                <div style="width:100%" >
+                                    <div class="tp1">
+                                
+                                <p class="text-secondary small-text answer-info" style="font-size:12px; margin-bottom:0px;"><a style="color:#009cda; margin-right:0.5em;" href=""><span>{{node.user.name}} | {{node.user.university_name}}</span> </a>
+                                    {% if request.user.id == node.user.id %}
+                                    {% comment %} <span><button class="btn btn-sm btn-outline-dark ml-4" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')">delete</button></span> {% endcomment %}
+                                    {% endif %}
+                                <span class="timepamper">
+                                     {{node.timestamp|naturaltime}} </span>
+
+                                </p>
+
+                                <div class="tp1-right">
+
+                                    {% if node.user != request.user %}
+
+                                    <button class="add-friend-btn" onclick="add_friend('send_req_btn-{{node.pk}}','{{node.user.pk}}', 'cancel_req_btn-{{node.pk}}')" id="send_req_btn-{{node.pk}}"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                                        width="26px" alt="" srcset=""></span></button>
+                                    <button class="d-none cancel_btn" onclick="cancel_friend('send_req_btn-{{node.pk}}','{{node.user.pk}}', 'cancel_req_btn-{{node.pk}}')" id="cancel_req_btn-{{node.pk}}"><i class="fa-solid fa-xmark "
+                                    style="color:red;"></i></button>
+
+                                    {% endif %}
+            
+                                    
+                                    {% comment %} <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span> {% endcomment %}
+
+                                    <div class="dropdown">
+                        
+                                        <button class="btn btn-secondary dropdown-toggle dots" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+                
+                                            
+                                            <ul class="dropdown-menu report-dpn">
+                                            {% if node.user != request.user %}
+
+                                            {% if request.user.is_authenticated %}
+
+                                                <li><button class="dropdown-item" onclick="myreportfunc('{{node.pk}}')"  type="button">Report</button></li>
+
+                                            {% else %}
+
+                                            <li><button disabled class="dropdown-item" onclick="myreportfunc('')"  type="button">Report</button></li>
+
+                                            {% endif %}
+
+                                            {% else %}
+                                            <li><button class="dropdown-item" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')" type="button">Delete</button></li>
+                                            {% endif %}
+                                            
+                                              
+                                            </ul>
+                                          </div>
+                                
+                                </div>
+
+                            </div>
+                            </div>
+
+                                {% comment %} <p style="margin-bottom:0px; margin-top:2px;" >{{node.content}}</p> {% endcomment %}
+                                <span class="ans_texti" style="width:96%;">
+                                {% if node.content|length > 250 %}
+                                {% with first_part=node.content|slice:":250" second_part=node.content|slice:"250:" %}
+                                <span id="partial-paragraph">{{ first_part }}
+
+                                    <span class="secondary-text mb-2" style="width:80px; border:none; background:none; color:#009cda; font-size:12px;" type="button"  id="contentcont-{{node.pk}}" onclick="myreadmorefunc('contentcont-{{node.pk}}')" data-bs-toggle="collapse" data-bs-target="#content-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                        ... read more
+                                    </span>
+                                
+
+                                    <span class="collapse" id="content-{{node.pk}}">
+
+                                       
+                                        {{ second_part }}
+                                        
+                                    </span>
+
+                                </span>
+                                
+                                    
+                                {% endwith %}
+                            {% else %}
+                                <div id="full-paragraph">{{ node.content }}</div>
+                            {% endif %}
+                        </span>
+
+                        
+                        {% if node.level < 2  %}
+                            <div style="margin-top:4px; display:flex;"> {% endif %}
+                            
+                            {% if request.user not in node.likes.all %}
+
+                                <span id="like-{{node.pk}}" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                            {% else %}
+
+                            {% if request.user.is_authenticated %}
+                            
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class=" like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% else %}
+
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class=" like-btn" ><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% endif %}
+
+                            
+                                <span id="unlike2-{{node.pk}}" style="" ><button class=" like-btn" onclick="myunlikefunc('{{node.pk}}', 'unlike2-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike2-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                            {% endif %}
+
+                            <span id="unlike-{{node.pk}}" style="display:none;" ><button class=" like-btn" onclick="myunlikefunc('{{node.pk}}','unlike-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                            
+
+
+                                {% if node.level < 2 %}
+                                {% if request.user.is_authenticated %}
+                                <span><button class="secondary-text f12" style="width:50px; border:none; background:none;  color: #009cda; font-size:14px;" type="button" data-bs-toggle="collapse" data-bs-target="#reply-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button></span>
+                                {% endif %}
+
+                            </div>
+                            
+                                {% if request.user.is_authenticated %}
+
+                           
+                            <div class="collapse replybox" id="reply-{{node.pk}}">
+
+                                
+                                
+                                <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}' , 'id_chat_message_input_answer-{{node.id}}' )" action="" method='post'> {% csrf_token %}
+                                    <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea style="margin-bottom: 1em;" class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                    </form>
+                                
+                            </div> 
+
+                                    {% endif %}
+                                 
+                                {% endif %}
+
+
+                                
+                                {% if not node.is_leaf_node %}
+
+                                <button class="secondary-text mb-2 f12 view_rep_btn" style="width:80px; border:none; background:none; color:#009cda; font-size:13px; margin-left:6em; margin-top:-1.78em;" type="button" data-bs-toggle="collapse" data-bs-target="#replies-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    view replies
+                                </button>
+
+                            {% comment %} </div> {% endcomment %}
+
+                                <div class="collapse" id="replies-{{node.pk}}">
+
+                                    <div class="children pl-2 pl-md-5 card-reply-main">
+                                    {{ children }}
+                                    
+                                    </div>
+
+                                </div>
+                                {% else %}
+
+                                {% comment %} {% if node.level < 2 %} </div>  {% endif %} {% endcomment %}
+                                
+                            
+                                {% endif %}
+                        
+                                
+                </div>
+                
+            </div>
+            
+            {% comment %} <div class="card">
+                <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+
+
+
+                            {% endrecursetree %}
+                            {% endif %}
+                            
+                        {% comment %} {% endfor %} {% endcomment %}
+                    {% endif %}
+
+                     {% comment %} <div>
+                        <form style="border:2px solid" class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+                            <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
+                            <textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input"></textarea>
+                            <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Add answer</span></button>
+                        </form>
+                    </div>   {% endcomment %}
+
+
+                    <!-- <div> -->
+                    {% comment %} <p style="margin-bottom:4px;">it's such a shitty university u r not gonna believe what happened to .......</p> {% endcomment %}
+                    {% comment %} <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">shreya | amity university</p></div> {% endcomment %}
+                    {% comment %} <a href="{% url "qna:minichat" user_id=question.pk %}" class="" style="font-size:14px; text-align: center; margin-bottom:0px;">see answers</a> {% endcomment %}
+
+                    {% comment %} <a href="" class="" style="font-size:14px; text-align: center; margin-bottom:0px;">see answers</a> {% endcomment %}
+
+
+                    </div>
+
+                    
+
+            {% comment %} <div class="card"> {% endcomment %}
+
+                {% if question.2 %}
+
+                    <button class="secondary-text mb-2 smaf" onclick="mytoogleanswersfunc('more-ans-{{question.0.pk}}')" style="width:115px; border:none; background:none; color:#009cda; font-size:12px;" type="button" id="more-ans-{{question.0.pk}}" data-bs-toggle="collapse" data-bs-target="#question-{{question.0.pk}}" aria-expanded="false" aria-controls="collapseExample">see more answers</button> 
+
+                    
+
+                    <div class="collapse" id="question-{{question.0.pk}}">
+
+                        <div class="card answers-card" >
+                            {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+                            
+
+                            {% load mptt_tags %}
+                        
+                            {% recursetree question.2 %}
+
+                            <div class="card card-answer card-reply" id="card-{{node.id}}">
+                                <div class="card-body card-body-answer" style="flex-direction: column;">
+
+                                
+                                {% comment %} {% if node.level ==0 %}{% endif %} {% endcomment %}
+
+                                
+                                {% comment %} <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">{{node.user.name}}</p> {% endcomment %}
+
+                                <div style="width:100%" >
+                                    <div class="tp1">
+
+                                <p class="text-secondary small-text " style="font-size:12px; margin-bottom:0px;"><a style="color:#009cda; margin-right:0.5em;" href=""><span>{{node.user.name}} | {{node.user.university_name}}</span> </a>
+                                    {% comment %} {% if request.user.id == node.user.id %}
+                                    <span><button class="btn btn-sm btn-outline-dark ml-4 d-none" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')">delete</button></span>
+                                    {% endif %} {% endcomment %}
+                                    <span class="timepamper">
+                                        {{node.timestamp|naturaltime}} </span>
+                                
+                                </p>
+
+                                <div class="tp1-right">
+
+                                    {% if node.user != request.user %}
+
+                                        <button class="add-friend-btn" onclick="add_friend('send_req_btn-{{node.pk}}','{{node.user.pk}}', 'cancel_req_btn-{{node.pk}}')" id="send_req_btn-{{node.pk}}"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                                            width="26px" alt="" srcset=""></span></button>
+                                        <button class="d-none cancel_btn" onclick="cancel_friend('send_req_btn-{{node.pk}}','{{node.user.pk}}', 'cancel_req_btn-{{node.pk}}')" id="cancel_req_btn-{{node.pk}}"><i class="fa-solid fa-xmark "
+                                        style="color:red;"></i></button>
+
+                                    {% endif %}
+            
+                                    
+                                    {% comment %} <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span> {% endcomment %}
+
+                                    <div class="dropdown">
+                        
+                                        <button class="btn btn-secondary dropdown-toggle dots" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+                
+                                            
+                                            <ul class="dropdown-menu report-dpn">
+                                            {% if node.user != request.user %}
+                                                {% if request.user.is_authenticated %}
+                                                 <li><button class="dropdown-item" onclick="myreportfunc('{{node.pk}}')" type="button">Report</button></li>
+                                                {% else %}
+                                                <li><button disabled class="dropdown-item" onclick="myreportfunc('')" type="button">Report</button></li>
+                                                {% endif %}
+                                            {% else %}
+                                            <li><button class="dropdown-item" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')" type="button">Delete</button></li>
+                                            {% endif %}
+                                            
+                                              
+                                            </ul>
+                                          </div>
+                                
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        
+                                {% comment %} <p style="margin-bottom:0px; margin-top:2px;" >{{node.content}}</p> {% endcomment %}
+
+                                <span 
+                                class="ans_texti"
+                                style="width:96%;">
+                                    {% if node.content|length > 250 %}
+                                    {% with first_part=node.content|slice:":250" second_part=node.content|slice:"250:" %}
+                                    <span id="partial-paragraph">{{ first_part }}
+    
+                                        <span class="secondary-text mb-2" style="width:80px; border:none; background:none; color:#009cda; font-size:12px;" type="button"  id="contentcont-{{node.pk}}" onclick="myreadmorefunc('contentcont-{{node.pk}}')" data-bs-toggle="collapse" data-bs-target="#content-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                            ... read more
+                                        </span>
+                                    
+    
+                                        <span class="collapse" id="content-{{node.pk}}">
+    
+                                           
+                                            {{ second_part }}
+                                            
+                                        </span>
+    
+                                    </span>
+                                    
+                                        
+                                    {% endwith %}
+                                {% else %}
+                                    <div id="full-paragraph">{{ node.content }}</div>
+                                {% endif %}
+                            </span>
+                                
+
+                                {% if node.level < 2  %}
+                            <div style="margin-top:4px; display:flex;"> {% endif %}
+
+                                {% if request.user not in node.likes.all %}
+
+                                <span id="like-{{node.pk}}" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                            {% else %}
+
+                            {% if request.user.is_authenticated %}
+                            
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% else %}
+
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class="like-btn"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% endif %}
+
+                            
+                                <span id="unlike2-{{node.pk}}" style="" ><button class="like-btn" onclick="myunlikefunc('{{node.pk}}', 'unlike2-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike2-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                            {% endif %}
+
+                            <span id="unlike-{{node.pk}}" style="display:none;" ><button class="like-btn" onclick="myunlikefunc('{{node.pk}}','unlike-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                                
+
+
+                                {% comment %} {% if node.level < 3 %}
+                                <button class="secondary-text" style="width:50px; border:none; background:none;" type="button" data-bs-toggle="collapse" data-bs-target="#{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button>
+                            </p>
+                            <div class="collapse" id="{{node.pk}}">
+                                
+                                <form class="answer-form" action="" method='post'> {% csrf_token %}
+                                    <input hidden  type="text" name='question-id' id="question-{{question.id}}" value="{{question.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea class="flex-grow-1 quora-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                </form>
+                                
+                            </div> 
+                                <hr> 
+                                {% endif %} {% endcomment %}
+
+
+                                {% if node.level < 2 %}
+                                {% if request.user.is_authenticated %}
+
+                                <span><button class="secondary-text f12" style="width:50px; border:none; background:none; color: #009cda; font-size:14px;" type="button" data-bs-toggle="collapse" data-bs-target="#reply-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button></span>
+
+                                {% endif %}
+                           
+                            </div>
+
+                            {% if request.user.is_authenticated %}
+
+
+                            <div class="collapse replybox" id="reply-{{node.pk}}">
+                                
+                                <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}', 'id_chat_message_input_answer-{{node.id}}')" action="" method='post'> {% csrf_token %}
+                                    <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                    </form>
+                                
+                            </div> 
+
+                                {% endif %}
+                                 
+                                {% endif %}
+
+                                {% if not node.is_leaf_node %}
+
+                                <button class="secondary-text mb- view_rep_btn f12" style="width:80px; border:none; background:none; color:#009cda; font-size:13px; margin-left:6em; margin-top:-1.78em;" type="button" data-bs-toggle="collapse" data-bs-target="#replies-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    view replies
+                                </button>
+
+                                <div class="collapse" id="replies-{{node.pk}}">
+
+                                    <div class="children pl-2 pl-md-5 card-reply-main">
+                                    {{ children }}
+                                    </div>
+
+                                </div>
+                                {% endif %}
+                                 
+                                    
+
+                                </div>
+                            </div>
+                            {% endrecursetree %}
+                            
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+                
+
+                <div id="elemental-{{question.0.pk}}">
+
+                    
+                    {% if request.user.is_authenticated %}
+                    
+                    {% comment %} {% if not question.0.polls.all %} {% endcomment %}
+                    <form class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+                        <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
+                        <textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
+
+                            <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Add answer</span></button>
+
+                            
+                        </form>
+                        {% comment %} {% endif %} {% endcomment %}
+                        {% else %}
+                       
+
+                           <p style="font-size:12px; text-align:center;">~login to answer</p>
+                    {% endif %}
+                </div>  
+
+                    {% comment %} <button class="btn btn-sm btn-outline-dark">See Answers</button> {% endcomment %}
+                    
+                    {% comment %} <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark">{{delta.students}} Students</button></a> {% endcomment %}
+                
+        
+                </div>
+            {% comment %} </div> {% endcomment %}
+        {% comment %} </div> {% endcomment %}
+            
+            {% endfor %}
+    </div>
+    
+</div>
+
+<!-- Bootstrap Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="shareModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Share Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Share this link:</p>
+          {% comment %} <input type="text" class="form-control mb-3" id="shareLink" value="https://mystranger.in/vibes/question/ans_id/" readonly> {% endcomment %}
+          <input type="text" class="form-control mb-3" id="shareLink" readonly>
+          <button class="btn btn-primary" onclick="copyLink()">Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% include 'friend/snippets/send_friend_request.html' %}
+{% include 'friend/snippets/cancel_friend_request.html' %}
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.min.js"></script>
+
+
+<script>
+
+    function myselecfunc(pollid,allpollid){
+        console.log('I am getting called baby - ',pollid,allpollid)
+        
+
+        <!-- Now i gotta disable click on all polls with allpollid  -->
+        // Get all elements with the class "pollidea"
+        var pollElements = document.getElementsByClassName('poll-'+allpollid);
+
+        // Loop through each element and disable the onclick function
+        for (var i = 0; i < pollElements.length; i++) {
+            // Disable the onclick function
+            pollElements[i].onclick = null;
+        }
+
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"poll-id": pollid,
+            'action' : 'poll-selected',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+			
+
+                if(data['status'] == "got_data"){ 
+
+                    console.log(data.response)
+                    mydict = data.response
+                    for (var key in mydict) { 
+                        var percentage = mydict[key];
+                        
+                        polltransition = document.getElementById('innerbar-'+key)
+                        {% comment %} polltransition.style.background = '#009cda' {% endcomment %}
+                        polltransition.style.width = percentage + '%';
+                        {% comment %} polltransition.style.transition = 'width 2s ease'; // Adjust the duration and easing as needed {% endcomment %}
+                       
+                        document.getElementById('persia-'+key).innerHTML = percentage + ' %'
+                        {% comment %} document.getElementById('poll-count-'+key).innerHTML = percentage + ' %' {% endcomment %}
+
+                    }
+
+                    var elementa = document.getElementById('tick-'+pollid)
+                    console.log('tick-',pollid, elementa)
+                    elementa.style.display = 'flex';
+
+                    var currentValue = document.getElementById('poll-count-' + allpollid).innerHTML;
+                    {% comment %} console.log('valval - ', currentValue) {% endcomment %}
+                    // Convert the value to a number (assuming it's a numeric value)
+                    var currentNumber = parseInt(currentValue, 10);
+                    
+
+                    // Add 1 to the value
+                    var newValue = currentNumber + 1;
+
+                    // Update the element with the new value
+                    document.getElementById('poll-count-' + allpollid).innerHTML = newValue + ' vibes';
+
+                }
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+
+       }
+
+    function openShareModal(postId) {
+        {% comment %} var dynamicLink = `https://example.com/post/${postId}`; {% endcomment %}
+        {% comment %} var dynamicLink = `https://mystranger.in/vibes/question/${postId}/`; {% endcomment %}
+        var dynamicLink = `http://127.0.0.1:8000/vibes/question/${postId}/?question=true`;
+        document.getElementById('shareLink').value = dynamicLink;
+        $('#shareModal').modal('show');
+      }
+    
+      function copyLink() {
+        var shareLinkInput = document.getElementById('shareLink');
+        shareLinkInput.select();
+        document.execCommand('copy');
+        Swal.fire('Link Copied!', '', 'success');
+      }
+    
+      // Close modal when clicking outside
+      $(document).mouseup(function (e) {
+        var modal = $('#shareModal');
+        if (!modal.is(e.target) && modal.has(e.target).length === 0) {
+          modal.modal('hide');
+        }
+      });
+
+    function add_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
+        console.log('add friend got clicked')
+        var sendFriendRequestBtn = document.getElementById(send_req_btn_id)
+        if (sendFriendRequestBtn != null){
+           
+                sendFriendRequest(receiver_id, function () {
+                    onFriendRequestSent(send_req_btn_id, cancel_req_btn_id); // Pass the variable to onFriendRequestSent
+               
+            })
+        }
+}
+
+function cancel_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
+
+console.log('cancel friend got clicked')
+var cancelFriendRequestBtn = document.getElementById(cancel_req_btn_id)
+	if(cancelFriendRequestBtn != null){
+		
+			cancelFriendRequest(receiver_id, function(){
+                onFriendRequestCancelled(send_req_btn_id, cancel_req_btn_id)
+            
+		})
+	}
+
+}
+
+function onFriendRequestSent(send_req_btn_id, cancel_req_btn_id){
+    var sendFriendRequestBtn = document.getElementById(send_req_btn_id)
+    sendFriendRequestBtn.style.display = "none"
+
+    var cancelFriendRequestBtn = document.getElementById(cancel_req_btn_id)
+    cancelFriendRequestBtn.classList.remove("d-none");
+    // though reloding the page is the easiest and most convenient way but we can try to do this without reloading the page
+    // if there's a way to do so then that is going to enhance the user experience
+}
+
+function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
+
+    var cancelFriendRequestBtn = document.getElementById(cancel_req_btn)
+    cancelFriendRequestBtn.classList.add("d-none");
+
+    var sendFriendRequestBtn = document.getElementById(send_req_btn)
+    sendFriendRequestBtn.style.display = "inline-block"
+}
+
+    function mytoogleanswersfunc(id){
+        console.log('func getin called')
+        var btn_txt = document.getElementById(id)
+        var textva = btn_txt.innerHTML
+
+        console.log(textva)
+
+        if (textva == 'see more answers'){
+            btn_txt.innerHTML = 'see less answers'
+            {% comment %} console.log('see less answers') {% endcomment %}
+        } else if (textva == 'see less answers'){
+            btn_txt.innerHTML = 'see more answers'
+            {% comment %} console.log('see more answers') {% endcomment %}
+        }
+    }
+
+
+    function myreportfunc(id){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",   
+			"node-id": id,
+            'action' : 'report',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "reported"){
+					// ui is updated
+                    console.log('This answer has been has reported')
+                    alert('The answer/reply has been reported!')
+					
+				}
+                else if(data.response == 'Already Reported')
+                alert('You have already reported this answer/reply')
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+    function myunlikefunc(id,spanid){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"node-id": id,
+            'action' : 'unlike',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "unliked"){
+					// ui is updated
+                    console.log('your unlike has been added')
+
+                    var unlikespan = document.getElementById(spanid);
+                    var unlikecount = document.getElementById('count-'+spanid).innerHTML
+                    unlikespan.style.display = 'none';
+
+                    var likespan = document.getElementById('like-'+id);
+                    var count = document.getElementById('like-count-'+id)
+                    var newNum = parseInt(unlikecount, 10) - 1;
+                    count.innerHTML = newNum;
+                    likespan.style.display = 'inline';
+                    
+					
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+
+    function mylikefunc(id){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",   
+			"node-id": id,
+            'action' : 'like',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "liked"){
+					// ui is updated
+                    console.log('your like has been added')
+                    var likespan = document.getElementById('like-'+id);
+                    likespan.style.display = 'none';
+
+                    var unlikespan = document.getElementById('unlike-'+id);
+                    var count = document.getElementById('count-unlike-'+id)
+                    var likecount = document.getElementById('like-count-'+id).innerHTML
+                    var newNumber = parseInt(likecount, 10) + 1;
+                    count.innerHTML = newNumber;
+                    unlikespan.style.display = 'inline';
+					
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+
+    function mydeletefunc(id,cardId){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"node-id": id,
+            'action' : 'delete',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "card deleted"){
+					// ui is updated
+                    console.log('The post has been deleted', cardId)
+                    var card = document.getElementById(cardId);
+                    card.style.display = 'none';
+					{% comment %} uiUpdateFunction() {% endcomment %}
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+    function myquestiondeletefunc(id,cardId){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"node-id": id,
+            'action' : 'delete_my_question',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'confessions:addAnswerc' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "card deleted"){
+					// ui is updated
+                    console.log('The post has been deleted', cardId)
+                    var card = document.getElementById(cardId);
+                    card.style.display = 'none';
+					{% comment %} uiUpdateFunction() {% endcomment %}
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+    function myreadmorefunc(id){
+        console.log('am i even getting called!')
+        readMoreBtn = document.getElementById(id)
+        readMoreBtn.style.display = 'none'
+    }
+
+    function submitForm(event, formId, ansElemental, repElemental, textareaId) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+        // Your AJAX logic here
+        var formData = new FormData(document.getElementById(formId));
+
+
+        $.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url "confessions:addAnswerc" %}",
+			timeout: 5000,
+			data: formData,
+            processData: false, // Set processData and contentType to false
+            contentType: false,
+			success: function(data) {
+				console.log("SUCCESS", data);
+                if(data['status'] == "Answered"){
+					
+                    console.log('Boom your answer has been generated now just gotta have to update the ui')
+                    document.getElementById(textareaId).value = ''
+                    // Create a new element
+                        // Create a new card element
+                        var newCard = document.createElement('div');
+                        newCard.className = 'card';
+                        newCard.classList.add('card-answer'); 
+                        newCard.id = 'card-' + data.nodeId;
+                        newCard.innerHTML = '<div class="card-body card-body-answer" style="flex-direction: column;">' +
+                                                '<p class="text-secondary" style="font-size:12px; margin-bottom:0px;">' + data.name + ' | ' + data.domain + '</p>' + 
+                                                
+                                                '<span><a class="on_add_class" onclick="mydeletefunc(\'' + data.nodeId + '\', \'card-' + data.nodeId + '\')">delete</a></span>' +
+                                                
+                                                '<p>' + data.content + '</p>'
+                                            '</div>';
+
+                        // Find the existing div
+                        var existingDiv = document.getElementById(ansElemental); // Replace with the actual ID of your existing div
+
+                        // Insert the new card before the existing div
+                        existingDiv.parentNode.insertBefore(newCard, existingDiv);
+
+				}
+                if(data['status'] == "Replied"){
+					
+                    console.log('Boom your reply has been generated now just gotta have to update the ui')
+                    inpval = document.getElementById(textareaId).value = ''
+                    
+                        // Create a new card element
+                        var newCard = document.createElement('div');
+                        newCard.className = 'card';
+                        newCard.classList.add('card-answer'); 
+                        newCard.classList.add('card-reply'); 
+                        newCard.id = 'card-' + data.nodeId;
+                        newCard.style.marginLeft = '3em';
+                        newCard.innerHTML = '<div class="card-body card-body-answer" style="flex-direction: column;">' +
+                                                '<p class="text-secondary" style="font-size:12px; margin-bottom:0px;">' + data.name + ' | ' + data.domain + '</p>' +
+                                                
+                                                '<span><a class="on_add_class" onclick="mydeletefunc(\'' + data.nodeId + '\', \'card-' + data.nodeId + '\')">delete</a></span>' +
+                                                
+                                                '<p>' + data.content + '</p>'
+                                            '</div>';
+
+                        // Find the existing div
+                        var existingDiv = document.getElementById(repElemental); // Replace with the actual ID of your existing div
+
+                        // Insert the new card before the existing div
+                        existingDiv.insertAdjacentElement('afterend', newCard);
+                    
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+                alert('Some error occured while answering. Please try again later - ', data.message)
+				
+			},
+			complete: function(data){
+				// Req is made
+			}
+		}); 
+    }
+
+</script>
+
+{% endblock body %}

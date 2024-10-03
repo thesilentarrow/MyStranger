@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block body %}
+{% comment %} {% load humanize %}
+{% load static %} {% endcomment %}
+
+<style>
+
+    p{
+        font-size:12px!important;
+        margin-bottom:0.5em!important;
+    }
+
+</style>
+
+
+<div class="container">
+
+	<div class="">
+		<div class="h-100 p-2 bg-body-tertiary border rounded-3" style=''>
+		  <h6 style="text-align:center;">How Confessios Works</h6>
+          <div>
+
+		  <p class="" style="font-size:14px; margin-top:0.5em; line-height:2em;">
+            1) You can confess anything to anyone in a completely anonymous way and can tag them so that the taggie can recieve a notification from mystranger.in that someone has confessed this about them and can respond back to it.
+          </p>
+
+		  <p class="" style="font-size:14px; margin-top:0.5em; line-height:2em;">
+            2) Only the Taggie and You (confesser) can reply on your confession.  Everyone else can comment with a prefix "stranger".
+          </p>
+
+		  <p class="" style="font-size:14px; margin-top:0.5em; line-height:2em;">
+            3) No other user can see your name or taggie's name, everyones identity is completely anonymous.
+          </p>
+		  <p class="" style="font-size:14px; margin-top:0.5em; line-height:2em;">
+            4) The confesser and taggie both have the ability to delete the confession
+          </p>
+		  <p class="" style="font-size:14px; margin-top:0.5em; line-height:2em;">
+            5) Anonymity comes with a responsibility so please don't spread any hate speech that violates the indian law. as long as you follow the indian law it's fine otherwise if someone files a complaint against you then we will be forced to share your information. so please just don't break the law. as long as you follow that it's fine.
+          </p>
+          <a class="btn btn-sm btn-primary" href="{% url "confessions:pikac" %}" style="font-size:12px;">return to confessions</a>
+        </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

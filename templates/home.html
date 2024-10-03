@@ -1,0 +1,471 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<style>
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&family=Rubik&display=swap');
+
+
+    body{
+        background-color: #F9F9F9;
+        {% comment %} font-family: 'Rubik', sans-serif; {% endcomment %}
+        /* height: 100vh; */
+        /* border: 2px solid blue; */
+        display: flex;
+        flex-direction: column;
+        scroll-behavior: smooth;
+    }
+
+.home-container{
+    {% comment %} position: relative; {% endcomment %}
+    /* border: 2px solid red; */
+    display: flex;
+    /* justify-content: center; */
+    /* flex: 1; */
+    height: 100vh;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.info-container{
+    {% comment %} position: absolute;
+    z-index: -1; {% endcomment %}
+}
+
+.box-left h3{
+    font-size: 29px;
+}
+.box-left p{
+    font-size: 18px;
+}
+
+.box-right img {
+    width: 351px;
+    height: 264px;
+}
+
+.center-box{
+    /* border: 2px solid blue; */
+    width: 63vw;
+    /* height: 76vh; */
+    margin-top: 6.5em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.box-left {
+    margin-bottom: 1em;
+}
+
+.box-right{
+    /* border: 2px solid rgb(0, 0, 0); */
+    margin-bottom: 3em;
+}
+
+.sub-head{
+    width: 380px;
+    margin-bottom: 2em;
+}
+
+.st{
+    margin-top: 2.5em;
+}
+
+.notice-traffic{
+    width:63vw;
+}
+
+.notice-traffic p{
+    margin-bottom:15px;
+    font-size:13px;
+}
+
+.home-btn1 {
+    font-size: 14px;
+    width: 75px;
+}
+
+.home-btn1:hover {
+    background-color:  #F9F9F9;
+    color: #343A40;
+}
+
+.home-btn2 {
+    font-size: 14px;
+    width: 75px;
+    margin-left: 4px;
+}
+
+.bottom-box{
+    /* border: 2px solid red; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+    /* height: 12vh; */
+    height: 90px;
+    margin-bottom: 50px!important;
+}
+
+.navbar{
+    position: fixed;
+    z-index:100;
+    width:100%;
+    top: 0;
+}
+
+.bottom-box img {
+    text-align: center;
+    width: 2.5rem;
+}
+
+.info-section{
+    /* height: 100vh; */
+    height: 100vh;
+    /* width: 100vw; */
+    display:flex;
+    align-items:center;
+    {% comment %} border: 2px solid red; {% endcomment %}
+    {% comment %} display:flex;
+    align-items:center; {% endcomment %}
+    {% comment %} flex-direction:column; {% endcomment %}
+}
+
+.bo-left{
+    width:50%;
+}
+.bo-left form textarea{
+    width:65%;
+    border-radius:12px;
+}
+
+.bo-right{
+    width:50%;
+}
+
+.info-bo-container{
+    display:flex;
+    margin: auto;
+    width: 80%;
+}
+
+.alert{
+    padding: 0.55rem 1.25rem;
+    font-family: 'Rubik', sans-serif;
+    font-size:12px;
+    z-index: -1;
+    position: absolute;
+    top:53px;
+  }
+
+  
+  .alert-dismissible .close {
+    padding: 0.55rem 1.25rem;
+    margin-left: 1em;
+  }
+
+  {% comment %} .msg-div{
+    width: 98%;
+  } {% endcomment %}
+
+  .bottom-box{
+    height:75px;
+    {% comment %} margin-top:2em; {% endcomment %}
+  }
+
+
+  .bottom-box{
+    font-size:12px;
+    margin-bottom:0.8rem;
+  }
+
+  .bottom-box img {
+    width:2rem
+  }
+
+  .top-sec{
+    {% comment %} margin-top:3em; {% endcomment %}
+    width: 95%;
+    flex-direction: row-reverse;
+  }
+
+  .map-img img{
+    border-radius: 16px !important;
+    box-shadow: 0 0 27px rgba(0, 0, 0, 0.13); /* Adjust the shadow color and size */
+  }
+
+
+    /* Media query for tablet width 768px */
+    @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+
+        body {
+            /* border: 5px solid red; */
+        }
+
+        .center-box{
+            width: auto;
+            justify-content: center;
+        }
+
+        .box-left{
+            width: 46%;
+        }
+
+        .sub-head {
+            max-width: 400px;
+            margin-bottom: 0em;
+        }
+
+        .st {
+            margin-top: 1.5em;
+        }
+
+        .box-right{
+            width: 48%;
+        }
+
+        .box-right img {
+            width: 371px;
+            height: 264px;
+        }
+
+    }
+
+    
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+    .box-right{
+        display: none;
+    }
+
+    /* html{
+        height: -webkit-fill-available;
+    }  */
+
+  
+
+   
+
+
+    .home-container{
+        height:100svh;
+        /* height:100dvh; */
+        /* height: 100%; */
+        /* border:2px solid red; */
+    }
+
+    #info-sec{
+        height:unset;
+    }
+
+    .info-container{
+        margin-top: 5em;
+    }
+
+    .center-box{
+        width: 71vw;
+        margin-top:5em;
+    }
+
+    .box-left h3 {
+    font-size: 24px;
+}
+
+
+.box-left{
+    margin-top: 3.5rem!important;
+    margin-bottom:0px!important;
+}
+
+.anon-p{
+    margin-bottom:0px;
+}
+
+.box-left p {
+    font-size: 16px;
+    width: 200px;
+}
+
+
+.notice-traffic{
+    width: 63vw;
+  /* margin-bottom: 2em; */
+  margin-right: 20px;
+  }
+
+  .notice-traffic p{
+    font-size:11px!important;
+  }
+
+
+  .map-img{
+    display: flex;
+    justify-content: center;
+  }
+
+  .map-img img{
+    width:85%;
+  }
+
+  .info-heading{
+    font-size: 1.1rem!important;
+  }
+
+  .info-sub-heading{
+    font-size: 15px!important;
+  }
+
+}
+
+
+</style>
+
+
+{% comment %} <div class='home_container'>
+    <div class='d-flex justify-content-center flex-column'>
+        
+            <div class="p-5 mb-4 bg-light rounded-3">
+                <div class="container-fluid py-5">
+                    <h1 class="display-5 fw-bold">MyStranger.In</h1>
+                    <p class="col-md-8 fs-4">A place where you can connect with the strangers of your own university and if you want so, than you can also connect with the strangers of other nearby universities as well. It's totally up to you with which strangers you want to connect and can be friends with.
+                        Remember we all meet thousands of strangers in our life but there are only few of them which we can call mine.
+                    </p>
+                    
+                    <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-primary btn-lg">New Chat</button>
+            </div>
+        </div>
+    </div>
+</div> {% endcomment %}
+
+{% if unverified_uni %}
+    <div class="alert alert-info alert-dismissible fade show reg-notice-top alert-after-login" role="alert">
+        <div class="msg-div">
+        <strong>Note:</strong> <span> We are currently verifying that whether this educational domain "@{{prof_email}}" is associated with this university "{{prof_name}}" or not. | This may take few hours. |   During this time period the site may not work properly. | You will stop receiving this message once it's been verified. </span>
+    </div>
+        {% comment %} <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> {% endcomment %}
+      </div>
+      {% endif %}
+
+{% if request.user.is_authenticated %}
+
+{% endif %}
+<div class="home-container">
+    
+    <div class="center-box">
+        <div class="box-left mt-4">
+        <h3>From Strangers to Friends</h3>
+        <p class="sub-head">Connect with random nearby college
+            Students anonymously</p>
+        
+        <p class="st">Start Chatting :</p>
+        <div class="head-buttons">
+            {% if request.user.is_authenticated %}
+                
+                <div style="border-radius: 100px 0px;
+                width: 159px;
+                height: 15px;
+                border: 1px solid #343a40; display:flex;  margin-bottom:8px;">
+                    <div class="tileft" style="height: 100%;
+                    width: 50%;
+                    border-radius: 100px 0px 0px 0px; display:flex; justify-content:center; align-items:center;"><span  id="text-count-home" class="text_count" style="font-size:9px">{{texti_counti}}+</span></div>
+                    <div class="tiright" style="height: 100%;
+                    width: 50%;
+                    background: #343a40;
+                    border-radius: 0px 0px 100px 0px;  display:flex; justify-content:center; align-items:center;"><span  id="video-count-home" class="text_count" style="font-size:9px; color:white;">{{videoi_counti}}+</span></div>
+                </div>
+                <a href="{% url 'new-chat-text' %}"><button type="button" class="btn btn-dark home-btn1">Text</button></a>
+                <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-outline-dark home-btn2 ">Video</button></a>
+                <p class="mt-1 text-secondary anon-p" style="font-size:12px;">~connect anonymously </p>
+            {% else %}
+            <a href="#"><button type="button" class="btn btn-dark home-btn1" onclick="login_req()">Text</button></a>
+            <a href="#"><button type="button" class="btn btn-outline-dark home-btn2 " onclick="login_req()">Video</button></a>
+            <p class="mt-1" id="login-req-txt" style="font-size:14px; display: none;">login required </p>
+            {% endif %}  
+            
+        </div>
+    </div>
+
+    <div class="box-right">
+        <img src="{% static 'images/2.2_tr_nohand.png' %}" alt="" srcset="">
+        {% comment %} <img src="{% static 'images/mnf.png' %}" alt="" srcset=""> {% endcomment %}
+        {% comment %} <img src="{% static 'images/2.2_tr_super_modified.png' %}" alt="" srcset=""> {% endcomment %}
+    </div>
+    </div>
+    <div class="notice-traffic text-secondary"><p style="margin-bottom:2px;">Note : Since mystranger.in is launched recently it is recommended to use the video/text feature at around 9pm - 10pm for best experience.</p><p>Interested in dating? how about some <a style="text-decoration:none; color:#009cda;" href="{% url 'nrt-text' %}">blind dates</a></p></div>
+    <div class="bottom-box">
+        <a href="#info-sec" class="bottom-box" style="text-decoration: none; color: #343a40;">
+            <p>scroll down for more</p>
+            <img src="{% static 'images/mouse.svg' %}" alt="" srcset=""> </a>
+    </div>
+
+    
+
+</div>
+ 
+<div class="info-section" id="info-sec" style="">
+    
+    <div class="info-container" style="">
+
+        <!-- About 1 - Bootstrap Brain Component -->
+<section class="d-flex justify-content-center">
+    {% comment %} <div class="container" style="margin:0px"> {% endcomment %}
+      <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center top-sec justify-content-center">
+        <div class="col-12 col-lg-6 col-xl-3 map-img">
+          <img class="img-fluid rounded" loading="lazy" src="{% static "images/radius-map.png" %}" alt="">
+        </div>
+        <div class="col-12 col-lg-6 col-xl-8" style="height: 100%;">
+          <div class="row justify-content-xl-center">
+            <div class="col-12 col-xl-11">
+              
+            <h6 class="mt-2">~Exclusively for College Students</h6>
+            {% comment %} <h6 class="mt-2">~ By The Students For The Students</h6> {% endcomment %}
+              <strong><p class="fs-4 mb-3 mt-1 info-heading" style="">MyStranger.in allows you to anonymously connect with random Nearby college students , as well as the students of your own university.</p></strong>
+        
+              <p class="mb-5 info-sub-heading">As long as the stranger's university lies within 60km of your university you can connect with them. On Video/Text both The Stranger and You are going to be anonymous to each other. Only your name & uni is going to be show but there is no way for stranger to see your profile. Thus your identity is going to remain anonymous until you add the other stranger as your friend. We value your security that's why no one can see your email except you.</p>
+
+              <hr style="border-top:1px solid black;">
+
+              <p>- Whole MyStranger Team is also made up of college students  </p>
+                <p class="info-sub-heading">so please be easy on us and if you face any kind of trouble , whether there is a bug or something you don't like than please inform us at <a style="color:#009cda" href="{% url "feedback" %}">This Form</a> or send a mail at info@mystranger.in, We are going to fix the issue as soon as we can. so please enjoy the site and share it with your friends.</p>
+
+             
+            </div>
+          </div>
+        </div>
+      </div>
+    {% comment %} </div> {% endcomment %}
+  </section>
+
+    </div>
+
+    {% comment %} <div class="bottom-box">
+        <a href="#info-sec" class="bottom-box" style="text-decoration: none; color: #343a40;">
+            <p>Top</p>
+            <img src="{% static 'images/mouse.svg' %}" alt="" srcset=""> </a>
+    </div> {% endcomment %}
+
+</div> 
+
+<button onclick="main()">Enable notification</button>
+<script src="{% static "script.js" %}"></script>
+
+<script>
+    
+
+
+    function login_req() {
+    var login_req_txt = document.getElementById("login-req-txt")
+    login_req_txt.style.display = "block"
+    // You can replace the alert with your desired code to show the message.
+}
+
+</script>
+{% endblock body %}

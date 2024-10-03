@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block body %}
+
+
+<style>
+
+    body{
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+
+    }
+
+    .ftco-section{
+        flex: 1;
+        display: flex;
+        {% comment %} align-items: center; {% endcomment %}
+        margin-top: 2em;
+        /* border: 2px solid red; */
+    }
+
+    .info-wrap{
+        background: #272a34;
+    }
+
+    .contact-wrap{
+        background: #1c1e25;
+    }
+
+    .wrapper {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+    -moz-box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+    box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+}
+
+.btn-feedback{
+    background-color: #009cda;
+}
+.btn-feedback:hover{
+    background-color: #038ac0;
+}
+
+.contact-wrap {
+    background: none; 
+}
+
+.headi{
+    color:black;
+    font-size:20px;
+}
+
+.wrapper{
+    border: 1px solid #e6e9ec;
+}
+
+.form-control{
+    font-size:0.9rem;
+}
+
+
+/* Media query for tablet width 768px */
+  @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+
+    .ftco-section{
+        margin-top: 1em;
+      }
+
+  }
+
+</style>
+{% if success %}
+<div class="alert alert-info alert-dismissible fade show reg-notice-top" role="alert">
+    <strong>Note:</strong> We've received your request and will address it within a few hours. We'll keep you informed of the progress.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% endif %}
+<div class="ftco-section" style="color: whitesmoke;">
+
+
+    <div class="container">
+        <div class="row justify-content-center">
+            
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="wrapper">
+                    <div class="row no-gutters">
+                        
+                        
+                        <div class="d-flex align-items-stretch">
+                            <div class="contact-wrap w-100 p-md-5 p-4 py-5">
+                                <h3 class="mb-4 headi">Facing Problem During Registration</h3>
+                                <!-- {% if response %}
+                                <div id="form-message-warning" class="mb-4"></div>
+                                <div id="form-message-success" class="mb-4 ml-2">
+                                    <p>{{response}}</p>
+                                    {% comment %} <p>{{msg}}</p> {% endcomment %}
+                                </div>
+                                {% else %} -->
+                                
+                                    <form method="POST" id="RegistrationIssueForm" name="RegistrationIssueForm" class="contactForm">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                    
+                                            <!-- <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" name="subject" id="subject"
+                                                        placeholder="Subject">
+                                                </div>
+                                            </div> -->
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <input type="email" name="user-email" id="inputEmail1" class="radius form-control" placeholder="Your Email - example@university.edu.in" required
+                                                    autofocus>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" name="userUniversityName" id="userUniversityName" required placeholder="Your University Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" name="userUniversityAddress" id="userUniversityAddress" required placeholder="Your University Address">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <textarea name="issue-message" class="form-control" id="issue-message" cols="30"
+                                                        rows="6" placeholder="Problem faced during registration..."></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <input type="submit" value="Send Message" class="btn btn-primary btn-feedback">
+                                                    <div class="submitting"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock body %}

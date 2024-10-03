@@ -1,0 +1,153 @@
+<!-- This is basically exactly the same as friend_list.html -->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+
+<style type="text/css">
+    .profile-image {
+        max-height: 100px;
+        max-width: 100px;
+    }
+
+    .profile-image {
+        border-radius: 12px;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .friends-text {
+        color: #000;
+        font-weight: 500;
+    }
+
+    .friends-text-container {
+        /* border: 1px solid #cccccc;
+		border-radius: 12px; */
+    }
+
+    .friends-btn:hover {
+        background-color: #bfbfbf;
+        border-color: #bfbfbf;
+    }
+
+    .dropdown-toggle::after {
+        content: none;
+    }
+
+    .profile-link {
+        color: #000;
+    }
+
+    .checkmark-icon {
+        color: green;
+    }
+
+    .cancel-icon {
+        color: red;
+    }
+
+    .c-main {
+        width: 35vw;
+        margin: auto;
+        margin-top: 5px;
+        border: 1px solid #707070;
+    }
+
+    .cont1 {
+        border-bottom: 2px solid #707070;
+        display: flex;
+    }
+
+    .name-title {
+        font-size: 20px;
+    }
+
+    .msg-btn{
+        font-size: 15px;
+        margin-left: 1em;
+    }
+
+</style>
+
+<div class="container">
+    <div class="card p-2 c-main">
+
+        {% if accounts %}
+        <div class="d-flex flex-row flex-wrap">
+            {% for account in accounts %}
+            <div class="cont1 flex-row flex-grow-1 my-2 mx-2 align-items-center">
+                {% comment %} <a class="profile-link" href="{% url 'account:view' user_id=account.0.id %}">
+                    <div class="card-image m-2">
+                        <img class="img-fluid profile-image" src="{{account.0.profile_image.url}}" alt="">
+                    </div>
+                </a> {% endcomment %}
+                <a class="profile-link" href="{% url 'account:view' user_id=account.0.id %}">
+                    <div class="card-center d-flex px-2">
+                        <h4 class="mb-0 name-title">{{account.0.name}}</h4>
+                        {% if account.1 %}
+                        <a href="#" onclick="createOrReturnPrivateChat('{{account.0.id}}')"><button class="btn btn-sm btn-outline-dark msg-btn">Message</button></a>
+                        {% endif %}
+
+                    </div>
+                </a>
+                <div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
+                    {% if account.1 %}
+                    <div class="d-flex flex-row friends-text-container p-3">
+                        <p class="friends-text m-auto">
+                            Friends
+                        </p>
+                        <span class="material-icons checkmark-icon m-auto pl-2">
+                            check_circle_outline
+                        </span>
+                    </div>
+                    {% else %}
+                    {% if account.0 != request.user %}
+                    <div class="d-flex flex-row friends-text-container p-3">
+                        <p class="friends-text m-auto">
+                            Not Friends
+                        </p>
+                        <span class="material-icons cancel-icon m-auto pl-2">cancel</span>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    {% if account.0 == request.user %}
+                    <div class="d-flex flex-row friends-text-container p-3">
+                        <p class="friends-text m-auto">
+                            This is you
+                        </p>
+                        <span class="material-icons m-auto pl-2">
+                            person_pin
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:1 %}
+        </div>
+        <div class="d-flex flex-row flex-wrap">
+            {% endif %}
+
+            {% endfor %}
+
+            {% else %} <!-- If no friends -->
+            <div class="d-flex flex-row flex-grow-1 justify-content-center align-items-center p-4">
+                <p>No results</p>
+            </div>
+        </div>
+            {% comment %} <p class="mt-2" style="text-align: center;"> </p> {% endcomment %}
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+
+{% include 'chat/snippets/create_or_return_private_chat.html' %}
+
+
+{% endblock body %}

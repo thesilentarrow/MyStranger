@@ -1,0 +1,582 @@
+{% load humanize %}
+{% load static %}
+
+{% for question in question_top2_answers %}
+        <div class="card card-main mb-4" id="card-main-{{question.0.id}}">
+            <div class="card-header">
+                <div style="width:100%" >
+                    <div class="tp1">
+                        <span class="text-secondary small-text" style="font-size:12px; margin-bottom:0px;">
+                            
+                            <span class="heading-top"><a style="color:white; margin-right:0.5em;" href=""><span>Confesser ({% if question.0.owner.gender == 'M' %}him{% elif question.0.owner.gender == 'F' %}her{% else %} {% endif %}) | {{question.0.owner.university_name}}</span> </a></span> 
+                          
+                            
+                            <span class="timepamper" style="color:white"> {{question.0.timestamp|naturaltime}} </span></span>
+
+                        <div class="tp1-right">
+
+                        {% if question.0.owner != request.user and question.0.taggie != request.user %}
+                            
+                          
+
+                            <button class="share-btn" onclick="openShareModal('{{question.0.pk}}')"><i class="fa-solid fa-share-from-square" style="color: white;"></i></button>
+
+
+                            {% comment %} <div class="dropdown">
+                        
+                                <button class="btn btn-secondary dropdown-toggle dots" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+        
+                                    
+                                    <ul class="dropdown-menu report-dpn">
+                                      
+                                    <li><button class="dropdown-item" type="button">Report</button></li>
+                                    
+                                      
+                                    </ul>
+                                  </div> {% endcomment %}
+                            
+
+                        {% endif %}
+
+
+                        {% if question.0.owner == request.user or question.0.taggie == request.user %}
+
+                        <button class="share-btn" onclick="openShareModal('{{question.0.pk}}')"><i class="fa-solid fa-share-from-square" style="color: white;"></i></button>
+
+                        <div class="dropdown">
+                        
+                            <button class="btn btn-secondary dropdown-toggle dots" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+    
+                                
+                                <ul class="dropdown-menu report-dpn">
+
+                                {% if request.user.is_authenticated %}
+
+                                  
+                                <li><button class="dropdown-item" onclick="myquestiondeletefunc('{{question.0.id}}', 'card-main-{{question.0.id}}')" type="button">Delete</button></li>
+
+                                {% else %}
+                                    <li><button disabled class="dropdown-item" onclick="myquestiondeletefunc('', 'card-main')" type="button">Delete</button></li>
+                                {% endif %}
+                                
+                                  
+                                </ul>
+                            </div>
+
+                        {% endif %}
+
+
+                        
+                    </div>
+
+                </div>
+
+                {% comment %} <div class="tp2">
+                    <strong class="the-ques"  style="font-size: 17px; word-break: break-word;">{{question.0.question}}</strong>
+                    <span class="text-secondary total_ans_box d-flex justify-content-center" style="font-size:12px; margin-left: 2em; min-width:78px; " >{{ question.0.ans_count }} {% if question.0.ans_count < 2 %}answer{% else %}answers{% endif %}</span>
+                </div>
+                 {% endcomment %}
+                </div>
+                
+            </div>
+            <!-- <div class="card-body heading-top">
+            
+                <p>Nearby Universities</p>
+                <p>Users</p>  
+            
+            </div> -->
+
+            
+           
+            <div class="card" style="border-radius: 0px 0px 14px 14px;">
+                {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+                    
+                    {% if not question.0.Canswers.all %}
+                        
+                        <p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
+                        
+                    {% else %}
+                        {% comment %} {% for answer in question.answers.all %} {% endcomment %}
+                        {% load mptt_tags %}
+                        {% if not question.0.polls.all %}
+                            {% recursetree question.1 %}
+
+                            {% comment %} {% if node.ans_reported.all|length > 5 %}{% endif %} {% endcomment %}
+                            <div class="card card-answer card-reply" id="card-{{node.id}}">
+                                <div class="card-body card-body-answer" style="flex-direction: column;">
+
+                                
+                                {% comment %} {% if node.level ==0 %}{% endif %} {% endcomment %}
+
+                                <div style="width:100%" >
+
+                                  {% if not node.level == 0  %}
+                                  
+                                    <div class="tp1">
+                                
+                                        <p class="text-secondary small-text answer-info" style="font-size:12px; margin-bottom:0px;"><span class="text-secondary" style=" margin-right:0.5em;"><span> {% if node.user == node.question.owner %}Confesser {% elif node.user == node.question.taggie %}Taggie {% else %}Stranger{% endif %} | {{node.user.university_name}}</span> </span>
+                                            {% if request.user.id == node.user.id %}
+                                            
+                                            {% endif %}
+                                        <span class="timepamper">
+                                             {{node.timestamp|naturaltime}} </span>
+        
+                                        </p>
+        
+                                        <div class="tp1-right">
+        
+                                            {% if node.user != request.user %}
+        
+                                            
+        
+                                            {% endif %}
+                    
+                                            
+                                          
+        
+                                            <div class="dropdown">
+                                
+                                                <button class="btn btn-secondary dropdown-toggle dots" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+                        
+                                                    
+                                                    <ul class="dropdown-menu report-dpn">
+                                                    {% if node.user != request.user %}
+        
+                                                    {% if request.user.is_authenticated %}
+        
+                                                        <li><button class="dropdown-item" onclick="myreportfunc('{{node.pk}}')"  type="button">Report</button></li>
+        
+                                                    {% else %}
+        
+                                                    <li><button disabled class="dropdown-item" onclick="myreportfunc('')"  type="button">Report</button></li>
+        
+                                                    {% endif %}
+        
+                                                    {% else %}
+                                                    <li><button class="dropdown-item" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')" type="button">Delete</button></li>
+                                                    {% endif %}
+                                                    
+                                                      
+                                                    </ul>
+                                                  </div>
+                                        
+                                        </div>
+        
+                                    </div>
+                                    </div>
+        
+                                    {% endif %}
+
+                                {% comment %} <p style="margin-bottom:0px; margin-top:2px;" >{{node.content}}</p> {% endcomment %}
+                                <span class="ans_texti" style="width:96%;">
+                                {% if node.content|length > 250 %}
+                                {% with first_part=node.content|slice:":250" second_part=node.content|slice:"250:" %}
+                                <span id="partial-paragraph">{{ first_part }}
+
+                                    <span class="secondary-text mb-2" style="width:80px; border:none; background:none; color:#009cda; font-size:12px;" type="button"  id="contentcont-{{node.pk}}" onclick="myreadmorefunc('contentcont-{{node.pk}}')" data-bs-toggle="collapse" data-bs-target="#content-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                        ... read more
+                                    </span>
+                                
+
+                                    <span class="collapse" id="content-{{node.pk}}">
+
+                                       
+                                        {{ second_part }}
+                                        
+                                    </span>
+
+                                </span>
+                                
+                                    
+                                {% endwith %}
+                            {% else %}
+                                <div id="full-paragraph">{{ node.content }}</div>
+                            {% endif %}
+                        </span>
+
+                        
+                        {% if node.level < 2  %}
+                            <div style="margin-top:4px; display:inline-block;"> {% endif %}
+                            
+                            {% if request.user not in node.likes.all %}
+
+                                <span id="like-{{node.pk}}" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                            {% else %}
+
+                            {% if request.user.is_authenticated %}
+                            
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class=" like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% else %}
+
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class=" like-btn" ><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% endif %}
+
+                            
+                                <span id="unlike2-{{node.pk}}" style="" ><button class=" like-btn" onclick="myunlikefunc('{{node.pk}}', 'unlike2-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike2-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                            {% endif %}
+
+                            <span id="unlike-{{node.pk}}" style="display:none;" ><button class=" like-btn" onclick="myunlikefunc('{{node.pk}}','unlike-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                            
+
+
+                                {% if node.level < 2 %}
+                                {% if request.user.is_authenticated %}
+                                {% if request.user == node.question.owner or request.user == node.question.taggie %}
+                                
+                                <span><button class="secondary-text f12" style="width:50px; border:none; background:none;  color: #009cda; font-size:14px;" type="button" data-bs-toggle="collapse" data-bs-target="#reply-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button></span>
+                                {% endif %}
+                                {% endif %}
+
+                            </div>
+                            
+                                {% comment %} {% if request.user.is_authenticated and (request.user == node.question.owner or request.user == node.question.taggie)  %} {% endcomment %}
+                                {% if request.user.is_authenticated %}
+
+                                {% if request.user == node.question.owner or request.user == node.question.taggie %}
+
+
+
+                           
+                            <div class="collapse replybox" id="reply-{{node.pk}}">
+                               
+                                
+                                
+                                <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}' , 'id_chat_message_input_answer-{{node.id}}' )" action="" method='post'> {% csrf_token %}
+                                    
+                                    <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea  oninput="resizeTextarea(this)" style="margin-bottom: 1em;" class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's confession" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                    </form>
+                                
+                            </div> 
+                                    {% endif %}
+                                    {% endif %}
+                                 
+                                {% endif %}
+
+
+                                
+                                {% if not node.is_leaf_node %}
+
+                                <button class="secondary-text mb-2 f12 view_rep_btn" style="width:80px; border:none; background:none; color:#009cda; font-size:13px; margin-top:-1.78em;" type="button" data-bs-toggle="collapse" data-bs-target="#replies-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    view replies
+                                </button>
+
+                            {% comment %} </div> {% endcomment %}
+
+                                <div class="collapse" id="replies-{{node.pk}}">
+
+                                    <div class="children pl-2 pl-md-5 card-reply-main">
+                                    {{ children }}
+                                    
+                                    </div>
+
+                                </div>
+                                {% else %}
+
+                                {% comment %} {% if node.level < 2 %} </div>  {% endif %} {% endcomment %}
+                                
+                            
+                                {% endif %}
+                        
+                                
+                </div>
+                
+            </div>
+            
+            {% comment %} <div class="card">
+                <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+
+
+
+                            {% endrecursetree %}
+                            {% endif %}
+                            
+                        {% comment %} {% endfor %} {% endcomment %}
+                    {% endif %}
+
+                     {% comment %} <div>
+                        <form style="border:2px solid" class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+                            <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
+                            <textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input"></textarea>
+                            <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Add answer</span></button>
+                        </form>
+                    </div>   {% endcomment %}
+
+
+                    <!-- <div> -->
+                    {% comment %} <p style="margin-bottom:4px;">it's such a shitty university u r not gonna believe what happened to .......</p> {% endcomment %}
+                    {% comment %} <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">shreya | amity university</p></div> {% endcomment %}
+                    {% comment %} <a href="{% url "qna:minichat" user_id=question.pk %}" class="" style="font-size:14px; text-align: center; margin-bottom:0px;">see answers</a> {% endcomment %}
+
+                    {% comment %} <a href="" class="" style="font-size:14px; text-align: center; margin-bottom:0px;">see answers</a> {% endcomment %}
+
+
+                    </div>
+
+                    
+
+            {% comment %} <div class="card"> {% endcomment %}
+                {% comment %} http://127.0.0.1:8000/confessions/question/23/?question=true&taggie_token= {% endcomment %}
+                
+
+                {% if question.2 or question.0.ans_count < 2 %}
+
+                    <button class="secondary-text mb-2 smaf" onclick="mytoogleanswersfunc('more-ans-{{question.0.pk}}')" style="width:115px; border:none; background:none; color:#009cda; font-size:12px; margin-left:1em; margin-top:0.5em;" type="button" id="more-ans-{{question.0.pk}}" data-bs-toggle="collapse" data-bs-target="#question-{{question.0.pk}}" aria-expanded="false" aria-controls="collapseExample">{% if question.0.ans_count < 3 %} {{ question.0.ans_count|add:"-1" }} {% if question.0.ans_count < 2 %} Comment {% else %} Comment {% endif %}{% else %}see all {{ question.0.ans_count|add:"-1" }} comments{% endif %}</button> 
+
+                    
+
+                    <div class="collapse" id="question-{{question.0.pk}}">
+
+                        <div id="elemental-{{question.0.pk}}">
+
+                    
+                            {% if request.user.is_authenticated %}
+                            
+                            {% comment %} {% if not question.0.polls.all %} {% endcomment %}
+                            <form class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+                                <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
+                                <textarea oninput="resizeTextarea(this)" class="flex-grow-1 quora-textarea" placeholder="wanna comment on this confession " name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
+        
+                                    <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Comment</span></button>
+        
+                                    
+                                </form>
+                                {% comment %} {% endif %} {% endcomment %}
+                                {% else %}
+                               
+        
+                                   <p style="font-size:12px; text-align:center;">~login to answer</p>
+                            {% endif %}
+                        </div>  
+        
+                        {% if question.2 %}
+
+                        <div class="card answers-card" >
+                            {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+                            
+
+                            {% load mptt_tags %}
+                        
+                            {% recursetree question.2 %}
+
+                            <div class="card card-answer card-reply" id="card-{{node.id}}">
+                                <div class="card-body card-body-answer" style="flex-direction: column;">
+
+                                
+                                {% comment %} {% if node.level ==0 %}{% endif %} {% endcomment %}
+
+                                
+                                {% comment %} <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">{{node.user.name}}</p> {% endcomment %}
+
+                                <div style="width:100%" >
+                                    <div class="tp1">
+
+                                <p class="text-secondary small-text " style="font-size:12px; margin-bottom:0px;"><span class="text-secondary" style="margin-right:0.5em;"><span> {% if node.user == node.question.owner %}Confesser {% elif node.user == node.question.taggie %}Taggie {% else %}Stranger{% endif %} | {{node.user.university_name}}</span> </span>
+                                   
+                                    <span class="timepamper">
+                                        {{node.timestamp|naturaltime}} </span>
+                                
+                                </p>
+
+                                <div class="tp1-right">
+
+                                    {% if node.user != request.user %}
+
+                                      
+
+                                    {% endif %}
+            
+                                    
+                                    {% comment %} <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span> {% endcomment %}
+
+                                    <div class="dropdown">
+                        
+                                        <button class="btn btn-secondary dropdown-toggle dots" style="color:#343a40;"  type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+                
+                                            
+                                            <ul class="dropdown-menu report-dpn">
+                                            {% if node.user != request.user %}
+                                                {% if request.user.is_authenticated %}
+                                                 <li><button class="dropdown-item" onclick="myreportfunc('{{node.pk}}')" type="button">Report</button></li>
+                                                {% else %}
+                                                <li><button disabled class="dropdown-item" onclick="myreportfunc('')" type="button">Report</button></li>
+                                                {% endif %}
+                                            {% else %}
+                                            <li><button class="dropdown-item" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')" type="button">Delete</button></li>
+                                            {% endif %}
+                                            
+                                              
+                                            </ul>
+                                          </div>
+                                
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        
+                                {% comment %} <p style="margin-bottom:0px; margin-top:2px;" >{{node.content}}</p> {% endcomment %}
+
+                                <span 
+                                class="ans_texti"
+                                style="width:96%;">
+                                    {% if node.content|length > 250 %}
+                                    {% with first_part=node.content|slice:":250" second_part=node.content|slice:"250:" %}
+                                    <span id="partial-paragraph">{{ first_part }}
+    
+                                        <span class="secondary-text mb-2" style="width:80px; border:none; background:none; color:#009cda; font-size:12px;" type="button"  id="contentcont-{{node.pk}}" onclick="myreadmorefunc('contentcont-{{node.pk}}')" data-bs-toggle="collapse" data-bs-target="#content-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                            ... read more
+                                        </span>
+                                    
+    
+                                        <span class="collapse" id="content-{{node.pk}}">
+    
+                                           
+                                            {{ second_part }}
+                                            
+                                        </span>
+    
+                                    </span>
+                                    
+                                        
+                                    {% endwith %}
+                                {% else %}
+                                    <div id="full-paragraph">{{ node.content }}</div>
+                                {% endif %}
+                            </span>
+                                
+
+                                {% if node.level < 2  %}
+                            <div style="margin-top:4px; display:inline-block;"> {% endif %}
+
+                                {% if request.user not in node.likes.all %}
+
+                                <span id="like-{{node.pk}}" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                            {% else %}
+
+                            {% if request.user.is_authenticated %}
+                            
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% else %}
+
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class="like-btn"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% endif %}
+
+                            
+                                <span id="unlike2-{{node.pk}}" style="" ><button class="like-btn" onclick="myunlikefunc('{{node.pk}}', 'unlike2-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike2-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                            {% endif %}
+
+                            <span id="unlike-{{node.pk}}" style="display:none;" ><button class="like-btn" onclick="myunlikefunc('{{node.pk}}','unlike-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                                
+
+
+                                {% comment %} {% if node.level < 3 %}
+                                <button class="secondary-text" style="width:50px; border:none; background:none;" type="button" data-bs-toggle="collapse" data-bs-target="#{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button>
+                            </p>
+                            <div class="collapse" id="{{node.pk}}">
+                                
+                                <form class="answer-form" action="" method='post'> {% csrf_token %}
+                                    <input hidden  type="text" name='question-id' id="question-{{question.id}}" value="{{question.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea class="flex-grow-1 quora-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                </form>
+                                
+                            </div> 
+                                <hr> 
+                                {% endif %} {% endcomment %}
+
+
+                                {% if node.level < 2 %}
+                                {% if request.user.is_authenticated %}
+
+                                <span><button class="secondary-text f12" style="width:50px; border:none; background:none; color: #009cda; font-size:14px;" type="button" data-bs-toggle="collapse" data-bs-target="#reply-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button></span>
+
+                                {% endif %}
+                           
+                            </div>
+
+                            {% if request.user.is_authenticated %}
+
+
+                            <div class="collapse replybox" id="reply-{{node.pk}}">
+                                
+                                <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}', 'id_chat_message_input_answer-{{node.id}}')" action="" method='post'> {% csrf_token %}
+                                    <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea oninput="resizeTextarea(this)" class="flex-grow-1 quora-textarea reply-textarea" placeholder="" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                    </form>
+                                
+                            </div> 
+
+                                {% endif %}
+                                 
+                                {% endif %}
+
+                                {% if not node.is_leaf_node %}
+
+                                <button class="secondary-text mb- view_rep_btn f12" style="width:80px; border:none; background:none; color:#009cda; font-size:13px; margin-top: -1.7em;
+                                margin-left: 7em;" type="button" data-bs-toggle="collapse" data-bs-target="#replies-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    view replies
+                                </button>
+
+                                <div class="collapse" id="replies-{{node.pk}}">
+
+                                    <div class="children pl-2 pl-md-5 card-reply-main">
+                                    {{ children }}
+                                    </div>
+
+                                </div>
+                                {% endif %}
+                                 
+                                    
+
+                                </div>
+                            </div>
+                            {% endrecursetree %}
+                            
+
+                        </div>
+                        {% endif %}
+                    </div>
+
+                {% endif %}
+
+                
+
+                
+                    {% comment %} <button class="btn btn-sm btn-outline-dark">See Answers</button> {% endcomment %}
+                    
+                    {% comment %} <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark">{{delta.students}} Students</button></a> {% endcomment %}
+                
+        
+                </div>
+
+            </div>
+        {% comment %} </div> {% endcomment %}
+            
+            {% endfor %}

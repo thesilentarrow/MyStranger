@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block body %}
+
+<style>
+
+    .nearby-container{
+        {% comment %} border: 2px solid green; {% endcomment %}
+        width: 60vw;
+        margin: auto;
+        margin-top: 2em;
+
+    }
+
+    .card-main{
+        width: 100%;
+        /* border: 2px solid red; */
+        max-height: 80vh;
+        overflow-y: scroll;
+        
+    }
+
+    .card-header{
+        display: flex;
+        justify-content: space-between;
+        height: 80px;
+        align-items: center;
+        /* margin-bottom: 2em; */
+    }
+    
+    /* .heading-top{
+        border: 1px solid#d5cfcf; 
+        font-size: 18px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    } */
+
+    .card-body{
+        border-bottom: 1px solid #d5cfcf;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .nearby-num:hover{
+        cursor: default;
+    }
+
+    .btn:hover{
+        background-color: #343a40!important;
+        cursor: default;
+    }
+
+    /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+	.nearby-container{
+        width:unset;
+    }
+
+  }
+
+</style>
+
+<div class="nearby-container">
+    <div class="card card-main">
+        <div class="card-header">
+            <div>
+        <strong style="font-size: 20px;">{{user_uni}}</strong>
+        <p class="text-secondary" style="font-size:13px; margin-bottom:0px;">{{user_uni_domain}}</p></div>
+        <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark ">{{user_uni_num}} {% if user_uni_num == 1 %}Student{% else %}Students{% endif %} </button></a>
+        </div>
+        <!-- <div class="card-body heading-top">
+           
+            <p>Nearby Universities</p>
+            <p>Users</p>  
+        
+        </div> -->
+        {% if nearby_lst %}
+        {% for delta in nearby_lst %}
+        <div class="card">
+            <div class="card-body">
+                <div>
+                <a style="color:#009cda;" href="{% url "account:view" user_id=delta.id %}"><p style="margin-bottom:4px;">{{delta.name}}</p></a>
+                {% if delta.bio|length > 150 %}
+                
+                    <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">{{delta.bio|slice:":100"}}</p></div>
+                    
+                    {% else %} 
+                    <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">{{delta.bio}}</p></div>
+                    
+                {% endif %}
+
+                {% if delta.id == request.user.id %}
+
+                <div class="d-flex flex-row friends-text-container p-3">
+                    <p class="friends-text m-auto">
+                        This is you
+                    </p>
+                    <span class="material-icons m-auto pl-2">
+                        person_pin
+                    </span>
+                </div>
+
+                {% else %}
+                
+                {% if delta.is_friend == True %}
+                {% comment %} <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark">status : friend</button></a> {% endcomment %}
+                {% comment %} <p style="color:green;" >friend</p> {% endcomment %}
+                <div class="d-flex flex-row friends-text-container p-3">
+                    <p class="friends-text m-auto">
+                        Friends
+                    </p>
+                    <span class="material-icons checkmark-icon m-auto pl-2">
+                        check_circle_outline
+                    </span>
+                </div>
+            {% else %}
+                {% comment %} <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark">status : not friend</button></a> {% endcomment %}
+                {% comment %} <p style="color:red;" >not friend</p> {% endcomment %}
+                <div class="d-flex flex-row friends-text-container p-3">
+                    <p class="friends-text m-auto">
+                        Not Friends
+                    </p>
+                    <span class="material-icons cancel-icon m-auto pl-2">cancel</span>
+                </div>
+            {% endif %}
+
+                {% endif %}
+                
+                
+                <!-- <p>Registered Students : </p> -->
+                   
+     
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+       
+</div>
+
+{% endblock body %}
